@@ -73,6 +73,25 @@ export function useWizardForm({
 
   const formValues = form.watch();
 
+  // Jobs.cz has a useful ready-to-run personal-search preset. Persist it into
+  // the actual form state as soon as the source is selected; otherwise the UI
+  // would show the preset while schema validation still saw no sourceConfig.
+  useEffect(() => {
+    if (
+      formValues.jobBoard === "jobs.cz" &&
+      !form.getValues("sourceConfig")?.["jobs.cz"]
+    ) {
+      form.setValue(
+        "sourceConfig",
+        {
+          ...form.getValues("sourceConfig"),
+          "jobs.cz": EMPTY_JOBSCZ,
+        },
+        { shouldValidate: true },
+      );
+    }
+  }, [form, formValues.jobBoard]);
+
   const onSubmit = async (data: CreateAutomationInput) => {
     setIsSubmitting(true);
     try {

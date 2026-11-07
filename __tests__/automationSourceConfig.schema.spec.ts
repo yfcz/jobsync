@@ -138,4 +138,19 @@ describe("CreateAutomationSchema conditional validation", () => {
     expect(noQuery.success).toBe(false);
     expect(excessiveCap.success).toBe(false);
   });
+
+  it("jobs.cz rejects a locality other than its fixed Brno search", () => {
+    const result = CreateAutomationSchema.safeParse({
+      ...base,
+      jobBoard: "jobs.cz",
+      sourceConfig: {
+        "jobs.cz": {
+          queries: ["java"],
+          locations: ["Prague"],
+          strictLocation: true,
+        },
+      },
+    });
+    expect(result.success).toBe(false);
+  });
 });

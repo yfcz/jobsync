@@ -24,6 +24,7 @@ vi.mock("@prisma/client", () => {
       aggregate: vi.fn(),
       create: vi.fn(),
     },
+    aiCall: { create: vi.fn() },
   };
   return {
     PrismaClient: vi.fn(function () {
@@ -256,7 +257,7 @@ describe("runAutomation (lever)", () => {
     expect(result.jobsProcessed).toBe(1);
     expect(result.jobsSaved).toBe(1);
     expect((prisma.job.create as any).mock.calls[0][0].data.jobUrl).toBe(
-      "https://www.jobs.cz/rpd/2000000001/",
+      "https://www.jobs.cz/rpd/2000000001",
     );
   });
 
