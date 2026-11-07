@@ -62,8 +62,8 @@ export interface JobsCzSourceConfig {
   queries: string[];
   targetTitles?: string[];
   keywords?: string[];
-  locations?: string[];
-  strictLocation?: boolean;
+  locations?: "Brno"[];
+  strictLocation?: true;
   topK?: number;
   saveUnanalyzed?: boolean;
   // Bounds both detail HTTP requests and in-memory work for this source.

@@ -29,6 +29,15 @@ describe("parseEditSourceConfig", () => {
       ashby: { companies: [{ name: "Ramp", token: "ramp" }] },
     });
   });
+
+  it("keeps a Jobs.cz config so editing preserves its search queries", () => {
+    const sc = JSON.stringify({
+      "jobs.cz": { queries: ["java", "backend"], locations: ["Brno"] },
+    });
+    expect(parseEditSourceConfig(sc)).toEqual({
+      "jobs.cz": { queries: ["java", "backend"], locations: ["Brno"] },
+    });
+  });
 });
 
 describe("PROVIDER_META", () => {

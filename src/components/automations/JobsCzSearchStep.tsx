@@ -70,7 +70,11 @@ export function JobsCzSearchStep({ value, onChange }: JobsCzSearchStepProps) {
         </p>
       </div>
 
-      <TargetingFields value={value} onChange={onChange} />
+      <TargetingFields
+        value={value}
+        onChange={onChange}
+        fixedLocation="Brno"
+      />
       <RunOptionsFields value={value} onChange={onChange} />
     </div>
   );

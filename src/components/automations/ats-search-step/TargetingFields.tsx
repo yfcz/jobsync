@@ -18,11 +18,13 @@ type TargetingValue = {
 interface TargetingFieldsProps<T extends TargetingValue> {
   value: T;
   onChange: (next: T) => void;
+  fixedLocation?: string;
 }
 
 export function TargetingFields<T extends TargetingValue>({
   value,
   onChange,
+  fixedLocation,
 }: TargetingFieldsProps<T>) {
   // Without target titles or keywords there is no signal to rank jobs against,
   // so the relevance floor drops everything and nothing is saved.
@@ -77,39 +79,52 @@ export function TargetingFields<T extends TargetingValue>({
         </div>
       )}
 
-      <EntityStringChipInput
-        label="Locations"
-        placeholder="e.g., Calgary, Seattle"
-        noun="location"
-        description="Optional. Used only to filter results when the toggle below is on (not part of ranking)."
-        values={value.locations ?? []}
-        onChange={(next) => onChange({ ...value, locations: next })}
-        loadOptions={async () => {
-          const res = await getAllJobLocations();
-          return Array.isArray(res) ? res : [];
-        }}
-        createOption={async (lbl) => {
-          const res = await createLocation(lbl);
-          return res?.success ? res.data : null;
-        }}
-      />
-
-      <div className="flex items-start justify-between gap-4 rounded-lg border p-3">
-        <div className="space-y-1">
-          <Label>Only show jobs in these locations</Label>
+      {fixedLocation ? (
+        <div className="rounded-lg border p-3">
+          <Label>Location</Label>
+          <p className="mt-1 text-sm font-medium">{fixedLocation}</p>
           <p className="text-sm text-muted-foreground">
-            When on, jobs matching none of your locations are dropped before
-            ranking. Remote roles always pass.
+            This source uses a fixed Jobs.cz locality and a strict downstream
+            location filter.
           </p>
         </div>
-        <Switch
-          checked={!!value.strictLocation}
-          disabled={(value.locations ?? []).length === 0}
-          onCheckedChange={(checked) =>
-            onChange({ ...value, strictLocation: checked })
-          }
-        />
-      </div>
+      ) : (
+        <>
+          <EntityStringChipInput
+            label="Locations"
+            placeholder="e.g., Calgary, Seattle"
+            noun="location"
+            description="Optional. Used only to filter results when the toggle below is on (not part of ranking)."
+            values={value.locations ?? []}
+            onChange={(next) => onChange({ ...value, locations: next })}
+            loadOptions={async () => {
+              const res = await getAllJobLocations();
+              return Array.isArray(res) ? res : [];
+            }}
+            createOption={async (lbl) => {
+              const res = await createLocation(lbl);
+              return res?.success ? res.data : null;
+            }}
+          />
+
+          <div className="flex items-start justify-between gap-4 rounded-lg border p-3">
+            <div className="space-y-1">
+              <Label>Only show jobs in these locations</Label>
+              <p className="text-sm text-muted-foreground">
+                When on, jobs matching none of your locations are dropped
+                before ranking. Remote roles always pass.
+              </p>
+            </div>
+            <Switch
+              checked={!!value.strictLocation}
+              disabled={(value.locations ?? []).length === 0}
+              onCheckedChange={(checked) =>
+                onChange({ ...value, strictLocation: checked })
+              }
+            />
+          </div>
+        </>
+      )}
     </>
   );
 }

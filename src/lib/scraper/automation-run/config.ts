@@ -36,8 +36,8 @@ export function parseAutomationConfig(
           .slice(0, 3),
         targetTitles: Array.isArray(cfg.targetTitles) ? cfg.targetTitles : [],
         keywords: Array.isArray(cfg.keywords) ? cfg.keywords : [],
-        locations: Array.isArray(cfg.locations) ? cfg.locations : ["Brno"],
-        strictLocation: cfg.strictLocation !== false,
+        locations: ["Brno"],
+        strictLocation: true,
         topK:
           typeof cfg.topK === "number" && cfg.topK > 0
             ? cfg.topK

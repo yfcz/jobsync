@@ -37,6 +37,10 @@ describe("JobsCzSearchStep", () => {
     render(<JobsCzSearchStep value={value} onChange={onChange} />);
 
     expect(screen.getByText("Jobs.cz search area: Brno")).toBeInTheDocument();
+    expect(screen.getByText("Location")).toBeInTheDocument();
+    expect(
+      screen.queryByText("Only show jobs in these locations"),
+    ).not.toBeInTheDocument();
     expect(screen.getByText("java")).toBeInTheDocument();
     expect(screen.getByText("backend")).toBeInTheDocument();
 

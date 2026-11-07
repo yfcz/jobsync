@@ -74,8 +74,8 @@ export const JobsCzSourceConfigSchema = z.object({
     .max(3),
   targetTitles: z.array(z.string().trim().min(1).max(100)).optional(),
   keywords: z.array(z.string().trim().min(1).max(100)).optional(),
-  locations: z.array(z.string().trim().min(1).max(100)).optional(),
-  strictLocation: z.boolean().optional(),
+  locations: z.array(z.literal("Brno")).length(1).optional(),
+  strictLocation: z.literal(true).optional(),
   topK: z.number().int().min(1).max(APP_CONSTANTS.ATS_LISTING_CAP).optional(),
   saveUnanalyzed: z.boolean().optional(),
   maxResults: z
