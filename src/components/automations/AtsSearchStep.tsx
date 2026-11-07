@@ -1,7 +1,7 @@
 "use client";
 
 import { APP_CONSTANTS } from "@/lib/constants";
-import type { JobBoard, LeverCompany } from "@/models/automation.model";
+import type { AtsBoard, LeverCompany } from "@/models/automation.model";
 import { CompanyPicker } from "./ats-search-step/CompanyPicker";
 import { TargetingFields } from "./ats-search-step/TargetingFields";
 import { RunOptionsFields } from "./ats-search-step/RunOptionsFields";
@@ -10,7 +10,7 @@ import type { AtsConfigValue } from "./ats-search-step/types";
 export type { AtsConfigValue };
 
 interface AtsSearchStepProps {
-  provider: JobBoard;
+  provider: AtsBoard;
   value: AtsConfigValue;
   onChange: (next: AtsConfigValue) => void;
 }

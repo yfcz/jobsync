@@ -13,12 +13,13 @@ import {
 } from "@/actions/automation.actions";
 import { toastSuccess, toastError } from "@/lib/toast";
 import type { AutomationWithResume, JobBoard } from "@/models/automation.model";
-import type { AtsConfigValue } from "../AtsSearchStep";
 import {
   EMPTY_ATS,
+  EMPTY_JOBSCZ,
   STEPS,
   parseEditSourceConfig,
-  type AtsKey,
+  type SearchConfigValue,
+  type SourceKey,
 } from "./wizardConfig";
 
 interface UseWizardFormArgs {
@@ -100,16 +101,19 @@ export function useWizardForm({
     }
   };
 
-  const atsKey: AtsKey = formValues.jobBoard;
-  const atsConfig: AtsConfigValue =
-    formValues.sourceConfig?.[atsKey] ?? EMPTY_ATS;
+  const sourceKey: SourceKey = formValues.jobBoard;
+  const sourceConfigValue: SearchConfigValue =
+    formValues.sourceConfig?.[sourceKey] ??
+    (sourceKey === "jobs.cz" ? EMPTY_JOBSCZ : EMPTY_ATS);
 
   const canGoNext = () => {
     switch (step) {
       case 0:
         return (formValues.name?.trim().length ?? 0) > 0;
       case 1:
-        return (atsConfig.companies?.length ?? 0) > 0;
+        return sourceKey === "jobs.cz"
+          ? ("queries" in sourceConfigValue && sourceConfigValue.queries.length > 0)
+          : ("companies" in sourceConfigValue && sourceConfigValue.companies.length > 0);
       case 2:
         return (formValues.resumeId?.length ?? 0) > 0;
       case 3:
@@ -161,8 +165,8 @@ export function useWizardForm({
     formValues,
     step,
     isSubmitting,
-    atsKey,
-    atsConfig,
+    sourceKey,
+    sourceConfigValue,
     takenHours,
     canGoNext,
     nextStep,

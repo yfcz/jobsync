@@ -60,10 +60,13 @@ export function StepBasics({
                 </SelectItem>
                 <SelectItem value="lever">Lever (company boards)</SelectItem>
                 <SelectItem value="ashby">Ashby (company boards)</SelectItem>
+                <SelectItem value="jobs.cz">Jobs.cz (Brno search)</SelectItem>
               </SelectContent>
             </Select>
             <FormDescription>
-              Track specific companies&apos; job boards
+              {field.value === "jobs.cz"
+                ? "Search public Jobs.cz listings in Brno"
+                : "Track specific companies' job boards"}
             </FormDescription>
             <FormMessage />
           </FormItem>

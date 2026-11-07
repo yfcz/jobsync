@@ -4,7 +4,12 @@ import { useState } from "react";
 import { ChevronDown, ChevronUp, ExternalLink } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import type { JobBoard, LeverSourceConfig } from "@/models/automation.model";
+import type {
+  AtsBoard,
+  JobBoard,
+  JobsCzSourceConfig,
+  LeverSourceConfig,
+} from "@/models/automation.model";
 import { companyBoardUrl } from "@/lib/atsBoardUrl";
 import { APP_CONSTANTS } from "@/lib/constants";
 
@@ -14,7 +19,7 @@ import { APP_CONSTANTS } from "@/lib/constants";
 function parseAtsConfig(
   sourceConfig: string | null | undefined,
   jobBoard: JobBoard,
-): Partial<LeverSourceConfig> | null {
+): Partial<LeverSourceConfig> | Partial<JobsCzSourceConfig> | null {
   if (!sourceConfig) return null;
   try {
     return JSON.parse(sourceConfig)?.[jobBoard] ?? null;
@@ -36,11 +41,19 @@ export function AutomationSearchConfig({
 }: AutomationSearchConfigProps) {
   const [showSearchConfig, setShowSearchConfig] = useState(false);
 
-  const greenhouseConfig = retired
+  const searchConfig = retired
     ? null
     : parseAtsConfig(sourceConfig, jobBoard);
 
-  if (!greenhouseConfig) return null;
+  if (!searchConfig) return null;
+  const jobsCzConfig =
+    jobBoard === "jobs.cz"
+      ? (searchConfig as Partial<JobsCzSourceConfig>)
+      : null;
+  const atsConfig =
+    jobBoard !== "jobs.cz"
+      ? (searchConfig as Partial<LeverSourceConfig>)
+      : null;
 
   return (
     <>
@@ -61,14 +74,24 @@ export function AutomationSearchConfig({
       {showSearchConfig && (
         <div className="mt-4 pt-4 border-t grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="col-span-2 md:col-span-4">
-            <p className="text-sm text-muted-foreground">Companies</p>
-            {greenhouseConfig.companies?.length ? (
+            <p className="text-sm text-muted-foreground">
+              {jobsCzConfig ? "Jobs.cz queries (Brno)" : "Companies"}
+            </p>
+            {jobsCzConfig?.queries?.length ? (
               <div className="mt-1 flex flex-wrap gap-1">
-                {greenhouseConfig.companies.map((c) => (
+                {jobsCzConfig.queries.map((query) => (
+                  <Badge key={query} variant="secondary">
+                    {query}
+                  </Badge>
+                ))}
+              </div>
+            ) : atsConfig?.companies?.length ? (
+              <div className="mt-1 flex flex-wrap gap-1">
+                {atsConfig.companies.map((c) => (
                   <Badge key={c.token} variant="secondary" className="gap-1">
                     {c.name}
                     <a
-                      href={companyBoardUrl(jobBoard, c)}
+                      href={companyBoardUrl(jobBoard as AtsBoard, c)}
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={`Open ${c.name} job board`}
@@ -87,25 +110,25 @@ export function AutomationSearchConfig({
           <div>
             <p className="text-sm text-muted-foreground">Target titles</p>
             <p className="text-sm font-medium">
-              {greenhouseConfig.targetTitles?.length
-                ? greenhouseConfig.targetTitles.join(", ")
+              {searchConfig.targetTitles?.length
+                ? searchConfig.targetTitles.join(", ")
                 : "Any"}
             </p>
           </div>
           <div>
             <p className="text-sm text-muted-foreground">Keywords</p>
             <p className="text-sm font-medium">
-              {greenhouseConfig.keywords?.length
-                ? greenhouseConfig.keywords.join(", ")
+              {searchConfig.keywords?.length
+                ? searchConfig.keywords.join(", ")
                 : "None"}
             </p>
           </div>
           <div>
             <p className="text-sm text-muted-foreground">Locations</p>
             <p className="text-sm font-medium">
-              {greenhouseConfig.locations?.length
-                ? `${greenhouseConfig.locations.join(", ")}${
-                    greenhouseConfig.strictLocation ? " (strict)" : ""
+              {searchConfig.locations?.length
+                ? `${searchConfig.locations.join(", ")}${
+                    searchConfig.strictLocation ? " (strict)" : ""
                   }`
                 : "Any location"}
             </p>
@@ -115,17 +138,25 @@ export function AutomationSearchConfig({
               Jobs analyzed per run
             </p>
             <p className="text-sm font-medium">
-              {greenhouseConfig.topK ?? APP_CONSTANTS.MAX_JOBS_PER_RUN}
+              {searchConfig.topK ?? APP_CONSTANTS.MAX_JOBS_PER_RUN}
             </p>
           </div>
           <div>
             <p className="text-sm text-muted-foreground">Extra listings</p>
             <p className="text-sm font-medium">
-              {greenhouseConfig.saveUnanalyzed !== false
+              {searchConfig.saveUnanalyzed !== false
                 ? "Saved"
                 : "Not saved"}
             </p>
           </div>
+          {jobsCzConfig && (
+            <div>
+              <p className="text-sm text-muted-foreground">Detail page cap</p>
+              <p className="text-sm font-medium">
+                {jobsCzConfig.maxResults ?? APP_CONSTANTS.JOBSCZ_MAX_RESULTS}
+              </p>
+            </div>
+          )}
         </div>
       )}
     </>

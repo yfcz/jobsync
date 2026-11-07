@@ -4,7 +4,12 @@ import { APP_CONSTANTS } from "@/lib/constants";
 // network code into the client bundle via this file's client consumers.
 import { ATS_TOKEN_REGEX } from "@/lib/scraper/utils";
 
-export const JobBoardSchema = z.enum(["greenhouse", "lever", "ashby"]);
+export const JobBoardSchema = z.enum([
+  "greenhouse",
+  "lever",
+  "ashby",
+  "jobs.cz",
+]);
 
 export const AutomationStatusSchema = z.enum(["active", "paused"]);
 
@@ -62,10 +67,30 @@ export const AshbySourceConfigSchema = GreenhouseSourceConfigSchema.extend({
     .max(APP_CONSTANTS.ATS_MAX_COMPANIES),
 });
 
+export const JobsCzSourceConfigSchema = z.object({
+  queries: z
+    .array(z.string().trim().min(1).max(100))
+    .min(1, "Add at least one Jobs.cz search query")
+    .max(3),
+  targetTitles: z.array(z.string().trim().min(1).max(100)).optional(),
+  keywords: z.array(z.string().trim().min(1).max(100)).optional(),
+  locations: z.array(z.string().trim().min(1).max(100)).optional(),
+  strictLocation: z.boolean().optional(),
+  topK: z.number().int().min(1).max(APP_CONSTANTS.ATS_LISTING_CAP).optional(),
+  saveUnanalyzed: z.boolean().optional(),
+  maxResults: z
+    .number()
+    .int()
+    .min(1)
+    .max(APP_CONSTANTS.JOBSCZ_MAX_RESULTS)
+    .optional(),
+});
+
 export const SourceConfigSchema = z.object({
   greenhouse: GreenhouseSourceConfigSchema.optional(),
   lever: LeverSourceConfigSchema.optional(),
   ashby: AshbySourceConfigSchema.optional(),
+  "jobs.cz": JobsCzSourceConfigSchema.optional(),
 });
 
 export const CreateAutomationSchema = z
@@ -80,6 +105,17 @@ export const CreateAutomationSchema = z
     scheduleHour: z.number().min(0).max(23),
   })
   .superRefine((data, ctx) => {
+    if (data.jobBoard === "jobs.cz") {
+      const queries = data.sourceConfig?.["jobs.cz"]?.queries ?? [];
+      if (queries.length < 1) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["sourceConfig", "jobs.cz", "queries"],
+          message: "Add at least one Jobs.cz search query",
+        });
+      }
+      return;
+    }
     const companies = data.sourceConfig?.[data.jobBoard]?.companies ?? [];
     if (companies.length < 1) {
       ctx.addIssue({
@@ -103,6 +139,17 @@ export const UpdateAutomationSchema = z
   })
   .superRefine((data, ctx) => {
     if (!data.jobBoard) return;
+    if (data.jobBoard === "jobs.cz") {
+      const queries = data.sourceConfig?.["jobs.cz"]?.queries ?? [];
+      if (queries.length < 1) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["sourceConfig", "jobs.cz", "queries"],
+          message: "Add at least one Jobs.cz search query",
+        });
+      }
+      return;
+    }
     const companies = data.sourceConfig?.[data.jobBoard]?.companies ?? [];
     if (companies.length < 1) {
       ctx.addIssue({
@@ -118,4 +165,7 @@ export type UpdateAutomationInput = z.infer<typeof UpdateAutomationSchema>;
 export type SourceConfigInput = z.infer<typeof SourceConfigSchema>;
 export type GreenhouseSourceConfigInput = z.infer<
   typeof GreenhouseSourceConfigSchema
+>;
+export type JobsCzSourceConfigInput = z.infer<
+  typeof JobsCzSourceConfigSchema
 >;

@@ -56,3 +56,12 @@ it("does not return boardErrors in the RunnerResult", async () => {
   const result = await finalizeRun("run-1", data);
   expect(result).not.toHaveProperty("boardErrors");
 });
+
+it("preserves a midnight daily schedule", async () => {
+  db.automation.findUnique.mockResolvedValue({ scheduleHour: 0 });
+
+  await finalizeRun("run-1", data);
+
+  const nextRunAt = db.automation.update.mock.calls[0][0].data.nextRunAt as Date;
+  expect(nextRunAt.getHours()).toBe(0);
+});

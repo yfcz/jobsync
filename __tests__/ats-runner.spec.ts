@@ -40,6 +40,10 @@ vi.mock("@/lib/scraper/lever", () => ({
   searchLeverJobs: vi.fn(),
 }));
 
+vi.mock("@/lib/scraper/jobscz", () => ({
+  searchJobsCzJobs: vi.fn(),
+}));
+
 vi.mock("@/lib/api-key-resolver", () => ({
   resolveApiKey: vi.fn().mockResolvedValue(undefined),
 }));
@@ -62,6 +66,7 @@ vi.mock("@/lib/ai", async (orig) => {
 import { runAutomation } from "@/lib/scraper/runner";
 import { searchGreenhouseJobs } from "@/lib/scraper/greenhouse";
 import { searchLeverJobs } from "@/lib/scraper/lever";
+import { searchJobsCzJobs } from "@/lib/scraper/jobscz";
 import { generateText } from "ai";
 import { recordRunNotifications } from "@/lib/notifications/record";
 import type { Automation } from "@/models/automation.model";
@@ -204,6 +209,89 @@ describe("runAutomation (lever)", () => {
     expect(result.status).toBe("failed");
     expect(result.errorMessage).toBe("no_companies");
     expect((searchLeverJobs as any).mock.calls.length).toBe(0);
+  });
+
+  it("runs Jobs.cz results through the existing AI and persistence pipeline", async () => {
+    const jobsCzAutomation: Automation = {
+      ...leverAutomation,
+      id: "auto-jobscz",
+      name: "Jobs.cz Brno",
+      jobBoard: "jobs.cz",
+      sourceConfig: JSON.stringify({
+        "jobs.cz": {
+          queries: ["java", "backend"],
+          targetTitles: ["Java Backend Developer"],
+          keywords: ["Java", "Spring"],
+          locations: ["Brno"],
+          strictLocation: true,
+          topK: 5,
+          maxResults: 5,
+        },
+      }),
+    };
+    (searchJobsCzJobs as any).mockResolvedValue({
+      jobs: [
+        makeJob("Java Backend Developer", "Java Spring backend", {
+          company: "Example Systems",
+          location: "Brno",
+          url: "https://www.jobs.cz/rpd/2000000001/",
+        }),
+      ],
+      errors: [],
+      totalScopes: 1,
+      skipped: 1,
+    });
+
+    const result = await runAutomation(jobsCzAutomation);
+
+    expect(result.status).toBe("completed");
+    expect(searchJobsCzJobs).toHaveBeenCalledWith(
+      expect.objectContaining({
+        kind: "jobs.cz",
+        queries: ["java", "backend"],
+        maxResults: 5,
+      }),
+      expect.anything(),
+    );
+    expect(result.jobsProcessed).toBe(1);
+    expect(result.jobsSaved).toBe(1);
+    expect((prisma.job.create as any).mock.calls[0][0].data.jobUrl).toBe(
+      "https://www.jobs.cz/rpd/2000000001/",
+    );
+  });
+
+  it("records a Jobs.cz 429 as rate_limited without running the pipeline", async () => {
+    const jobsCzAutomation: Automation = {
+      ...leverAutomation,
+      id: "auto-jobscz",
+      jobBoard: "jobs.cz",
+      sourceConfig: JSON.stringify({
+        "jobs.cz": {
+          queries: ["java", "backend"],
+          keywords: ["Java"],
+          locations: ["Brno"],
+        },
+      }),
+    };
+    (searchJobsCzJobs as any).mockResolvedValue({
+      jobs: [],
+      errors: [
+        {
+          key: "jobs.cz",
+          name: "Jobs.cz search",
+          reason: "rate limited; retry after 120s",
+          kind: "rate_limited",
+        },
+      ],
+      totalScopes: 1,
+      skipped: 0,
+    });
+
+    const result = await runAutomation(jobsCzAutomation);
+
+    expect(result.status).toBe("rate_limited");
+    expect(result.jobsProcessed).toBe(0);
+    expect(prisma.job.create).not.toHaveBeenCalled();
   });
 
   it("strips HTML and decodes entities from the resume before matching", async () => {
