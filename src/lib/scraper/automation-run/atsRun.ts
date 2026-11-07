@@ -15,7 +15,7 @@ import {
   getDefaultModelForProvider,
   getUserAiSettings,
 } from "./aiSettings";
-import { parseAtsConfig } from "./config";
+import { parseAutomationConfig } from "./config";
 import { extractResumeSkills } from "./resumeText";
 import { buildSkillTerms } from "./skillTags";
 import { persistDiscoveredJob, scalePrerank } from "./persist";
@@ -30,18 +30,23 @@ export async function runAtsRun(
   signal?: AbortSignal,
 ): Promise<RunnerResult> {
   const label = `[${provider.label}]`;
-  const config = parseAtsConfig(automation.sourceConfig, automation.jobBoard);
+  const config = parseAutomationConfig(automation.sourceConfig, automation.jobBoard);
 
-  if (!config || config.companies.length === 0) {
+  const missingConfig =
+    !config ||
+    (config.kind === "ats" && config.companies.length === 0) ||
+    (config.kind === "jobs.cz" && config.queries.length === 0);
+  if (missingConfig) {
+    const errorCode = automation.jobBoard === "jobs.cz" ? "no_queries" : "no_companies";
     automationLogger.log(
       automation.id,
       "error",
-      `${label} No companies configured`,
+      `${label} No ${automation.jobBoard === "jobs.cz" ? "search queries" : "companies"} configured`,
     );
     automationLogger.endRun(automation.id);
     return await finalizeRun(runId, {
       status: "failed",
-      errorMessage: "no_companies",
+      errorMessage: errorCode,
       jobsSearched: 0,
       jobsDeduplicated: 0,
       jobsProcessed: 0,
@@ -54,33 +59,41 @@ export async function runAtsRun(
     automationLogger.log(
       automation.id,
       "info",
-      `${label} Fetching ${config.companies.length} companies...`,
+      config.kind === "jobs.cz"
+        ? `${label} Fetching up to ${config.maxResults} public listings for ${config.queries.join(", ")} in Brno...`
+        : `${label} Fetching ${config.companies.length} companies...`,
     );
 
-    const { jobs, errors } = await provider.search(config.companies);
+    const { jobs, errors, totalScopes, skipped = 0 } = await provider.search(config, signal);
 
     for (const err of errors) {
       automationLogger.log(
         automation.id,
         "warning",
-        `${label} Board '${err.token}' ${err.reason} — skipped`,
+        `${label} '${err.name}' ${err.reason} — skipped`,
       );
     }
 
-    const nameByToken = new Map(config.companies.map((c) => [c.token, c.name]));
     const boardErrors: BoardFailure[] = errors.map((e) => ({
-      token: e.token,
-      name: nameByToken.get(e.token) ?? e.token,
+      token: e.key,
+      name: e.name,
       reason: e.reason,
     }));
-    const total = config.companies.length;
+    const total = totalScopes;
+    const scopeLabel = config.kind === "jobs.cz" ? "search" : "boards";
 
-    if (errors.length > 0 && errors.length === total) {
-      const message = `All ${total} boards unreachable`;
+    if (errors.length > 0 && errors.length >= total && jobs.length === 0) {
+      const message = config.kind === "jobs.cz"
+        ? "Jobs.cz search unavailable"
+        : `All ${total} boards unreachable`;
       automationLogger.log(automation.id, "error", `${label} ${message}`);
       automationLogger.endRun(automation.id);
       return await finalizeRun(runId, {
-        status: "failed",
+        status:
+          config.kind === "jobs.cz" &&
+          errors.some((error) => error.kind === "rate_limited")
+            ? "rate_limited"
+            : "failed",
         errorMessage: message,
         boardErrors,
         jobsSearched: 0,
@@ -92,7 +105,11 @@ export async function runAtsRun(
     }
 
     const boardNote =
-      errors.length > 0 ? `${errors.length} of ${total} boards unreachable` : null;
+      errors.length > 0
+        ? config.kind === "jobs.cz"
+          ? `${errors.length} Jobs.cz listing request(s) failed`
+          : `${errors.length} of ${total} boards unreachable`
+        : null;
     // One place decides the terminal status for every completed path below.
     const outcome = (aiError: string | null) => ({
       status: aiError || boardNote ? ("completed_with_errors" as const) : ("completed" as const),
@@ -106,9 +123,16 @@ export async function runAtsRun(
     automationLogger.log(
       automation.id,
       "success",
-      `${label} Fetched ${jobsSearched} jobs across ${config.companies.length} boards`,
+      `${label} Fetched ${jobsSearched} jobs across ${total} ${scopeLabel}`,
       { jobsSearched },
     );
+    if (skipped > 0) {
+      automationLogger.log(
+        automation.id,
+        "info",
+        `${label} Skipped ${skipped} listing(s) without a public server-rendered description`,
+      );
+    }
 
     // Dedup against existing jobs and within this batch.
     const existingKeys = await getExistingJobDedupeMap(automation.userId);

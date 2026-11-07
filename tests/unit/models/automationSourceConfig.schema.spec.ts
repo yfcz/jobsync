@@ -103,4 +103,39 @@ describe("CreateAutomationSchema conditional validation", () => {
     });
     expect(result.success).toBe(true);
   });
+
+  it("jobs.cz accepts a bounded Java/backend Brno search", () => {
+    const result = CreateAutomationSchema.safeParse({
+      ...base,
+      jobBoard: "jobs.cz",
+      sourceConfig: {
+        "jobs.cz": {
+          queries: ["java", "backend"],
+          targetTitles: ["Java Developer", "Backend Developer"],
+          keywords: ["Java", "Spring Boot"],
+          locations: ["Brno"],
+          strictLocation: true,
+          maxResults: 10,
+        },
+      },
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it("jobs.cz requires a query and rejects an excessive request cap", () => {
+    const noQuery = CreateAutomationSchema.safeParse({
+      ...base,
+      jobBoard: "jobs.cz",
+      sourceConfig: { "jobs.cz": { queries: [] } },
+    });
+    const excessiveCap = CreateAutomationSchema.safeParse({
+      ...base,
+      jobBoard: "jobs.cz",
+      sourceConfig: {
+        "jobs.cz": { queries: ["java"], maxResults: 11 },
+      },
+    });
+    expect(noQuery.success).toBe(false);
+    expect(excessiveCap.success).toBe(false);
+  });
 });

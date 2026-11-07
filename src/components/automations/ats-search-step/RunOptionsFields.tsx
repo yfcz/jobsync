@@ -4,14 +4,20 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
 import { APP_CONSTANTS } from "@/lib/constants";
-import type { AtsConfigValue } from "./types";
+type RunOptionsValue = {
+  topK?: number;
+  saveUnanalyzed?: boolean;
+};
 
-interface RunOptionsFieldsProps {
-  value: AtsConfigValue;
-  onChange: (next: AtsConfigValue) => void;
+interface RunOptionsFieldsProps<T extends RunOptionsValue> {
+  value: T;
+  onChange: (next: T) => void;
 }
 
-export function RunOptionsFields({ value, onChange }: RunOptionsFieldsProps) {
+export function RunOptionsFields<T extends RunOptionsValue>({
+  value,
+  onChange,
+}: RunOptionsFieldsProps<T>) {
   return (
     <>
       <div className="space-y-2">

@@ -1,8 +1,10 @@
 import { APP_CONSTANTS } from "@/lib/constants";
 import type { CreateAutomationInput } from "@/models/automation.schema";
 import type { AtsConfigValue } from "../AtsSearchStep";
+import type { JobBoard, JobsCzSourceConfig } from "@/models/automation.model";
 
-export type AtsKey = "greenhouse" | "lever" | "ashby";
+export type SourceKey = JobBoard;
+export type SearchConfigValue = AtsConfigValue | JobsCzSourceConfig;
 
 export const EMPTY_ATS: AtsConfigValue = {
   companies: [],
@@ -12,6 +14,17 @@ export const EMPTY_ATS: AtsConfigValue = {
   strictLocation: false,
   topK: APP_CONSTANTS.MAX_JOBS_PER_RUN,
   saveUnanalyzed: true,
+};
+
+export const EMPTY_JOBSCZ: JobsCzSourceConfig = {
+  queries: ["java", "backend"],
+  targetTitles: ["Java Developer", "Backend Developer"],
+  keywords: ["Java", "Spring", "Spring Boot", "backend"],
+  locations: ["Brno"],
+  strictLocation: true,
+  topK: APP_CONSTANTS.MAX_JOBS_PER_RUN,
+  saveUnanalyzed: true,
+  maxResults: APP_CONSTANTS.JOBSCZ_MAX_RESULTS,
 };
 
 export const STEPS = [
@@ -34,7 +47,7 @@ export function parseEditSourceConfig(
   if (!sc) return undefined;
   try {
     const parsed = JSON.parse(sc);
-    return parsed?.greenhouse || parsed?.lever || parsed?.ashby
+    return parsed?.greenhouse || parsed?.lever || parsed?.ashby || parsed?.["jobs.cz"]
       ? parsed
       : undefined;
   } catch {

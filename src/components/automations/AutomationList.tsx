@@ -135,6 +135,7 @@ export function AutomationList({
           })();
           const atsCompanies: { name: string; token: string }[] =
             ats?.companies ?? [];
+          const jobsCzQueries: string[] = ats?.queries ?? [];
           const atsTitles: string[] = ats?.targetTitles ?? [];
           const atsLocations: string[] = ats?.locations ?? [];
           const atsKeywords: string[] = ats?.keywords ?? [];
@@ -190,6 +191,11 @@ export function AutomationList({
                 {!retired && (
                   <div className="space-y-1.5 text-sm text-muted-foreground">
                     <div className="flex flex-wrap items-center gap-1">
+                      {jobsCzQueries.map((query) => (
+                        <Badge key={query} variant="secondary">
+                          {query}
+                        </Badge>
+                      ))}
                       {atsCompanies.slice(0, 3).map((c) => (
                         <Badge key={c.token} variant="secondary">
                           {c.name}

@@ -2,16 +2,15 @@
 
 import { APP_CONSTANTS } from "@/lib/constants";
 import type { CreateAutomationInput } from "@/models/automation.schema";
-import type { AtsConfigValue } from "../AtsSearchStep";
-import type { WizardResume } from "./wizardConfig";
+import type { SearchConfigValue, WizardResume } from "./wizardConfig";
 
 export function StepReview({
   formValues,
-  atsConfig,
+  searchConfig,
   selectedResume,
 }: {
   formValues: CreateAutomationInput;
-  atsConfig: AtsConfigValue;
+  searchConfig: SearchConfigValue;
   selectedResume?: WizardResume;
 }) {
   return (
@@ -27,27 +26,31 @@ export function StepReview({
         </span>
       </div>
       <div className="flex justify-between gap-4">
-        <span className="text-muted-foreground">Companies</span>
+        <span className="text-muted-foreground">
+          {formValues.jobBoard === "jobs.cz" ? "Search queries" : "Companies"}
+        </span>
         <span className="font-medium text-right">
-          {atsConfig.companies?.length
-            ? atsConfig.companies.map((c) => c.name).join(", ")
-            : "-"}
+          {"queries" in searchConfig
+            ? searchConfig.queries.join(", ")
+            : searchConfig.companies?.length
+              ? searchConfig.companies.map((c) => c.name).join(", ")
+              : "-"}
         </span>
       </div>
       <div className="flex justify-between gap-4">
         <span className="text-muted-foreground">Target titles</span>
         <span className="font-medium text-right">
-          {atsConfig.targetTitles?.length
-            ? atsConfig.targetTitles.join(", ")
+          {searchConfig.targetTitles?.length
+            ? searchConfig.targetTitles.join(", ")
             : "Any"}
         </span>
       </div>
       <div className="flex justify-between gap-4">
         <span className="text-muted-foreground">Locations</span>
         <span className="font-medium text-right">
-          {atsConfig.locations?.length
-            ? `${atsConfig.locations.join(", ")}${
-                atsConfig.strictLocation ? " (strict)" : ""
+          {searchConfig.locations?.length
+            ? `${searchConfig.locations.join(", ")}${
+                searchConfig.strictLocation ? " (strict)" : ""
               }`
             : "Any location"}
         </span>
@@ -55,13 +58,13 @@ export function StepReview({
       <div className="flex justify-between gap-4">
         <span className="text-muted-foreground">Jobs analyzed per run</span>
         <span className="font-medium text-right">
-          {atsConfig.topK ?? APP_CONSTANTS.MAX_JOBS_PER_RUN}
+          {searchConfig.topK ?? APP_CONSTANTS.MAX_JOBS_PER_RUN}
         </span>
       </div>
       <div className="flex justify-between gap-4">
         <span className="text-muted-foreground">Save additional listings</span>
         <span className="font-medium text-right">
-          {atsConfig.saveUnanalyzed !== false ? "Yes" : "No"}
+          {searchConfig.saveUnanalyzed !== false ? "Yes" : "No"}
         </span>
       </div>
       <div className="flex justify-between">

@@ -16,8 +16,13 @@ import {
   buildIncompleteResumeHint,
   hasMinResumeSections,
 } from "@/lib/resumeSections";
-import type { AutomationWithResume } from "@/models/automation.model";
-import { AtsSearchStep } from "./AtsSearchStep";
+import type {
+  AtsBoard,
+  AutomationWithResume,
+  JobsCzSourceConfig,
+} from "@/models/automation.model";
+import { AtsSearchStep, type AtsConfigValue } from "./AtsSearchStep";
+import { JobsCzSearchStep } from "./JobsCzSearchStep";
 import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { STEPS, type WizardResume } from "./automation-wizard/wizardConfig";
 import { useWizardForm } from "./automation-wizard/useWizardForm";
@@ -49,8 +54,8 @@ export function AutomationWizard({
     formValues,
     step,
     isSubmitting,
-    atsKey,
-    atsConfig,
+    sourceKey,
+    sourceConfigValue,
     takenHours,
     canGoNext,
     nextStep,
@@ -116,17 +121,30 @@ export function AutomationWizard({
               </div>
 
               <div className={step === 1 ? "space-y-4" : "hidden"}>
-                <AtsSearchStep
-                  provider={formValues.jobBoard}
-                  value={atsConfig}
-                  onChange={(next) =>
-                    form.setValue(
-                      "sourceConfig",
-                      { [atsKey]: next } as CreateAutomationInput["sourceConfig"],
-                      { shouldValidate: true },
-                    )
-                  }
-                />
+                {formValues.jobBoard === "jobs.cz" ? (
+                  <JobsCzSearchStep
+                    value={sourceConfigValue as JobsCzSourceConfig}
+                    onChange={(next) =>
+                      form.setValue(
+                        "sourceConfig",
+                        { [sourceKey]: next } as CreateAutomationInput["sourceConfig"],
+                        { shouldValidate: true },
+                      )
+                    }
+                  />
+                ) : (
+                  <AtsSearchStep
+                    provider={formValues.jobBoard as AtsBoard}
+                    value={sourceConfigValue as AtsConfigValue}
+                    onChange={(next) =>
+                      form.setValue(
+                        "sourceConfig",
+                        { [sourceKey]: next } as CreateAutomationInput["sourceConfig"],
+                        { shouldValidate: true },
+                      )
+                    }
+                  />
+                )}
               </div>
 
               <div className={step === 2 ? "space-y-4" : "hidden"}>
@@ -144,7 +162,7 @@ export function AutomationWizard({
               <div className={step === 5 ? "space-y-4" : "hidden"}>
                 <StepReview
                   formValues={formValues}
-                  atsConfig={atsConfig}
+                  searchConfig={sourceConfigValue}
                   selectedResume={selectedResume}
                 />
               </div>

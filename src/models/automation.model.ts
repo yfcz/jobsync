@@ -11,7 +11,8 @@ export type AutomationRunStatus =
   | "rate_limited"
   | "cancelled";
 export type DiscoveryStatus = "new" | "accepted" | "dismissed";
-export type JobBoard = "greenhouse" | "lever" | "ashby";
+export type JobBoard = "greenhouse" | "lever" | "ashby" | "jobs.cz";
+export type AtsBoard = Exclude<JobBoard, "jobs.cz">;
 
 export interface GreenhouseCompany {
   name: string;
@@ -54,16 +55,33 @@ export interface AshbySourceConfig
   companies: AshbyCompany[];
 }
 
+export interface JobsCzSourceConfig {
+  // Jobs.cz accepts repeated q[] parameters. Keeping these separate lets the
+  // UI express the intended Java/backend OR search without inventing a
+  // company-board token.
+  queries: string[];
+  targetTitles?: string[];
+  keywords?: string[];
+  locations?: string[];
+  strictLocation?: boolean;
+  topK?: number;
+  saveUnanalyzed?: boolean;
+  // Bounds both detail HTTP requests and in-memory work for this source.
+  maxResults?: number;
+}
+
 export interface SourceConfig {
   greenhouse?: GreenhouseSourceConfig;
   lever?: LeverSourceConfig;
   ashby?: AshbySourceConfig;
+  "jobs.cz"?: JobsCzSourceConfig;
 }
 
 // Plain, dependency-free board list. Do NOT import this from ats/registry.ts
 // (that pulls the network-calling search fns into client bundles). Both the
 // client-imported schema and the scheduler import it here.
-export const ATS_BOARDS: JobBoard[] = ["greenhouse", "lever", "ashby"];
+export const ATS_BOARDS: AtsBoard[] = ["greenhouse", "lever", "ashby"];
+export const AUTOMATION_BOARDS: JobBoard[] = [...ATS_BOARDS, "jobs.cz"];
 
 // Boards that used to exist and were removed. Their Automation rows stay in
 // the database; the UI marks them retired and only offers pause/delete.
