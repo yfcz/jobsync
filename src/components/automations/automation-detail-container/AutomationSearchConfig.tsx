@@ -10,6 +10,10 @@ import type {
   JobsCzSourceConfig,
   LeverSourceConfig,
 } from "@/models/automation.model";
+import {
+  JOBSCZ_SEARCH_MODE_LABELS,
+  jobsCzSearchMode,
+} from "@/models/automation.model";
 import { companyBoardUrl } from "@/lib/atsBoardUrl";
 import { APP_CONSTANTS } from "@/lib/constants";
 
@@ -54,6 +58,9 @@ export function AutomationSearchConfig({
     jobBoard !== "jobs.cz"
       ? (searchConfig as Partial<LeverSourceConfig>)
       : null;
+  const jobsCzMode = jobsCzConfig
+    ? JOBSCZ_SEARCH_MODE_LABELS[jobsCzSearchMode(jobsCzConfig.searchMode)]
+    : null;
 
   return (
     <>
@@ -75,7 +82,7 @@ export function AutomationSearchConfig({
         <div className="mt-4 pt-4 border-t grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="col-span-2 md:col-span-4">
             <p className="text-sm text-muted-foreground">
-              {jobsCzConfig ? "Jobs.cz queries (Brno)" : "Companies"}
+              {jobsCzConfig ? "Jobs.cz queries" : "Companies"}
             </p>
             {jobsCzConfig?.queries?.length ? (
               <div className="mt-1 flex flex-wrap gap-1">
@@ -124,9 +131,13 @@ export function AutomationSearchConfig({
             </p>
           </div>
           <div>
-            <p className="text-sm text-muted-foreground">Locations</p>
+            <p className="text-sm text-muted-foreground">
+              {jobsCzMode ? "Search location" : "Locations"}
+            </p>
             <p className="text-sm font-medium">
-              {searchConfig.locations?.length
+              {jobsCzMode
+                ? jobsCzMode
+                : searchConfig.locations?.length
                 ? `${searchConfig.locations.join(", ")}${
                     searchConfig.strictLocation ? " (strict)" : ""
                   }`

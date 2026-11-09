@@ -19,12 +19,14 @@ interface TargetingFieldsProps<T extends TargetingValue> {
   value: T;
   onChange: (next: T) => void;
   fixedLocation?: string;
+  fixedLocationDescription?: string;
 }
 
 export function TargetingFields<T extends TargetingValue>({
   value,
   onChange,
   fixedLocation,
+  fixedLocationDescription,
 }: TargetingFieldsProps<T>) {
   // Without target titles or keywords there is no signal to rank jobs against,
   // so the relevance floor drops everything and nothing is saved.
@@ -84,8 +86,8 @@ export function TargetingFields<T extends TargetingValue>({
           <Label>Location</Label>
           <p className="mt-1 text-sm font-medium">{fixedLocation}</p>
           <p className="text-sm text-muted-foreground">
-            This source uses a fixed Jobs.cz locality and a strict downstream
-            location filter.
+            {fixedLocationDescription ??
+              "This source uses a fixed Jobs.cz locality and a strict downstream location filter."}
           </p>
         </div>
       ) : (

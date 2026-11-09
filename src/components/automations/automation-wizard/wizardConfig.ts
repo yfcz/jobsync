@@ -18,6 +18,7 @@ export const EMPTY_ATS: AtsConfigValue = {
 
 export const EMPTY_JOBSCZ: JobsCzSourceConfig = {
   queries: ["java", "backend"],
+  searchMode: "brno",
   targetTitles: ["Java Developer", "Backend Developer"],
   keywords: ["Java", "Spring", "Spring Boot", "backend"],
   locations: ["Brno"],
