@@ -32,10 +32,18 @@ describe("parseEditSourceConfig", () => {
 
   it("keeps a Jobs.cz config so editing preserves its search queries", () => {
     const sc = JSON.stringify({
-      "jobs.cz": { queries: ["java", "backend"], locations: ["Brno"] },
+      "jobs.cz": {
+        queries: ["java", "backend"],
+        searchMode: "remote_cz",
+        locations: [],
+      },
     });
     expect(parseEditSourceConfig(sc)).toEqual({
-      "jobs.cz": { queries: ["java", "backend"], locations: ["Brno"] },
+      "jobs.cz": {
+        queries: ["java", "backend"],
+        searchMode: "remote_cz",
+        locations: [],
+      },
     });
   });
 });

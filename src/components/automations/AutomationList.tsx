@@ -35,7 +35,11 @@ import {
   Zap,
 } from "lucide-react";
 import type { AutomationWithResume } from "@/models/automation.model";
-import { isRetiredBoard } from "@/models/automation.model";
+import {
+  JOBSCZ_SEARCH_MODE_LABELS,
+  isRetiredBoard,
+  jobsCzSearchMode,
+} from "@/models/automation.model";
 import {
   deleteAutomation,
   pauseAutomation,
@@ -136,6 +140,10 @@ export function AutomationList({
           const atsCompanies: { name: string; token: string }[] =
             ats?.companies ?? [];
           const jobsCzQueries: string[] = ats?.queries ?? [];
+          const jobsCzMode =
+            automation.jobBoard === "jobs.cz"
+              ? JOBSCZ_SEARCH_MODE_LABELS[jobsCzSearchMode(ats?.searchMode)]
+              : null;
           const atsTitles: string[] = ats?.targetTitles ?? [];
           const atsLocations: string[] = ats?.locations ?? [];
           const atsKeywords: string[] = ats?.keywords ?? [];
@@ -224,7 +232,9 @@ export function AutomationList({
                         <span className="font-medium text-foreground">
                           Location:
                         </span>{" "}
-                        {atsLocations.length
+                        {jobsCzMode
+                          ? jobsCzMode
+                          : atsLocations.length
                           ? atsLocations.join(", ")
                           : "Any location"}
                       </span>
