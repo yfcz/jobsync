@@ -84,6 +84,7 @@ export function parseJobsCzSearchPage(html: string): JobsCzSearchListing[] {
         ? (attr(companyLogo, "alt") ?? "")
         : "";
     const location = locationNode ? text(locationNode) : "";
+    const workplaceType = workplaceTypeFrom(text(card));
     if (!title || !company) continue;
 
     seen.add(id);
@@ -93,6 +94,7 @@ export function parseJobsCzSearchPage(html: string): JobsCzSearchListing[] {
       company,
       location,
       url: canonicalDetailUrl(id),
+      ...(workplaceType ? { workplaceType } : {}),
     });
   }
 
@@ -116,7 +118,7 @@ function employmentTypeFrom(info: string): string | undefined {
   return undefined;
 }
 
-function workplaceTypeFrom(info: string): string | undefined {
+function workplaceTypeFrom(info: string): "REMOTE" | "HYBRID" | undefined {
   const normalized = info.toLocaleLowerCase("cs");
   if (
     normalized.includes("práce převážně z domova") ||
@@ -171,6 +173,7 @@ export function parseJobsCzDetailPage(
     document,
     (node) => node.tagName === "time" && !!attr(node, "datetime"),
   );
+  const workplaceType = workplaceTypeFrom(info) ?? listing.workplaceType;
 
   return {
     title: listing.title,
@@ -181,6 +184,7 @@ export function parseJobsCzDetailPage(
     postedDate: timeNode ? attr(timeNode, "datetime") : undefined,
     salary: salaryNode ? text(salaryNode) : undefined,
     employmentType: employmentTypeFrom(info),
-    workplaceType: workplaceTypeFrom(`${info} ${text(descriptionNode)}`),
+    workplaceType,
+    isRemote: workplaceType === "REMOTE",
   };
 }

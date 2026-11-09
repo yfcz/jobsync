@@ -111,6 +111,7 @@ describe("CreateAutomationSchema conditional validation", () => {
       sourceConfig: {
         "jobs.cz": {
           queries: ["java", "backend"],
+          searchMode: "brno",
           targetTitles: ["Java Developer", "Backend Developer"],
           keywords: ["Java", "Spring Boot"],
           locations: ["Brno"],
@@ -139,16 +140,26 @@ describe("CreateAutomationSchema conditional validation", () => {
     expect(excessiveCap.success).toBe(false);
   });
 
-  it("jobs.cz rejects a locality other than its fixed Brno search", () => {
+  it.each(["brno", "praha", "remote_cz"])(
+    "jobs.cz accepts search mode %s",
+    (searchMode) => {
+      const result = CreateAutomationSchema.safeParse({
+        ...base,
+        jobBoard: "jobs.cz",
+        sourceConfig: {
+          "jobs.cz": { queries: ["java"], searchMode },
+        },
+      });
+      expect(result.success).toBe(true);
+    },
+  );
+
+  it("jobs.cz rejects an unknown search mode", () => {
     const result = CreateAutomationSchema.safeParse({
       ...base,
       jobBoard: "jobs.cz",
       sourceConfig: {
-        "jobs.cz": {
-          queries: ["java"],
-          locations: ["Prague"],
-          strictLocation: true,
-        },
+        "jobs.cz": { queries: ["java"], searchMode: "everywhere" },
       },
     });
     expect(result.success).toBe(false);

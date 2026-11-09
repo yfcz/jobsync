@@ -1,5 +1,6 @@
 import type { JobDetails } from "../types";
 import type { ScraperError } from "../types";
+import type { JobsCzSearchMode } from "@/models/automation.model";
 
 export interface JobsCzSearchListing {
   id: string;
@@ -7,10 +8,12 @@ export interface JobsCzSearchListing {
   company: string;
   location: string;
   url: string;
+  workplaceType?: "REMOTE" | "HYBRID";
 }
 
 export interface JobsCzRunConfig {
   kind: "jobs.cz";
+  searchMode: JobsCzSearchMode;
   queries: string[];
   targetTitles: string[];
   keywords: string[];
@@ -31,4 +34,10 @@ export interface JobsCzSearchResult {
   }[];
   totalScopes: number;
   skipped: number;
+  fetchedCount: number;
+  rejected: {
+    key: string;
+    name: string;
+    reason: string;
+  }[];
 }

@@ -221,6 +221,7 @@ describe("runAutomation (lever)", () => {
       sourceConfig: JSON.stringify({
         "jobs.cz": {
           queries: ["java", "backend"],
+          searchMode: "brno",
           targetTitles: ["Java Backend Developer"],
           keywords: ["Java", "Spring"],
           locations: ["Brno"],
@@ -249,6 +250,7 @@ describe("runAutomation (lever)", () => {
     expect(searchJobsCzJobs).toHaveBeenCalledWith(
       expect.objectContaining({
         kind: "jobs.cz",
+        searchMode: "brno",
         queries: ["java", "backend"],
         maxResults: 5,
       }),
@@ -292,6 +294,54 @@ describe("runAutomation (lever)", () => {
 
     expect(result.status).toBe("rate_limited");
     expect(result.jobsProcessed).toBe(0);
+    expect(prisma.job.create).not.toHaveBeenCalled();
+  });
+
+  it("reports fetched Jobs.cz listings rejected by the selected mode without AI", async () => {
+    const remoteAutomation: Automation = {
+      ...leverAutomation,
+      id: "auto-jobscz-remote",
+      jobBoard: "jobs.cz",
+      sourceConfig: JSON.stringify({
+        "jobs.cz": {
+          queries: ["java", "backend"],
+          searchMode: "remote_cz",
+          keywords: ["Java"],
+        },
+      }),
+    };
+    (searchJobsCzJobs as any).mockResolvedValue({
+      jobs: [],
+      errors: [],
+      totalScopes: 1,
+      skipped: 0,
+      fetchedCount: 1,
+      rejected: [
+        {
+          key: "https://www.jobs.cz/rpd/2000000002/",
+          name: "Hybrid Java Developer",
+          reason: "not marked fully remote",
+        },
+      ],
+    });
+
+    const result = await runAutomation(remoteAutomation);
+
+    expect(searchJobsCzJobs).toHaveBeenCalledWith(
+      expect.objectContaining({
+        searchMode: "remote_cz",
+        locations: [],
+        strictLocation: false,
+      }),
+      expect.anything(),
+    );
+    expect(result).toMatchObject({
+      status: "completed",
+      jobsSearched: 1,
+      jobsProcessed: 0,
+      jobsSaved: 0,
+    });
+    expect(generateText).not.toHaveBeenCalled();
     expect(prisma.job.create).not.toHaveBeenCalled();
   });
 
