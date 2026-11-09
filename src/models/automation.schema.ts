@@ -72,10 +72,13 @@ export const JobsCzSourceConfigSchema = z.object({
     .array(z.string().trim().min(1).max(100))
     .min(1, "Add at least one Jobs.cz search query")
     .max(3),
+  searchMode: z.enum(["brno", "praha", "remote_cz"]).optional(),
   targetTitles: z.array(z.string().trim().min(1).max(100)).optional(),
   keywords: z.array(z.string().trim().min(1).max(100)).optional(),
-  locations: z.array(z.literal("Brno")).length(1).optional(),
-  strictLocation: z.literal(true).optional(),
+  // Retained for legacy serialized configurations. Runtime location scope is
+  // derived from searchMode so mismatched client input cannot widen a search.
+  locations: z.array(z.enum(["Brno", "Praha"])).max(1).optional(),
+  strictLocation: z.boolean().optional(),
   topK: z.number().int().min(1).max(APP_CONSTANTS.ATS_LISTING_CAP).optional(),
   saveUnanalyzed: z.boolean().optional(),
   maxResults: z

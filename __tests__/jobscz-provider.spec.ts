@@ -17,6 +17,7 @@ const loaderHtml = fixture("jobscz-loader.html");
 
 const config: JobsCzRunConfig = {
   kind: "jobs.cz",
+  searchMode: "brno",
   queries: ["java", "backend"],
   targetTitles: ["Java Developer", "Backend Developer"],
   keywords: ["Java", "Spring"],
@@ -40,6 +41,31 @@ describe("Jobs.cz HTML provider", () => {
     expect(url.searchParams.get("page")).toBe("1");
   });
 
+  it("builds the verified Prague locality search", () => {
+    const url = new URL(
+      buildJobsCzSearchUrl({ ...config, searchMode: "praha" }),
+    );
+    expect(url.pathname).toBe("/prace/praha/");
+    expect(url.searchParams.get("locality[code]")).toBe("R200000");
+    expect(url.searchParams.get("locality[label]")).toBe("Praha");
+    expect(url.searchParams.get("locality[coords]")).toBe(
+      "50.08455,14.41778",
+    );
+    expect(url.searchParams.get("locality[radius]")).toBe("0");
+  });
+
+  it("builds a nationwide search with the native remote-work filter", () => {
+    const url = new URL(
+      buildJobsCzSearchUrl({ ...config, searchMode: "remote_cz" }),
+    );
+    expect(url.pathname).toBe("/prace/");
+    expect(url.searchParams.get("arrangement")).toBe(
+      "work-mostly-from-home",
+    );
+    expect(url.searchParams.has("locality[code]")).toBe(false);
+    expect(url.searchParams.getAll("q[]")).toEqual(["java", "backend"]);
+  });
+
   it("parses result cards and normalizes their public canonical URLs", () => {
     expect(parseJobsCzSearchPage(searchHtml)).toEqual([
       {
@@ -59,6 +85,14 @@ describe("Jobs.cz HTML provider", () => {
     ]);
   });
 
+  it("captures the structured remote-work label from result cards", () => {
+    const remoteHtml = searchHtml.replace(
+      '<span data-test="serp-locality">Brno – střed</span>',
+      '<span data-test="serp-locality">Brno – střed</span><span>Práce převážně z domova</span>',
+    );
+    expect(parseJobsCzSearchPage(remoteHtml)[0].workplaceType).toBe("REMOTE");
+  });
+
   it("converts a server-rendered detail into internal JobDetails", () => {
     const listing = parseJobsCzSearchPage(searchHtml)[0];
     const job = parseJobsCzDetailPage(detailHtml, listing);
@@ -73,6 +107,20 @@ describe("Jobs.cz HTML provider", () => {
       workplaceType: "HYBRID",
     });
     expect(job?.description).toContain("Spring Boot");
+  });
+
+  it("uses structured workplace data rather than description claims", () => {
+    const listing = parseJobsCzSearchPage(searchHtml)[0];
+    const unstructuredRemoteHtml = detailHtml
+      .replace(
+        '<div data-test="jd-info-item">Možnost občasné práce z domova</div>',
+        "",
+      )
+      .replace("</p>", " Fully remote and home office benefit.</p>");
+
+    expect(
+      parseJobsCzDetailPage(unstructuredRemoteHtml, listing)?.workplaceType,
+    ).toBeUndefined();
   });
 
   it("skips JavaScript-only career pages instead of calling private APIs", () => {
@@ -91,6 +139,8 @@ describe("Jobs.cz HTML provider", () => {
 
     expect(fetchMock).toHaveBeenCalledTimes(2);
     expect(result.jobs).toHaveLength(1);
+    expect(result.fetchedCount).toBe(1);
+    expect(result.rejected).toEqual([]);
     expect(result.jobs[0].title).toBe("Java Backend Developer");
     expect(result.errors).toEqual([]);
   });

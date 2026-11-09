@@ -1,5 +1,8 @@
 import { APP_CONSTANTS } from "@/lib/constants";
-import type { JobBoard } from "@/models/automation.model";
+import {
+  jobsCzSearchMode,
+  type JobBoard,
+} from "@/models/automation.model";
 import type { JobsCzRunConfig } from "../jobscz";
 
 export interface AtsRunConfig {
@@ -27,8 +30,10 @@ export function parseAutomationConfig(
       if (!cfg || !Array.isArray(cfg.queries) || cfg.queries.length === 0) {
         return null;
       }
+      const searchMode = jobsCzSearchMode(cfg.searchMode);
       return {
         kind: "jobs.cz",
+        searchMode,
         queries: cfg.queries
           .filter((value: unknown): value is string => typeof value === "string")
           .map((value: string) => value.trim())
@@ -36,8 +41,13 @@ export function parseAutomationConfig(
           .slice(0, 3),
         targetTitles: Array.isArray(cfg.targetTitles) ? cfg.targetTitles : [],
         keywords: Array.isArray(cfg.keywords) ? cfg.keywords : [],
-        locations: ["Brno"],
-        strictLocation: true,
+        locations:
+          searchMode === "brno"
+            ? ["Brno"]
+            : searchMode === "praha"
+              ? ["Praha", "Prague", "Hlavní město Praha"]
+              : [],
+        strictLocation: searchMode !== "remote_cz",
         topK:
           typeof cfg.topK === "number" && cfg.topK > 0
             ? cfg.topK

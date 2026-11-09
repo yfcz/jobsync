@@ -13,6 +13,22 @@ export type AutomationRunStatus =
 export type DiscoveryStatus = "new" | "accepted" | "dismissed";
 export type JobBoard = "greenhouse" | "lever" | "ashby" | "jobs.cz";
 export type AtsBoard = Exclude<JobBoard, "jobs.cz">;
+export const JOBSCZ_SEARCH_MODES = ["brno", "praha", "remote_cz"] as const;
+export type JobsCzSearchMode = (typeof JOBSCZ_SEARCH_MODES)[number];
+
+export const JOBSCZ_SEARCH_MODE_LABELS: Record<JobsCzSearchMode, string> = {
+  brno: "Brno",
+  praha: "Prague",
+  remote_cz: "Remote – Czech Republic",
+};
+
+export function jobsCzSearchMode(
+  value: unknown,
+): JobsCzSearchMode {
+  return JOBSCZ_SEARCH_MODES.includes(value as JobsCzSearchMode)
+    ? (value as JobsCzSearchMode)
+    : "brno";
+}
 
 export interface GreenhouseCompany {
   name: string;
@@ -60,10 +76,13 @@ export interface JobsCzSourceConfig {
   // UI express the intended Java/backend OR search without inventing a
   // company-board token.
   queries: string[];
+  // Optional for backward compatibility. Legacy Jobs.cz configurations are
+  // Brno searches and are interpreted as such by the UI and runner.
+  searchMode?: JobsCzSearchMode;
   targetTitles?: string[];
   keywords?: string[];
-  locations?: "Brno"[];
-  strictLocation?: true;
+  locations?: ("Brno" | "Praha")[];
+  strictLocation?: boolean;
   topK?: number;
   saveUnanalyzed?: boolean;
   // Bounds both detail HTTP requests and in-memory work for this source.

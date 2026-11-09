@@ -146,10 +146,6 @@ export const APP_CONSTANTS = {
   // Jobs.cz public HTML source. One bounded search page plus a small number of
   // server-rendered details; JavaScript-only career pages are skipped.
   JOBSCZ_BASE_URL: "https://www.jobs.cz",
-  JOBSCZ_SEARCH_PATH: "/prace/brno/",
-  JOBSCZ_LOCATION_CODE: "M265747",
-  JOBSCZ_LOCATION_LABEL: "Brno",
-  JOBSCZ_LOCATION_COORDS: "49.19186,16.61108",
   JOBSCZ_FETCH_TIMEOUT_MS: 12_000,
   JOBSCZ_DETAIL_CONCURRENCY: 2,
   JOBSCZ_MAX_RESULTS: 10,

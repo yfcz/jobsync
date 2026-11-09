@@ -24,5 +24,11 @@ export interface AtsProvider {
     }[];
     totalScopes: number;
     skipped?: number;
+    fetchedCount?: number;
+    rejected?: {
+      key: string;
+      name: string;
+      reason: string;
+    }[];
   }>;
 }

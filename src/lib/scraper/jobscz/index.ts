@@ -2,9 +2,16 @@ import pLimit from "p-limit";
 import { APP_CONSTANTS } from "@/lib/constants";
 import type { ScraperError, ScraperResult } from "../types";
 import { parseJobsCzDetailPage, parseJobsCzSearchPage } from "./parser";
+import { filterJobsCzJobs } from "./filter";
 import type { JobsCzRunConfig, JobsCzSearchResult } from "./types";
 
 export { parseJobsCzDetailPage, parseJobsCzSearchPage } from "./parser";
+export {
+  filterJobsCzJobs,
+  isBrnoLocation,
+  isPragueLocation,
+  jobsCzRejectionReason,
+} from "./filter";
 export type { JobsCzRunConfig, JobsCzSearchListing } from "./types";
 
 function allowedJobsCzUrl(value: string): boolean {
@@ -180,13 +187,32 @@ async function fetchHtml(
 }
 
 export function buildJobsCzSearchUrl(config: JobsCzRunConfig): string {
-  const url = new URL(
-    APP_CONSTANTS.JOBSCZ_SEARCH_PATH,
-    APP_CONSTANTS.JOBSCZ_BASE_URL,
-  );
-  url.searchParams.set("locality[code]", APP_CONSTANTS.JOBSCZ_LOCATION_CODE);
-  url.searchParams.set("locality[label]", APP_CONSTANTS.JOBSCZ_LOCATION_LABEL);
-  url.searchParams.set("locality[coords]", APP_CONSTANTS.JOBSCZ_LOCATION_COORDS);
+  const cityScopes = {
+    brno: {
+      path: "/prace/brno/",
+      code: "M265747",
+      label: "Brno",
+      coords: "49.19186,16.61108",
+    },
+    praha: {
+      path: "/prace/praha/",
+      code: "R200000",
+      label: "Praha",
+      coords: "50.08455,14.41778",
+    },
+  } as const;
+  if (config.searchMode === "remote_cz") {
+    const url = new URL("/prace/", APP_CONSTANTS.JOBSCZ_BASE_URL);
+    url.searchParams.set("arrangement", "work-mostly-from-home");
+    url.searchParams.set("page", "1");
+    for (const query of config.queries) url.searchParams.append("q[]", query);
+    return url.toString();
+  }
+  const scope = cityScopes[config.searchMode];
+  const url = new URL(scope.path, APP_CONSTANTS.JOBSCZ_BASE_URL);
+  url.searchParams.set("locality[code]", scope.code);
+  url.searchParams.set("locality[label]", scope.label);
+  url.searchParams.set("locality[coords]", scope.coords);
   url.searchParams.set("locality[radius]", "0");
   url.searchParams.set("page", "1");
   for (const query of config.queries) url.searchParams.append("q[]", query);
@@ -221,12 +247,21 @@ export async function searchJobsCzJobs(
       ],
       totalScopes: 1,
       skipped: 0,
+      fetchedCount: 0,
+      rejected: [],
     };
   }
 
   const listings = parseJobsCzSearchPage(search.data).slice(0, config.maxResults);
   if (listings.length === 0) {
-    return { jobs: [], errors: [], totalScopes: 1, skipped: 0 };
+    return {
+      jobs: [],
+      errors: [],
+      totalScopes: 1,
+      skipped: 0,
+      fetchedCount: 0,
+      rejected: [],
+    };
   }
 
   const limit = pLimit(APP_CONSTANTS.JOBSCZ_DETAIL_CONCURRENCY);
@@ -256,10 +291,21 @@ export async function searchJobsCzJobs(
     ),
   );
 
+  const parsedJobs = settled.filter(
+    (job): job is NonNullable<typeof job> => !!job,
+  );
+  const filtered = filterJobsCzJobs(parsedJobs, config.searchMode);
+
   return {
-    jobs: settled.filter((job): job is NonNullable<typeof job> => !!job),
+    jobs: filtered.accepted,
     errors,
     totalScopes: 1,
     skipped,
+    fetchedCount: parsedJobs.length,
+    rejected: filtered.rejected.map(({ job, reason }) => ({
+      key: job.url,
+      name: job.title,
+      reason,
+    })),
   };
 }
