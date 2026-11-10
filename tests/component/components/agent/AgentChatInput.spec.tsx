@@ -155,7 +155,7 @@ describe("AgentChatInput", () => {
       ],
     };
     render(<AgentChatInput />);
-    expect(screen.getByText(/pasted posting · 1,234 chars/i)).toBeInTheDocument();
+    expect(screen.getByText(/pasted posting/i).textContent).toBe(`Pasted posting · ${(1234).toLocaleString()} chars`);
   });
 
   it("hands the discard back to the provider", async () => {
