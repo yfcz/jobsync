@@ -13,6 +13,7 @@ import type {
 import {
   JOBSCZ_SEARCH_MODE_LABELS,
   jobsCzSearchMode,
+  isCzechJobBoard,
 } from "@/models/automation.model";
 import { companyBoardUrl } from "@/lib/atsBoardUrl";
 import { APP_CONSTANTS } from "@/lib/constants";
@@ -51,11 +52,11 @@ export function AutomationSearchConfig({
 
   if (!searchConfig) return null;
   const jobsCzConfig =
-    jobBoard === "jobs.cz"
+    isCzechJobBoard(jobBoard)
       ? (searchConfig as Partial<JobsCzSourceConfig>)
       : null;
   const atsConfig =
-    jobBoard !== "jobs.cz"
+    !isCzechJobBoard(jobBoard)
       ? (searchConfig as Partial<LeverSourceConfig>)
       : null;
   const jobsCzMode = jobsCzConfig
@@ -82,7 +83,7 @@ export function AutomationSearchConfig({
         <div className="mt-4 pt-4 border-t grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="col-span-2 md:col-span-4">
             <p className="text-sm text-muted-foreground">
-              {jobsCzConfig ? "Jobs.cz queries" : "Companies"}
+              {jobsCzConfig ? `${jobBoard === "startupjobs.cz" ? "StartupJobs.cz" : "Jobs.cz"} queries` : "Companies"}
             </p>
             {jobsCzConfig?.queries?.length ? (
               <div className="mt-1 flex flex-wrap gap-1">

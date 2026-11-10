@@ -22,7 +22,8 @@ import type {
   JobsCzSourceConfig,
 } from "@/models/automation.model";
 import { AtsSearchStep, type AtsConfigValue } from "./AtsSearchStep";
-import { JobsCzSearchStep } from "./JobsCzSearchStep";
+import { CzechBoardSearchStep } from "./CzechBoardSearchStep";
+import { isCzechJobBoard } from "@/models/automation.model";
 import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { STEPS, type WizardResume } from "./automation-wizard/wizardConfig";
 import { useWizardForm } from "./automation-wizard/useWizardForm";
@@ -121,8 +122,9 @@ export function AutomationWizard({
               </div>
 
               <div className={step === 1 ? "space-y-4" : "hidden"}>
-                {formValues.jobBoard === "jobs.cz" ? (
-                  <JobsCzSearchStep
+                {isCzechJobBoard(formValues.jobBoard) ? (
+                  <CzechBoardSearchStep
+                    board={formValues.jobBoard}
                     value={sourceConfigValue as JobsCzSourceConfig}
                     onChange={(next) =>
                       form.setValue(

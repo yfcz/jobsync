@@ -117,7 +117,7 @@ function hasCzechLocationEvidence(job: JobDetails): boolean {
   return false;
 }
 
-function hasAttendanceContradiction(job: JobDetails): boolean {
+export function hasAttendanceContradiction(job: JobDetails): boolean {
   const content = normalize(`${job.title} ${job.description}`);
   return [
     /hybrid\w* (?:rezim|prace|model|spoluprace)/,

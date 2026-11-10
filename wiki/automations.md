@@ -15,7 +15,7 @@ stale_after: 2027-09-30
 
 An automation is a saved search that runs once a day and brings new job postings to you. It reads the public job boards of the companies you pick, drops the listings that have nothing to do with what you asked for, sends the most promising ones to your AI provider to be scored against one of your resumes, and saves the results as **discovered jobs** you can accept into your tracker or dismiss.
 
-Everything is company-centric: JobSync reads job boards hosted by **Greenhouse**, **Lever** and **Ashby**, so you choose employers rather than searching the whole internet. One automation covers one of those three boards; create a second automation if you want to track companies on another.
+For **Greenhouse**, **Lever** and **Ashby**, you choose employers. **Jobs.cz** and **StartupJobs.cz** instead offer searches in Brno, Prague or Remote – Czech Republic. One automation covers one board. StartupJobs discovery uses OR terms in public offer URL titles, with less coverage than the portal's full-text search; see [StartupJobs setup and limitations](startupjobs.md).
 
 An automation needs an AI provider and model set under **Settings → AI Provider**, and a resume in your profile to match against.
 
@@ -23,7 +23,7 @@ An automation needs an AI provider and model set under **Settings → AI Provide
 
 Open **Automations** in the sidebar and click **Create Automation**. The wizard has six steps:
 
-1. **Basics** — a name, and which job board (Greenhouse, Lever or Ashby) the companies live on.
+1. **Basics** — a name and job board: Greenhouse, Lever, Ashby, Jobs.cz or StartupJobs.cz.
 2. **Search** — the companies to track, then your filters: target job titles, keywords/skills, locations, and how many listings get full AI analysis per run. This is the step that decides how useful the automation is; see the next two sections.
 3. **Resume** — the resume every discovered job is scored against. Resumes with fewer than two sections are shown greyed out with an alert icon until you fill them in under **Profile**; an attached file does not count.
 4. **Matching** — a match threshold. Only listings whose AI match score reaches it are saved; anything analyzed and scored below it is discarded.

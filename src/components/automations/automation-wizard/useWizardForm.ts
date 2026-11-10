@@ -13,9 +13,11 @@ import {
 } from "@/actions/automation.actions";
 import { toastSuccess, toastError } from "@/lib/toast";
 import type { AutomationWithResume, JobBoard } from "@/models/automation.model";
+import { isCzechJobBoard } from "@/models/automation.model";
 import {
   EMPTY_ATS,
   EMPTY_JOBSCZ,
+  EMPTY_STARTUPJOBS,
   STEPS,
   parseEditSourceConfig,
   type SearchConfigValue,
@@ -73,19 +75,19 @@ export function useWizardForm({
 
   const formValues = form.watch();
 
-  // Jobs.cz has a useful ready-to-run personal-search preset. Persist it into
+  // Czech job boards have a ready-to-run personal-search preset. Persist it into
   // the actual form state as soon as the source is selected; otherwise the UI
   // would show the preset while schema validation still saw no sourceConfig.
   useEffect(() => {
     if (
-      formValues.jobBoard === "jobs.cz" &&
-      !form.getValues("sourceConfig")?.["jobs.cz"]
+      isCzechJobBoard(formValues.jobBoard) &&
+      !form.getValues("sourceConfig")?.[formValues.jobBoard]
     ) {
       form.setValue(
         "sourceConfig",
         {
           ...form.getValues("sourceConfig"),
-          "jobs.cz": EMPTY_JOBSCZ,
+          [formValues.jobBoard]: formValues.jobBoard === "startupjobs.cz" ? EMPTY_STARTUPJOBS : EMPTY_JOBSCZ,
         },
         { shouldValidate: true },
       );
@@ -123,14 +125,14 @@ export function useWizardForm({
   const sourceKey: SourceKey = formValues.jobBoard;
   const sourceConfigValue: SearchConfigValue =
     formValues.sourceConfig?.[sourceKey] ??
-    (sourceKey === "jobs.cz" ? EMPTY_JOBSCZ : EMPTY_ATS);
+    (sourceKey === "startupjobs.cz" ? EMPTY_STARTUPJOBS : sourceKey === "jobs.cz" ? EMPTY_JOBSCZ : EMPTY_ATS);
 
   const canGoNext = () => {
     switch (step) {
       case 0:
         return (formValues.name?.trim().length ?? 0) > 0;
       case 1:
-        return sourceKey === "jobs.cz"
+        return isCzechJobBoard(sourceKey)
           ? ("queries" in sourceConfigValue && sourceConfigValue.queries.length > 0)
           : ("companies" in sourceConfigValue && sourceConfigValue.companies.length > 0);
       case 2:

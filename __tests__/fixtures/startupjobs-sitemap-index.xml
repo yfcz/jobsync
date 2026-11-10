@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <sitemap>
+        <loc>https://www.startupjobs.cz/sitemap/blog.xml</loc>
+    </sitemap>
+    <sitemap>
+        <loc>https://www.startupjobs.cz/sitemap/categories.xml</loc>
+    </sitemap>
+    <sitemap>
+        <loc>https://www.startupjobs.cz/sitemap/companies.xml</loc>
+    </sitemap>
+    <sitemap>
+        <loc>https://www.startupjobs.cz/sitemap/offers.xml</loc>
+    </sitemap>
+    <sitemap>
+        <loc>https://www.startupjobs.cz/sitemap/quiz-fields.xml</loc>
+    </sitemap>
+</sitemapindex>

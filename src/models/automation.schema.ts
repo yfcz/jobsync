@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { APP_CONSTANTS } from "@/lib/constants";
+import { isCzechJobBoard } from "./automation.model";
 // Deep-import (NOT the barrel) — utils.ts is pure; the barrel pulls scraper
 // network code into the client bundle via this file's client consumers.
 import { ATS_TOKEN_REGEX } from "@/lib/scraper/utils";
@@ -9,6 +10,7 @@ export const JobBoardSchema = z.enum([
   "lever",
   "ashby",
   "jobs.cz",
+  "startupjobs.cz",
 ]);
 
 export const AutomationStatusSchema = z.enum(["active", "paused"]);
@@ -89,11 +91,18 @@ export const JobsCzSourceConfigSchema = z.object({
     .optional(),
 });
 
+export const StartupJobsSourceConfigSchema = JobsCzSourceConfigSchema.extend({
+  queries: z.array(z.string().trim().min(1).max(100).refine((value) => /[\p{L}\p{N}]/u.test(value), "Use a search term with letters or numbers")).min(1, "Add at least one StartupJobs.cz search query").max(3),
+  searchMode: z.enum(["brno", "praha", "remote_cz"]),
+  maxResults: z.number().int().min(1).max(APP_CONSTANTS.STARTUPJOBS_MAX_RESULTS).optional(),
+});
+
 export const SourceConfigSchema = z.object({
   greenhouse: GreenhouseSourceConfigSchema.optional(),
   lever: LeverSourceConfigSchema.optional(),
   ashby: AshbySourceConfigSchema.optional(),
   "jobs.cz": JobsCzSourceConfigSchema.optional(),
+  "startupjobs.cz": StartupJobsSourceConfigSchema.optional(),
 });
 
 export const CreateAutomationSchema = z
@@ -108,13 +117,13 @@ export const CreateAutomationSchema = z
     scheduleHour: z.number().min(0).max(23),
   })
   .superRefine((data, ctx) => {
-    if (data.jobBoard === "jobs.cz") {
-      const queries = data.sourceConfig?.["jobs.cz"]?.queries ?? [];
+    if (isCzechJobBoard(data.jobBoard)) {
+      const queries = data.sourceConfig?.[data.jobBoard]?.queries ?? [];
       if (queries.length < 1) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          path: ["sourceConfig", "jobs.cz", "queries"],
-          message: "Add at least one Jobs.cz search query",
+          path: ["sourceConfig", data.jobBoard, "queries"],
+          message: "Add at least one search query",
         });
       }
       return;
@@ -142,13 +151,13 @@ export const UpdateAutomationSchema = z
   })
   .superRefine((data, ctx) => {
     if (!data.jobBoard) return;
-    if (data.jobBoard === "jobs.cz") {
-      const queries = data.sourceConfig?.["jobs.cz"]?.queries ?? [];
+    if (isCzechJobBoard(data.jobBoard)) {
+      const queries = data.sourceConfig?.[data.jobBoard]?.queries ?? [];
       if (queries.length < 1) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          path: ["sourceConfig", "jobs.cz", "queries"],
-          message: "Add at least one Jobs.cz search query",
+          path: ["sourceConfig", data.jobBoard, "queries"],
+          message: "Add at least one search query",
         });
       }
       return;

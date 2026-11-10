@@ -11,8 +11,12 @@ export type AutomationRunStatus =
   | "rate_limited"
   | "cancelled";
 export type DiscoveryStatus = "new" | "accepted" | "dismissed";
-export type JobBoard = "greenhouse" | "lever" | "ashby" | "jobs.cz";
-export type AtsBoard = Exclude<JobBoard, "jobs.cz">;
+export type CzechJobBoard = "jobs.cz" | "startupjobs.cz";
+export type JobBoard = "greenhouse" | "lever" | "ashby" | CzechJobBoard;
+export type AtsBoard = Exclude<JobBoard, CzechJobBoard>;
+export function isCzechJobBoard(board: string): board is CzechJobBoard {
+  return board === "jobs.cz" || board === "startupjobs.cz";
+}
 export const JOBSCZ_SEARCH_MODES = ["brno", "praha", "remote_cz"] as const;
 export type JobsCzSearchMode = (typeof JOBSCZ_SEARCH_MODES)[number];
 
@@ -94,13 +98,18 @@ export interface SourceConfig {
   lever?: LeverSourceConfig;
   ashby?: AshbySourceConfig;
   "jobs.cz"?: JobsCzSourceConfig;
+  "startupjobs.cz"?: StartupJobsSourceConfig;
+}
+
+export interface StartupJobsSourceConfig extends JobsCzSourceConfig {
+  searchMode: JobsCzSearchMode;
 }
 
 // Plain, dependency-free board list. Do NOT import this from ats/registry.ts
 // (that pulls the network-calling search fns into client bundles). Both the
 // client-imported schema and the scheduler import it here.
 export const ATS_BOARDS: AtsBoard[] = ["greenhouse", "lever", "ashby"];
-export const AUTOMATION_BOARDS: JobBoard[] = [...ATS_BOARDS, "jobs.cz"];
+export const AUTOMATION_BOARDS: JobBoard[] = [...ATS_BOARDS, "jobs.cz", "startupjobs.cz"];
 
 // Boards that used to exist and were removed. Their Automation rows stay in
 // the database; the UI marks them retired and only offers pause/delete.
@@ -138,6 +147,7 @@ export interface FunnelStage {
   key: string;
   label: string;
   count: number;
+  details?: { key: string; name: string; reason: string }[];
 }
 
 export interface AutomationRun {

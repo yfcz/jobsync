@@ -254,19 +254,37 @@ export function RunHistoryList({
                     {funnel.length > 0 && (
                       <TableRow className="hover:bg-transparent border-0">
                         <TableCell colSpan={10} className="pt-0 pb-3">
-                          <div className="flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
-                            {funnel.map((stage, i) => (
-                              <Fragment key={stage.key}>
-                                {i > 0 && <span className="opacity-50">→</span>}
-                                <span>
-                                  {stage.label}{" "}
-                                  <span className="font-medium text-foreground">
-                                    {stage.count}
-                                  </span>
-                                </span>
-                              </Fragment>
-                            ))}
-                          </div>
+                          <TooltipProvider>
+                            <div className="flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
+                              {funnel.map((stage, i) => (
+                                <Fragment key={stage.key}>
+                                  {i > 0 && <span className="opacity-50">→</span>}
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <span
+                                        tabIndex={stage.details?.length ? 0 : undefined}
+                                        className={stage.details?.length ? "cursor-help underline decoration-dotted" : undefined}
+                                      >
+                                        {stage.label}{" "}
+                                        <span className="font-medium text-foreground">
+                                          {stage.count}
+                                        </span>
+                                      </span>
+                                    </TooltipTrigger>
+                                    {stage.details?.length ? (
+                                      <TooltipContent className="max-w-lg max-h-64 overflow-y-auto">
+                                        {stage.details.map((entry, index) => (
+                                          <p key={`${entry.key}-${index}`}>
+                                            {entry.name} [{entry.key}]: {entry.reason}
+                                          </p>
+                                        ))}
+                                      </TooltipContent>
+                                    ) : null}
+                                  </Tooltip>
+                                </Fragment>
+                              ))}
+                            </div>
+                          </TooltipProvider>
                         </TableCell>
                       </TableRow>
                     )}

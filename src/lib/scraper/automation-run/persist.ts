@@ -48,7 +48,7 @@ export async function persistDiscoveredJob(
     userId: automation.userId,
     automationId: automation.id,
     matchScore,
-    matchData: JSON.stringify(matchData),
+    matchData: JSON.stringify({ ...matchData, ...(job.sourceId ? { sourceId: job.sourceId } : {}) }),
     skillTerms,
   });
 

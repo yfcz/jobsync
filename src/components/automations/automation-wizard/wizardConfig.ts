@@ -1,7 +1,7 @@
 import { APP_CONSTANTS } from "@/lib/constants";
 import type { CreateAutomationInput } from "@/models/automation.schema";
 import type { AtsConfigValue } from "../AtsSearchStep";
-import type { JobBoard, JobsCzSourceConfig } from "@/models/automation.model";
+import type { JobBoard, JobsCzSourceConfig, StartupJobsSourceConfig } from "@/models/automation.model";
 
 export type SourceKey = JobBoard;
 export type SearchConfigValue = AtsConfigValue | JobsCzSourceConfig;
@@ -28,6 +28,12 @@ export const EMPTY_JOBSCZ: JobsCzSourceConfig = {
   maxResults: APP_CONSTANTS.JOBSCZ_MAX_RESULTS,
 };
 
+export const EMPTY_STARTUPJOBS: StartupJobsSourceConfig = {
+  ...EMPTY_JOBSCZ,
+  searchMode: "brno",
+  maxResults: APP_CONSTANTS.STARTUPJOBS_MAX_RESULTS,
+};
+
 export const STEPS = [
   { id: "basics", title: "Basics", description: "Name your automation" },
   { id: "search", title: "Search", description: "Configure search criteria" },
@@ -48,7 +54,7 @@ export function parseEditSourceConfig(
   if (!sc) return undefined;
   try {
     const parsed = JSON.parse(sc);
-    return parsed?.greenhouse || parsed?.lever || parsed?.ashby || parsed?.["jobs.cz"]
+    return parsed?.greenhouse || parsed?.lever || parsed?.ashby || parsed?.["jobs.cz"] || parsed?.["startupjobs.cz"]
       ? parsed
       : undefined;
   } catch {

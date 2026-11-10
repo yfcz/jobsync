@@ -63,6 +63,10 @@ function urlDedupeKey(url: string): string {
   try {
     const parsed = new URL(normalizeJobUrl(url));
     const host = parsed.hostname.toLowerCase().replace(/^www\./, "");
+    // StartupJobs keeps a numeric offer identity when an edited title changes
+    // the URL slug. Compare saved and incoming URLs using that stable identity.
+    const startupId = host === "startupjobs.cz" ? parsed.pathname.match(/^\/nabidka\/(\d+)(?:\/|$)/)?.[1] : undefined;
+    if (startupId) return `${host}/nabidka/${startupId}`;
     return `${host}${parsed.pathname}${parsed.search}`;
   } catch {
     return url.trim().toLowerCase();

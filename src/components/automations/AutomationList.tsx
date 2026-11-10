@@ -39,6 +39,7 @@ import {
   JOBSCZ_SEARCH_MODE_LABELS,
   isRetiredBoard,
   jobsCzSearchMode,
+  isCzechJobBoard,
 } from "@/models/automation.model";
 import {
   deleteAutomation,
@@ -141,7 +142,7 @@ export function AutomationList({
             ats?.companies ?? [];
           const jobsCzQueries: string[] = ats?.queries ?? [];
           const jobsCzMode =
-            automation.jobBoard === "jobs.cz"
+            isCzechJobBoard(automation.jobBoard)
               ? JOBSCZ_SEARCH_MODE_LABELS[jobsCzSearchMode(ats?.searchMode)]
               : null;
           const atsTitles: string[] = ats?.targetTitles ?? [];

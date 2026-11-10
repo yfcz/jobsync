@@ -18,6 +18,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import type { CreateAutomationInput } from "@/models/automation.schema";
+import { isCzechJobBoard } from "@/models/automation.model";
 
 export function StepBasics({
   form,
@@ -61,11 +62,12 @@ export function StepBasics({
                 <SelectItem value="lever">Lever (company boards)</SelectItem>
                 <SelectItem value="ashby">Ashby (company boards)</SelectItem>
                 <SelectItem value="jobs.cz">Jobs.cz</SelectItem>
+                <SelectItem value="startupjobs.cz">StartupJobs.cz</SelectItem>
               </SelectContent>
             </Select>
             <FormDescription>
-              {field.value === "jobs.cz"
-                ? "Search public Jobs.cz listings in Brno, Prague or Remote Czech Republic"
+              {isCzechJobBoard(field.value)
+                ? `Search public ${field.value === "startupjobs.cz" ? "StartupJobs.cz" : "Jobs.cz"} listings in Brno, Prague or Remote Czech Republic`
                 : "Track specific companies' job boards"}
             </FormDescription>
             <FormMessage />

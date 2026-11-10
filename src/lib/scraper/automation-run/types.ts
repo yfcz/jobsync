@@ -17,6 +17,7 @@ export interface RunnerResult {
   jobsSaved: number;
   errorMessage?: string;
   blockedReason?: string;
+  funnelStats?: string;
 }
 
 export interface ResumeWithSections extends PrismaResume {

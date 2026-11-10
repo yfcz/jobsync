@@ -27,7 +27,7 @@ services:
     restart: unless-stopped
 
   app:
-    image: ghcr.io/gsync/jobsync:latest
+    image: ${JOBSYNC_IMAGE:-ghcr.io/gsync/jobsync:latest}
     container_name: jobsync_app
     ports:
       - "3737:3737"
