@@ -4,6 +4,8 @@ import {
   type JobBoard,
 } from "@/models/automation.model";
 import type { JobsCzRunConfig } from "../jobscz";
+import type { StartupJobsRunConfig } from "../startupjobs/types";
+import { StartupJobsSourceConfigSchema } from "@/models/automation.schema";
 
 export interface AtsRunConfig {
   kind: "ats";
@@ -16,7 +18,7 @@ export interface AtsRunConfig {
   saveUnanalyzed: boolean;
 }
 
-export type AutomationRunConfig = AtsRunConfig | JobsCzRunConfig;
+export type AutomationRunConfig = AtsRunConfig | JobsCzRunConfig | StartupJobsRunConfig;
 
 export function parseAutomationConfig(
   sourceConfig: string | null | undefined,
@@ -26,6 +28,22 @@ export function parseAutomationConfig(
   try {
     const parsed = JSON.parse(sourceConfig);
     const cfg = parsed?.[jobBoard];
+    if (jobBoard === "startupjobs.cz") {
+      const valid = StartupJobsSourceConfigSchema.safeParse(cfg);
+      if (!valid.success) return null;
+      const value = valid.data;
+      return {
+        kind: "startupjobs.cz",
+        searchMode: value.searchMode,
+        queries: [...new Set(value.queries)],
+        targetTitles: value.targetTitles ?? [], keywords: value.keywords ?? [],
+        // Source filtering already validates exact structured cities/country.
+        locations: [], strictLocation: false,
+        topK: value.topK ?? APP_CONSTANTS.MAX_JOBS_PER_RUN,
+        saveUnanalyzed: value.saveUnanalyzed !== false,
+        maxResults: value.maxResults ?? APP_CONSTANTS.STARTUPJOBS_MAX_RESULTS,
+      };
+    }
     if (jobBoard === "jobs.cz") {
       if (!cfg || !Array.isArray(cfg.queries) || cfg.queries.length === 0) {
         return null;

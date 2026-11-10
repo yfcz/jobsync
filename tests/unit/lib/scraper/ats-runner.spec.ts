@@ -44,6 +44,7 @@ vi.mock("@/lib/scraper/lever", () => ({
 vi.mock("@/lib/scraper/jobscz", () => ({
   searchJobsCzJobs: vi.fn(),
 }));
+vi.mock("@/lib/scraper/startupjobs", () => ({ searchStartupJobs: vi.fn() }));
 
 vi.mock("@/lib/api-key-resolver", () => ({
   resolveApiKey: vi.fn().mockResolvedValue(undefined),
@@ -68,6 +69,8 @@ import { runAutomation } from "@/lib/scraper/runner";
 import { searchGreenhouseJobs } from "@/lib/scraper/greenhouse";
 import { searchLeverJobs } from "@/lib/scraper/lever";
 import { searchJobsCzJobs } from "@/lib/scraper/jobscz";
+import { searchStartupJobs } from "@/lib/scraper/startupjobs";
+import { automationLogger } from "@/lib/automation-logger";
 import { generateText } from "ai";
 import { recordRunNotifications } from "@/lib/notifications/record";
 import type { Automation } from "@/models/automation.model";
@@ -150,6 +153,63 @@ describe("runAutomation (lever)", () => {
     (generateText as any).mockResolvedValue({
       text: "SCORES: match=90 recommendation=strong match\n\n## Summary\nGreat fit",
     });
+  });
+
+  const startupAutomation: Automation = {
+    ...leverAutomation, id: "auto-startupjobs", jobBoard: "startupjobs.cz",
+    sourceConfig: JSON.stringify({ "startupjobs.cz": { queries: ["java", "backend"], searchMode: "brno", targetTitles: ["Java Developer"], keywords: ["Java", "Spring"], topK: 5 } }),
+  };
+
+  it("runs StartupJobs through AI, persistence, diagnostics and inter-run dedup", async () => {
+    const url = "https://www.startupjobs.cz/nabidka/108443/java-developer";
+    const job = makeJob("Java Developer", "Java Spring backend", { sourceId: "108443", location: "Brno", workplaceType: "HYBRID", url });
+    vi.mocked(searchStartupJobs).mockResolvedValue({ jobs: [job, job], errors: [], totalScopes: 1, fetchedCount: 3, rejected: [{ key: "123", name: "Java Prague", reason: "outside Brno", category: "location" }] });
+    const first = await runAutomation(startupAutomation);
+    expect(first).toMatchObject({ status: "completed", jobsSearched: 3, jobsProcessed: 1, jobsSaved: 1 });
+    const data = vi.mocked(prisma.job.create).mock.calls[0][0].data;
+    expect(data.workplaceType).toBe("HYBRID");
+    expect(JSON.parse(data.matchData as string).sourceId).toBe("108443");
+    const stages = JSON.parse(first.funnelStats!);
+    expect(stages).toEqual(expect.arrayContaining([
+      expect.objectContaining({ key: "duplicates", count: 1 }), expect.objectContaining({ key: "location_rejected", count: 1 }), expect.objectContaining({ key: "analyzed", count: 1 }), expect.objectContaining({ key: "saved", count: 1 }),
+    ]));
+    expect(automationLogger.getLogs(startupAutomation.id).some((entry) => entry.message.includes("[123]: outside Brno"))).toBe(true);
+    vi.mocked(prisma.job.findMany).mockResolvedValue([{ id: "existing", jobUrl: url.replace("java-developer", "old-title"), JobTitle: { label: "Java Developer" }, Company: { label: "Acme" }, Location: { label: "Brno" } }] as never);
+    vi.mocked(prisma.job.create).mockClear(); vi.mocked(generateText).mockClear();
+    const second = await runAutomation(startupAutomation);
+    expect(second.jobsSaved).toBe(0);
+    expect(JSON.parse(second.funnelStats!).find((stage: { key: string }) => stage.key === "duplicates").count).toBe(2);
+    expect(prisma.job.create).not.toHaveBeenCalled(); expect(generateText).not.toHaveBeenCalled();
+  });
+
+  it("keeps StartupJobs rejection identities and counts for prefilter and low AI scores", async () => {
+    vi.mocked(searchStartupJobs).mockResolvedValue({ jobs: [makeJob("Java Developer", "Java Spring", { sourceId: "1" }), makeJob("Accountant", "Payroll", { sourceId: "2" })], errors: [], totalScopes: 1 });
+    vi.mocked(generateText).mockResolvedValue({ text: "SCORES: match=40 recommendation=weak match\n\n## Summary\nThin fit" } as never);
+    const run = await runAutomation(startupAutomation);
+    const stages = JSON.parse(run.funnelStats!);
+    expect(stages).toEqual(expect.arrayContaining([
+      expect.objectContaining({ key: "pre_ai_rejected", count: 1, details: [expect.objectContaining({ key: "2", name: "Accountant" })] }),
+      expect.objectContaining({ key: "below_threshold", count: 1, details: [expect.objectContaining({ key: "1", name: "Java Developer", reason: "AI score 40% below threshold 80%" })] }),
+    ]));
+    expect(run.jobsSaved).toBe(0);
+  });
+
+  it.each(["blocked", "rate_limited"] as const)("records StartupJobs %s in shared Run History", async (kind) => {
+    vi.mocked(searchStartupJobs).mockResolvedValue({ jobs: [], errors: [{ key: "robots", name: "StartupJobs", reason: "access refused", kind }], totalScopes: 1 });
+    expect((await runAutomation(startupAutomation)).status).toBe(kind);
+    expect(generateText).not.toHaveBeenCalled();
+  });
+
+  it.each([true, false])("honors the StartupJobs AI budget and saving additional listings (%s)", async (saveUnanalyzed) => {
+    const source = JSON.parse(startupAutomation.sourceConfig!);
+    Object.assign(source["startupjobs.cz"], { topK: 1, saveUnanalyzed });
+    const jobs = [1, 2].map((id) => makeJob("Java Developer", "Java Spring", { sourceId: String(id), url: `https://www.startupjobs.cz/nabidka/${id}/java-developer` }));
+    vi.mocked(searchStartupJobs).mockResolvedValue({ jobs, errors: [], totalScopes: 1 });
+    const run = await runAutomation({ ...startupAutomation, sourceConfig: JSON.stringify(source) });
+    expect(generateText).toHaveBeenCalledTimes(1);
+    expect(run.jobsSaved).toBe(saveUnanalyzed ? 2 : 1);
+    const stages = JSON.parse(run.funnelStats!);
+    expect(stages.find((stage: { key: string }) => stage.key === "pre_ai_rejected").count).toBe(saveUnanalyzed ? 0 : 1);
   });
 
   it("dispatches to the Lever provider (reads the lever config key), not Greenhouse", async () => {

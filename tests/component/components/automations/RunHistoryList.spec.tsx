@@ -1,4 +1,5 @@
 import { render, screen, waitFor, act } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { RunHistoryList } from "@/components/automations/RunHistoryList";
 import type { AutomationRun } from "@/models/automation.model";
 
@@ -53,6 +54,11 @@ function renderList(
 }
 
 describe("RunHistoryList", () => {
+  it("shows persisted rejection identity and reason from the existing funnel", async () => {
+    renderList({ runs: [makeRun({ funnelStats: JSON.stringify([{ key: "location_rejected", label: "Location/workplace rejected", count: 1, details: [{ key: "108443", name: "Java Developer", reason: "outside Prague" }] }]) })] });
+    await userEvent.hover(screen.getByText("Location/workplace rejected"));
+    expect(await screen.findByRole("tooltip")).toHaveTextContent("Java Developer [108443]: outside Prague");
+  });
   it("renders runs and the records-count summary", () => {
     const { container } = renderList({
       runs: [makeRun(), makeRun({ id: "run-2" })],

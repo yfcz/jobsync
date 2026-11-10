@@ -6,6 +6,7 @@ import type { SearchConfigValue, WizardResume } from "./wizardConfig";
 import {
   JOBSCZ_SEARCH_MODE_LABELS,
   jobsCzSearchMode,
+  isCzechJobBoard,
 } from "@/models/automation.model";
 
 export function StepReview({
@@ -41,7 +42,7 @@ export function StepReview({
       </div>
       <div className="flex justify-between gap-4">
         <span className="text-muted-foreground">
-          {formValues.jobBoard === "jobs.cz" ? "Search queries" : "Companies"}
+          {isCzechJobBoard(formValues.jobBoard) ? "Search queries" : "Companies"}
         </span>
         <span className="font-medium text-right">
           {"queries" in searchConfig

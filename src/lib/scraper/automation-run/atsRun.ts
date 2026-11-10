@@ -2,11 +2,13 @@ import type {
   Automation,
   FunnelStage,
 } from "@/models/automation.model";
-import { JOBSCZ_SEARCH_MODE_LABELS } from "@/models/automation.model";
+import { JOBSCZ_SEARCH_MODE_LABELS, isCzechJobBoard } from "@/models/automation.model";
 import type { AtsProvider } from "../ats/types";
 import { runAtsPipeline } from "../ats/pipeline";
 import type { ScoredJob } from "../ats/pipeline";
-import { dedupeJobs } from "../utils";
+import { buildIdf, passesFloor, scoreJob } from "../ats/rank";
+import { APP_CONSTANTS } from "@/lib/constants";
+import { dedupeJobs, jobDedupeKey } from "../utils";
 import { getExistingJobDedupeMap } from "@/lib/jobs/jobDedupe";
 import { automationLogger } from "@/lib/automation-logger";
 import { log } from "@/lib/telemetry";
@@ -36,13 +38,13 @@ export async function runAtsRun(
   const missingConfig =
     !config ||
     (config.kind === "ats" && config.companies.length === 0) ||
-    (config.kind === "jobs.cz" && config.queries.length === 0);
+    (config.kind !== "ats" && config.queries.length === 0);
   if (missingConfig) {
-    const errorCode = automation.jobBoard === "jobs.cz" ? "no_queries" : "no_companies";
+    const errorCode = isCzechJobBoard(automation.jobBoard) ? "no_queries" : "no_companies";
     automationLogger.log(
       automation.id,
       "error",
-      `${label} No ${automation.jobBoard === "jobs.cz" ? "search queries" : "companies"} configured`,
+      `${label} No ${isCzechJobBoard(automation.jobBoard) ? "search queries" : "companies"} configured`,
     );
     automationLogger.endRun(automation.id);
     return await finalizeRun(runId, {
@@ -60,7 +62,7 @@ export async function runAtsRun(
     automationLogger.log(
       automation.id,
       "info",
-      config.kind === "jobs.cz"
+      config.kind !== "ats"
         ? `${label} Search mode: ${JOBSCZ_SEARCH_MODE_LABELS[config.searchMode]} (${config.searchMode}). Fetching up to ${config.maxResults} public listings for ${config.queries.join(", ")}...`
         : `${label} Fetching ${config.companies.length} companies...`,
     );
@@ -74,6 +76,27 @@ export async function runAtsRun(
       rejected = [],
     } = searchResult;
     const fetchedCount = searchResult.fetchedCount ?? jobs.length;
+    const startup = config.kind === "startupjobs.cz";
+    const duplicates = [...(searchResult.duplicates ?? [])];
+    const preAiRejected: NonNullable<FunnelStage["details"]> = [];
+    const lowAiRejected: NonNullable<FunnelStage["details"]> = [];
+    const startupStats = (analyzed = 0, saved = 0): string | undefined => startup ? JSON.stringify([
+      { key: "fetched", label: "Fetched details", count: fetchedCount },
+      { key: "duplicates", label: "Duplicates removed", count: duplicates.length, details: duplicates },
+      { key: "location_rejected", label: "Location/workplace rejected", count: rejected.filter((r) => r.category === "location").length, details: rejected.filter((r) => r.category === "location") },
+      { key: "source_rejected", label: "Invalid/nonmatching details", count: rejected.filter((r) => r.category !== "location").length, details: rejected.filter((r) => r.category !== "location") },
+      { key: "pre_ai_rejected", label: "Pre-AI rejected", count: preAiRejected.length, details: preAiRejected },
+      { key: "analyzed", label: "AI analyzed", count: analyzed },
+      { key: "below_threshold", label: "Below AI threshold", count: lowAiRejected.length, details: lowAiRejected },
+      { key: "saved", label: "Saved", count: saved },
+    ] satisfies FunnelStage[]) : undefined;
+    const logRejection = (rejection: { key: string; name: string; reason: string }) => {
+      automationLogger.log(automation.id, "info", `${label} Rejected '${rejection.name}' [${rejection.key}]: ${rejection.reason}`, rejection);
+    };
+    if (startup) {
+      automationLogger.log(automation.id, "info", `${label} Public sitemap discovery matches OR terms in URL titles; portal full-text search coverage is unavailable`);
+      duplicates.forEach(logRejection);
+    }
 
     for (const err of errors) {
       automationLogger.log(
@@ -89,21 +112,23 @@ export async function runAtsRun(
       reason: e.reason,
     }));
     const total = totalScopes;
-    const scopeLabel = config.kind === "jobs.cz" ? "search" : "boards";
+    const scopeLabel = config.kind !== "ats" ? "search" : "boards";
 
     if (errors.length > 0 && errors.length >= total && fetchedCount === 0) {
-      const message = config.kind === "jobs.cz"
-        ? "Jobs.cz search unavailable"
+      const message = config.kind !== "ats"
+        ? `${provider.label} search unavailable`
         : `All ${total} boards unreachable`;
       automationLogger.log(automation.id, "error", `${label} ${message}`);
       automationLogger.endRun(automation.id);
       return await finalizeRun(runId, {
         status:
-          config.kind === "jobs.cz" &&
+          config.kind !== "ats" &&
           errors.some((error) => error.kind === "rate_limited")
             ? "rate_limited"
-            : "failed",
-        errorMessage: message,
+            : config.kind !== "ats" && errors.some((error) => error.kind === "blocked") ? "blocked" : "failed",
+        errorMessage: startup ? `${message}: ${errors.map((e) => e.reason).join("; ")}` : message,
+        blockedReason: errors.find((e) => e.kind === "blocked")?.reason,
+        funnelStats: startupStats(),
         boardErrors,
         jobsSearched: 0,
         jobsDeduplicated: 0,
@@ -115,8 +140,8 @@ export async function runAtsRun(
 
     const boardNote =
       errors.length > 0
-        ? config.kind === "jobs.cz"
-          ? `${errors.length} Jobs.cz listing request(s) failed`
+        ? config.kind !== "ats"
+          ? `${errors.length} ${provider.label} listing request(s) failed`
           : `${errors.length} of ${total} boards unreachable`
         : null;
     // One place decides the terminal status for every completed path below.
@@ -141,14 +166,14 @@ export async function runAtsRun(
         "info",
         `${label} Rejected ${rejected.length} job(s) by location/workplace filters`,
       );
-      for (const rejection of rejected.slice(0, 5)) {
+      for (const rejection of (config.kind === "startupjobs.cz" ? rejected : rejected.slice(0, 5))) {
         automationLogger.log(
           automation.id,
           "info",
-          `${label} Rejected '${rejection.name}': ${rejection.reason}`,
+          `${label} Rejected '${rejection.name}' [${rejection.key}]: ${rejection.reason}`,
         );
       }
-      if (rejected.length > 5) {
+      if (config.kind !== "startupjobs.cz" && rejected.length > 5) {
         automationLogger.log(
           automation.id,
           "info",
@@ -164,7 +189,7 @@ export async function runAtsRun(
       );
     }
 
-    if (config.kind === "jobs.cz" && jobs.length === 0 && jobsSearched > 0) {
+    if (config.kind !== "ats" && jobs.length === 0 && jobsSearched > 0) {
       automationLogger.log(
         automation.id,
         "warning",
@@ -174,7 +199,7 @@ export async function runAtsRun(
       automationLogger.endRun(automation.id);
       return await finalizeRun(runId, {
         ...outcome(null),
-        funnelStats: JSON.stringify([
+        funnelStats: startupStats() ?? JSON.stringify([
           { key: "fetched", label: "Fetched", count: jobsSearched },
           { key: "eligible", label: "In search mode", count: 0 },
         ] satisfies FunnelStage[]),
@@ -190,6 +215,19 @@ export async function runAtsRun(
     const existingKeys = await getExistingJobDedupeMap(automation.userId);
     const dedupedJobs = dedupeJobs(jobs, existingKeys);
     const jobsDeduplicated = dedupedJobs.length;
+    if (startup) {
+      const acceptedKeys = new Set(dedupedJobs.map(jobDedupeKey));
+      const seen = new Set<string>();
+      for (const job of jobs) {
+        const key = jobDedupeKey(job);
+        if (!acceptedKeys.has(key) || seen.has(key)) {
+          const rejection = { key: job.sourceId ?? job.url, name: job.title, reason: existingKeys.has(key) ? "already saved in an earlier run" : "duplicate within this run" };
+          duplicates.push(rejection);
+          logRejection(rejection);
+        }
+        seen.add(key);
+      }
+    }
 
     automationLogger.log(
       automation.id,
@@ -210,6 +248,7 @@ export async function runAtsRun(
       automationLogger.endRun(automation.id);
       return await finalizeRun(runId, {
         ...outcome(null),
+        funnelStats: startupStats(),
         jobsSearched,
         jobsDeduplicated: 0,
         jobsProcessed: 0,
@@ -238,6 +277,25 @@ export async function runAtsRun(
       corpus: jobs,
       k: config.topK,
     });
+    if (startup) {
+      const retained = new Set([...pipeline.toAnalyze, ...(config.saveUnanalyzed ? pipeline.toSaveUnanalyzed : [])].map((s) => jobDedupeKey(s.job)));
+      const additional = new Set(pipeline.toSaveUnanalyzed.map((s) => jobDedupeKey(s.job)));
+      const idf = buildIdf(jobs);
+      for (const job of dedupedJobs) {
+        if (retained.has(jobDedupeKey(job))) continue;
+        const scored = scoreJob(job, config.targetTitles, config.keywords, resumeSkills, config.locations, idf);
+        const reason = additional.has(jobDedupeKey(job))
+          ? `outside top ${config.topK} AI budget; saving additional listings is disabled`
+          : !passesFloor(scored.components)
+            ? "no target title or keyword/resume skill overlap"
+            : scored.score < APP_CONSTANTS.ATS_MIN_PRERANK_SCORE
+              ? `pre-ranking score ${scored.score.toFixed(3)} below minimum ${APP_CONSTANTS.ATS_MIN_PRERANK_SCORE}`
+              : `outside listing cap ${APP_CONSTANTS.ATS_LISTING_CAP}`;
+        const rejection = { key: job.sourceId ?? job.url, name: job.title, reason };
+        preAiRejected.push(rejection);
+        logRejection(rejection);
+      }
+    }
 
     if (config.strictLocation && config.locations.length > 0) {
       automationLogger.log(
@@ -264,7 +322,9 @@ export async function runAtsRun(
       );
     }
 
-    const buildFunnel = (analyzed: number, highlighted: number): string => {
+    const buildFunnel = (analyzed: number, highlighted: number, saved = 0): string => {
+      const stats = startupStats(analyzed, saved);
+      if (stats) return stats;
       const stages: FunnelStage[] = [
         { key: "fetched", label: "Fetched", count: jobsSearched },
       ];
@@ -476,7 +536,14 @@ export async function runAtsRun(
         { score: matchResult.score, threshold: automation.matchThreshold },
       );
 
-      if (!isStrong) return;
+      if (!isStrong) {
+        if (startup) {
+          const rejection = { key: scored.job.sourceId ?? scored.job.url, name: scored.job.title, reason: `AI score ${matchResult.score}% below threshold ${automation.matchThreshold}%` };
+          lowAiRejected.push(rejection);
+          logRejection(rejection);
+        }
+        return;
+      }
 
       try {
         const { saved, tagsApplied } = await persistDiscoveredJob(
@@ -553,7 +620,7 @@ export async function runAtsRun(
 
     return await finalizeRun(runId, {
       ...(signal?.aborted ? { status: "cancelled" as const } : outcome(aiError)),
-      funnelStats: buildFunnel(analyzed, highlighted),
+      funnelStats: buildFunnel(analyzed, highlighted, jobsSaved),
       jobsSearched,
       jobsDeduplicated,
       jobsProcessed: analyzed,
