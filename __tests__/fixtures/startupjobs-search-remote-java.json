@@ -1,0 +1,1182 @@
+{
+  "@context": "/api/contexts/SearchOffer",
+  "@id": "/api/search-offers",
+  "@type": "Collection",
+  "totalItems": 56,
+  "member": [
+    {
+      "@id": "/api/offers/108943",
+      "@type": "SearchOffer",
+      "id": 108943,
+      "name": {
+        "en": "Senior Full Stack Engineer"
+      },
+      "slug": {
+        "en": "senior-full-stack-engineer"
+      },
+      "salary": null,
+      "seniorities": [
+        "senior"
+      ],
+      "hours": [
+        "full-time"
+      ],
+      "contracts": [
+        "contract"
+      ],
+      "locationPreferences": [
+        "hybrid",
+        "onsite",
+        "remote"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Praha, Česko",
+            "en": "Prague, Czechia"
+          },
+          "place": {
+            "cs": "Praha",
+            "en": "Prague"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/f8e4ab52532cdac79ff0",
+        "startup": false,
+        "name": "Ciklum",
+        "slug": "cn-group-cz",
+        "logo": "https://assets.startupjobs.cz/LOGO/1523/db30a55a9f438e8f85eb7a5ef8ca02d6.png"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/105167",
+      "@type": "SearchOffer",
+      "id": 105167,
+      "name": {
+        "cs": "Principal QA Engineer",
+        "en": "Principal QA Engineer"
+      },
+      "slug": {
+        "cs": "principal-qa-engineer"
+      },
+      "salary": {
+        "@type": "SearchOfferSalary",
+        "@id": "/api/.well-known/genid/6784f25480c83e7912bc",
+        "min": 8000000,
+        "max": 12000000,
+        "currency": "CZK",
+        "period": "month"
+      },
+      "seniorities": [
+        "medior",
+        "senior"
+      ],
+      "hours": [
+        "full-time"
+      ],
+      "contracts": [],
+      "locationPreferences": [
+        "hybrid",
+        "remote"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Praha, Česko",
+            "en": "Prague, Czechia"
+          },
+          "place": {
+            "cs": "Praha",
+            "en": "Prague"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/06e96d733845099f67a5",
+        "startup": false,
+        "name": "Wultra",
+        "slug": "wultra-s-r-o",
+        "logo": "https://assets.startupjobs.cz/LOGO/8158/4df424a3d2ac180b313f52c8be848ab4.png"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/40052",
+      "@type": "SearchOffer",
+      "id": 40052,
+      "name": {
+        "cs": "⚙️ Senior vývojář/ka eSales platformy – PHP | remote | 130–160 000 Kč"
+      },
+      "slug": {
+        "cs": "senior-vyvojar-ka-esales-platformy-php-remote-130-160-000-kc"
+      },
+      "salary": {
+        "@type": "SearchOfferSalary",
+        "@id": "/api/.well-known/genid/556e19457a9db7738de6",
+        "min": 13000000,
+        "max": 16000000,
+        "currency": "CZK",
+        "period": "month"
+      },
+      "seniorities": [
+        "senior"
+      ],
+      "hours": [
+        "full-time"
+      ],
+      "contracts": [
+        "freelance"
+      ],
+      "locationPreferences": [
+        "remote"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Praha, Česko",
+            "en": "Prague, Czechia"
+          },
+          "place": {
+            "cs": "Praha",
+            "en": "Prague"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/337923da4b422fd0a794",
+        "startup": false,
+        "name": "Emorfiq - e-commerce řešení nové generace",
+        "slug": "webtown-autonomni-e-shopy",
+        "logo": "https://assets.startupjobs.cz/LOGO/6793/f09264129655f6b88b3621e669bd99ff.png"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/109055",
+      "@type": "SearchOffer",
+      "id": 109055,
+      "name": {
+        "cs": "Senior Enterprise Sales Manager @ Base.com"
+      },
+      "slug": {
+        "cs": "senior-enterprise-sales-manager-base-com"
+      },
+      "salary": null,
+      "seniorities": [
+        "senior"
+      ],
+      "hours": [
+        "full-time"
+      ],
+      "contracts": [
+        "contract",
+        "freelance"
+      ],
+      "locationPreferences": [
+        "hybrid",
+        "onsite",
+        "remote"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Praha, Česko",
+            "en": "Prague, Czechia"
+          },
+          "place": {
+            "cs": "Praha",
+            "en": "Prague"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/0d7f472b7a0b22cea903",
+        "startup": false,
+        "name": "base.com",
+        "slug": "baseliker-cz",
+        "logo": "https://assets.startupjobs.cz/LOGO/8892/035149fc19f5ba9cf02bed54b5dd040f.png"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/109241",
+      "@type": "SearchOffer",
+      "id": 109241,
+      "name": {
+        "cs": "🤖 Linux & DevOps nadšenec",
+        "en": ""
+      },
+      "slug": {
+        "cs": "linux-devops-nadsenec",
+        "en": ""
+      },
+      "salary": null,
+      "seniorities": [
+        "junior",
+        "medior",
+        "senior"
+      ],
+      "hours": [
+        "full-time",
+        "part-time"
+      ],
+      "contracts": [
+        "freelance"
+      ],
+      "locationPreferences": [
+        "hybrid",
+        "onsite",
+        "remote"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Praha, Česko",
+            "en": "Prague, Czechia"
+          },
+          "place": {
+            "cs": "Praha",
+            "en": "Prague"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/194f6b70b6fa0b997c92",
+        "startup": false,
+        "name": "COex",
+        "slug": "coex",
+        "logo": "https://assets.startupjobs.cz/LOGO/1297/6e3b8be1f4ef64cd023f1361ee001a04.png"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/108565",
+      "@type": "SearchOffer",
+      "id": 108565,
+      "name": {
+        "cs": "Senior AI Engineer",
+        "en": ""
+      },
+      "slug": {
+        "cs": "senior-ai-engineer",
+        "en": ""
+      },
+      "salary": null,
+      "seniorities": [
+        "medior",
+        "senior"
+      ],
+      "hours": [
+        "full-time"
+      ],
+      "contracts": [
+        "freelance"
+      ],
+      "locationPreferences": [
+        "hybrid",
+        "onsite",
+        "remote"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Praha, Česko",
+            "en": "Prague, Czechia"
+          },
+          "place": {
+            "cs": "Praha",
+            "en": "Prague"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/59c6b7d1c93e6a3ac5e4",
+        "startup": false,
+        "name": "Oddin.gg",
+        "slug": "oddin-gg",
+        "logo": "https://assets.startupjobs.cz/LOGO/6106/cef1224db9df27de6349d2983629d125.png"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/108141",
+      "@type": "SearchOffer",
+      "id": 108141,
+      "name": {
+        "cs": "Medior AI Engineer"
+      },
+      "slug": {
+        "cs": "medior-ai-engineer"
+      },
+      "salary": null,
+      "seniorities": [
+        "medior"
+      ],
+      "hours": [
+        "full-time"
+      ],
+      "contracts": [
+        "contract",
+        "freelance"
+      ],
+      "locationPreferences": [
+        "hybrid",
+        "remote"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Praha, Česko",
+            "en": "Prague, Czechia"
+          },
+          "place": {
+            "cs": "Praha",
+            "en": "Prague"
+          }
+        },
+        {
+          "name": {
+            "cs": "Brno, Česko",
+            "en": "Brno, Czechia"
+          },
+          "place": {
+            "cs": "Brno",
+            "en": "Brno"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/9bb1741d179db6df016c",
+        "startup": false,
+        "name": "ARTIN",
+        "slug": "artin",
+        "logo": "https://assets.startupjobs.cz/LOGO/731/1aad5fe228281ec8d324f9b4ad952340.png"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/106307",
+      "@type": "SearchOffer",
+      "id": 106307,
+      "name": {
+        "cs": "Prodávej budoucnost bydlení (ve VR) – obchodník/obchodnice pro Moravu",
+        "en": ""
+      },
+      "slug": {
+        "cs": "prodavej-budoucnost-bydleni-ve-vr-obchodnik-obchodnice-pro-moravu",
+        "en": ""
+      },
+      "salary": {
+        "@type": "SearchOfferSalary",
+        "@id": "/api/.well-known/genid/7f2531a77134606f13db",
+        "min": 4000000,
+        "max": 9000000,
+        "currency": "CZK",
+        "period": "month"
+      },
+      "seniorities": [
+        "junior",
+        "medior"
+      ],
+      "hours": [
+        "full-time"
+      ],
+      "contracts": [
+        "freelance"
+      ],
+      "locationPreferences": [
+        "remote"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Brno, Česko",
+            "en": "Brno, Czechia"
+          },
+          "place": {
+            "cs": "Brno",
+            "en": "Brno"
+          }
+        },
+        {
+          "name": {
+            "cs": "Ostrava, Česko",
+            "en": "Ostrava, Czechia"
+          },
+          "place": {
+            "cs": "Ostrava",
+            "en": "Ostrava"
+          }
+        },
+        {
+          "name": {
+            "cs": "Olomouc, Česko",
+            "en": "Olomouc, Czechia"
+          },
+          "place": {
+            "cs": "Olomouc",
+            "en": "Olomouc"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/52a1cf1c56db77fd1fe6",
+        "startup": false,
+        "name": "we are Nuveo",
+        "slug": "we-are-nuveo",
+        "logo": "https://assets.startupjobs.cz/LOGO/16579/ef371fa45a31b0a6f902deb86fe15f31.png"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/108845",
+      "@type": "SearchOffer",
+      "id": 108845,
+      "name": {
+        "cs": "Obchodník v IT firmě, díky vysokým maržím softwaru vydělávej až 150k s možností remote 🚀"
+      },
+      "slug": {
+        "cs": "obchodnik-v-it-firme-diky-vysokym-marzim-softwaru-vydelavej-az-150k-s-moznosti-remote"
+      },
+      "salary": {
+        "@type": "SearchOfferSalary",
+        "@id": "/api/.well-known/genid/1d7009e444094f548d6d",
+        "min": 5000000,
+        "max": 15000000,
+        "currency": "CZK",
+        "period": "month"
+      },
+      "seniorities": [
+        "junior",
+        "medior",
+        "senior"
+      ],
+      "hours": [
+        "full-time",
+        "part-time"
+      ],
+      "contracts": [
+        "contract",
+        "freelance"
+      ],
+      "locationPreferences": [
+        "hybrid",
+        "onsite",
+        "remote"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Praha, Česko",
+            "en": "Prague, Czechia"
+          },
+          "place": {
+            "cs": "Praha",
+            "en": "Prague"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/2050102699b5f90c6b8e",
+        "startup": true,
+        "name": "Swaglift Software s.r.o.",
+        "slug": "swaglift-software-s-r-o",
+        "logo": null
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/109067",
+      "@type": "SearchOffer",
+      "id": 109067,
+      "name": {
+        "cs": "Digital Learning Video Creator"
+      },
+      "slug": {
+        "cs": "digital-learning-video-creator"
+      },
+      "salary": null,
+      "seniorities": [
+        "junior"
+      ],
+      "hours": [
+        "full-time",
+        "part-time"
+      ],
+      "contracts": [
+        "contract",
+        "freelance"
+      ],
+      "locationPreferences": [
+        "remote"
+      ],
+      "locations": [],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/224b178549ec535c9fed",
+        "startup": false,
+        "name": "Digiskills.cz",
+        "slug": "digiskills-cz",
+        "logo": "https://assets.startupjobs.cz/LOGO/3422/f219dc5f8e2566e7d668062ce2ea07f7.png"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/109291",
+      "@type": "SearchOffer",
+      "id": 109291,
+      "name": {
+        "cs": "🚀 Obchodník po telefonu do brněnské marketingovky",
+        "en": ""
+      },
+      "slug": {
+        "cs": "obchodnik-po-telefonu-do-brnenske-marketingovky",
+        "en": ""
+      },
+      "salary": null,
+      "seniorities": [
+        "medior",
+        "senior"
+      ],
+      "hours": [
+        "full-time",
+        "part-time"
+      ],
+      "contracts": [
+        "contract",
+        "freelance",
+        "internship"
+      ],
+      "locationPreferences": [
+        "hybrid",
+        "onsite",
+        "remote"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Brno, Česko",
+            "en": "Brno, Czechia"
+          },
+          "place": {
+            "cs": "Brno",
+            "en": "Brno"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/6a5af7d96f0cb5df0158",
+        "startup": false,
+        "name": "Four Bros s.r.o.",
+        "slug": "four-bros-s-r-o",
+        "logo": "https://assets.startupjobs.cz/LOGO/4769/00bd110e500d58f848382e00b8e7e9c6.png"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/109113",
+      "@type": "SearchOffer",
+      "id": 109113,
+      "name": {
+        "cs": "Linux administrátor a technická podpora (PHP, WordPress)",
+        "en": ""
+      },
+      "slug": {
+        "cs": "linux-administrator-a-technicka-podpora-php-wordpress",
+        "en": ""
+      },
+      "salary": null,
+      "seniorities": [
+        "medior",
+        "senior"
+      ],
+      "hours": [
+        "full-time"
+      ],
+      "contracts": [
+        "contract",
+        "freelance"
+      ],
+      "locationPreferences": [
+        "remote"
+      ],
+      "locations": [],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/1d2891dc6a007789a4b1",
+        "startup": false,
+        "name": "Váš Hosting s.r.o.",
+        "slug": "vas-hosting-s-r-o",
+        "logo": "https://assets.startupjobs.cz/LOGO/2958/2OV3526ERTQ4vas-hosting-logo-1155922302173.png"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/109157",
+      "@type": "SearchOffer",
+      "id": 109157,
+      "name": {
+        "cs": "Social Media Manager – koncerty a festivaly"
+      },
+      "slug": {
+        "cs": "social-media-manager-koncerty-a-festivaly"
+      },
+      "salary": null,
+      "seniorities": [
+        "medior",
+        "senior"
+      ],
+      "hours": [
+        "full-time",
+        "part-time"
+      ],
+      "contracts": [
+        "contract",
+        "freelance"
+      ],
+      "locationPreferences": [
+        "remote"
+      ],
+      "locations": [],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/172c655a0988876cfbc5",
+        "startup": false,
+        "name": "ZL Production s.r.o.",
+        "slug": "zl-production-s-r-o",
+        "logo": "https://assets.startupjobs.cz/LOGO/17121/81e04c24f42ac7353d5a09d6bb4b0170a4590aac7da67aafee62ed9386167fe3.jpg"
+      },
+      "hasPreferentialOrdering": true,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/104611",
+      "@type": "SearchOffer",
+      "id": 104611,
+      "name": {
+        "cs": "Performance marketing specialist / Growth Consultant"
+      },
+      "slug": {
+        "cs": "performance-marketing-specialist-growth-consultant"
+      },
+      "salary": null,
+      "seniorities": [
+        "medior",
+        "senior"
+      ],
+      "hours": [
+        "full-time",
+        "part-time"
+      ],
+      "contracts": [
+        "freelance"
+      ],
+      "locationPreferences": [
+        "hybrid",
+        "onsite",
+        "remote"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Praha, Česko",
+            "en": "Prague, Czechia"
+          },
+          "place": {
+            "cs": "Praha",
+            "en": "Prague"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/1ed4756d0f8d6242490c",
+        "startup": false,
+        "name": "Striveondigital",
+        "slug": "striveondigital-1",
+        "logo": "https://assets.startupjobs.cz/LOGO/15239/3e9d493b4249ded48a92f99195261abc.png"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/108937",
+      "@type": "SearchOffer",
+      "id": 108937,
+      "name": {
+        "cs": "Outbound Courtesy Caller"
+      },
+      "slug": {
+        "cs": "outbound-courtesy-caller"
+      },
+      "salary": null,
+      "seniorities": [
+        "junior",
+        "medior"
+      ],
+      "hours": [
+        "full-time"
+      ],
+      "contracts": [
+        "freelance"
+      ],
+      "locationPreferences": [
+        "remote"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Praha, Česko",
+            "en": "Prague, Czechia"
+          },
+          "place": {
+            "cs": "Praha",
+            "en": "Prague"
+          }
+        },
+        {
+          "name": {
+            "cs": "Liberec, Česko",
+            "en": "Liberec, Czechia"
+          },
+          "place": {
+            "cs": "Liberec",
+            "en": "Liberec"
+          }
+        },
+        {
+          "name": {
+            "cs": "Brno, Česko",
+            "en": "Brno, Czechia"
+          },
+          "place": {
+            "cs": "Brno",
+            "en": "Brno"
+          }
+        },
+        {
+          "name": {
+            "cs": "Česko",
+            "en": "Czechia"
+          },
+          "place": null
+        },
+        {
+          "name": {
+            "cs": "České Budějovice, Česko",
+            "en": "České Budějovice, Czechia"
+          },
+          "place": {
+            "cs": "České Budějovice",
+            "en": "České Budějovice"
+          }
+        },
+        {
+          "name": {
+            "cs": "Ostrava, Česko",
+            "en": "Ostrava, Czechia"
+          },
+          "place": {
+            "cs": "Ostrava",
+            "en": "Ostrava"
+          }
+        },
+        {
+          "name": {
+            "cs": "Zlín, Česko",
+            "en": "Zlín, Czechia"
+          },
+          "place": {
+            "cs": "Zlín",
+            "en": "Zlín"
+          }
+        },
+        {
+          "name": {
+            "cs": "Hradec Králové, Česko",
+            "en": "Hradec Kralove, Czechia"
+          },
+          "place": {
+            "cs": "Hradec Králové",
+            "en": "Hradec Kralove"
+          }
+        },
+        {
+          "name": {
+            "cs": "Plzeň, Česko",
+            "en": "Plzeň, Czechia"
+          },
+          "place": {
+            "cs": "Plzeň",
+            "en": "Plzeň"
+          }
+        },
+        {
+          "name": {
+            "cs": "Pardubice, Česko",
+            "en": "Pardubice, Czechia"
+          },
+          "place": {
+            "cs": "Pardubice",
+            "en": "Pardubice"
+          }
+        },
+        {
+          "name": {
+            "cs": "Olomouc, Česko",
+            "en": "Olomouc, Czechia"
+          },
+          "place": {
+            "cs": "Olomouc",
+            "en": "Olomouc"
+          }
+        },
+        {
+          "name": {
+            "cs": "Znojmo, Česko",
+            "en": "Znojmo, Czechia"
+          },
+          "place": {
+            "cs": "Znojmo",
+            "en": "Znojmo"
+          }
+        },
+        {
+          "name": {
+            "cs": "Karlovy Vary, Česko",
+            "en": "Karlovy Vary, Czechia"
+          },
+          "place": {
+            "cs": "Karlovy Vary",
+            "en": "Karlovy Vary"
+          }
+        },
+        {
+          "name": {
+            "cs": "Ústí nad Labem, Česko",
+            "en": "Ústí nad Labem, Czechia"
+          },
+          "place": {
+            "cs": "Ústí nad Labem",
+            "en": "Ústí nad Labem"
+          }
+        },
+        {
+          "name": {
+            "cs": "Jihlava, Česko",
+            "en": "Jihlava, Czechia"
+          },
+          "place": {
+            "cs": "Jihlava",
+            "en": "Jihlava"
+          }
+        },
+        {
+          "name": {
+            "cs": "Čechy, Česko",
+            "en": "Čechy, Czechia"
+          },
+          "place": {
+            "cs": "Čechy",
+            "en": "Čechy"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/9a6d98a638e360d78a79",
+        "startup": false,
+        "name": "Newsmatics",
+        "slug": "newsmatics",
+        "logo": "https://assets.startupjobs.cz/LOGO/6362/ab096c709b4fb126fa531d7051cedc41.png"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/69505",
+      "@type": "SearchOffer",
+      "id": 69505,
+      "name": {
+        "cs": "Remote Full-stack Developer (React + Node.js)"
+      },
+      "slug": {
+        "cs": "remote-full-stack-developer-react-node-js"
+      },
+      "salary": {
+        "@type": "SearchOfferSalary",
+        "@id": "/api/.well-known/genid/a529367a2087b50561ee",
+        "min": 0,
+        "max": 13000000,
+        "currency": "CZK",
+        "period": "month"
+      },
+      "seniorities": [
+        "medior",
+        "senior"
+      ],
+      "hours": [
+        "full-time"
+      ],
+      "contracts": [
+        "contract",
+        "freelance"
+      ],
+      "locationPreferences": [
+        "hybrid",
+        "onsite",
+        "remote"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Košice, Slovensko",
+            "en": "Košice, Slovakia"
+          },
+          "place": {
+            "cs": "Košice",
+            "en": "Košice"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/dc3b4959953b2ea5ee62",
+        "startup": false,
+        "name": "Sudolabs",
+        "slug": "sudolabs",
+        "logo": "https://assets.startupjobs.cz/LOGO/7076/7826f3bf4c9730ad52f16f80ed760bfe.png"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/108523",
+      "@type": "SearchOffer",
+      "id": 108523,
+      "name": {
+        "cs": "Business Development Manager",
+        "en": ""
+      },
+      "slug": {
+        "cs": "business-development-manager",
+        "en": ""
+      },
+      "salary": null,
+      "seniorities": [
+        "medior",
+        "senior"
+      ],
+      "hours": [
+        "full-time"
+      ],
+      "contracts": [
+        "freelance"
+      ],
+      "locationPreferences": [
+        "hybrid",
+        "remote"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Praha, Česko",
+            "en": "Prague, Czechia"
+          },
+          "place": {
+            "cs": "Praha",
+            "en": "Prague"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/5db04e92ec29dd48c3d8",
+        "startup": false,
+        "name": "Labyrinth Labs",
+        "slug": "labyrinth-labs-1",
+        "logo": "https://assets.startupjobs.cz/LOGO/7239/833bee344b554afa3390cb0b43d7856a.png"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/93461",
+      "@type": "SearchOffer",
+      "id": 93461,
+      "name": {
+        "cs": "Proven E-Commerce CMO for Growing Interactive Media Startup",
+        "en": "Proven E-Commerce CMO for Growing Interactive Media Startup"
+      },
+      "slug": {
+        "cs": "proven-e-commerce-cmo-for-growing-interactive-media-startup",
+        "en": "proven-e-commerce-cmo-for-growing-interactive-media-startup"
+      },
+      "salary": {
+        "@type": "SearchOfferSalary",
+        "@id": "/api/.well-known/genid/e9386fb0716b0d32d6cb",
+        "min": 10000000,
+        "max": 16000000,
+        "currency": "CZK",
+        "period": "month"
+      },
+      "seniorities": [
+        "senior"
+      ],
+      "hours": [
+        "full-time"
+      ],
+      "contracts": [],
+      "locationPreferences": [
+        "remote"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Praha, Česko",
+            "en": "Prague, Czechia"
+          },
+          "place": {
+            "cs": "Praha",
+            "en": "Prague"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/7fe5944cf598cd7a5687",
+        "startup": false,
+        "name": "Whodunnit s.r.o.",
+        "slug": "whodunnit-s-r-o",
+        "logo": "https://assets.startupjobs.cz/LOGO/14207/c91bb9c1b06a114f1b6f63f785f78dd4.png"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/107867",
+      "@type": "SearchOffer",
+      "id": 107867,
+      "name": {
+        "cs": "Performance marketing manager",
+        "en": ""
+      },
+      "slug": {
+        "cs": "performance-marketing-manager",
+        "en": ""
+      },
+      "salary": null,
+      "seniorities": [
+        "medior"
+      ],
+      "hours": [
+        "full-time"
+      ],
+      "contracts": [
+        "freelance"
+      ],
+      "locationPreferences": [
+        "hybrid",
+        "onsite",
+        "remote"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Praha, Česko",
+            "en": "Prague, Czechia"
+          },
+          "place": {
+            "cs": "Praha",
+            "en": "Prague"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/e9028cbdfe4672c28f0d",
+        "startup": false,
+        "name": "GAMEE",
+        "slug": "gamee",
+        "logo": "https://assets.startupjobs.cz/LOGO/1947/0ba0b23fe7ff7bd65cd896274577ddc6.png"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/109311",
+      "@type": "SearchOffer",
+      "id": 109311,
+      "name": {
+        "cs": "Junior System Administrator pro online vzdělávání"
+      },
+      "slug": {
+        "cs": "junior-system-administrator-pro-online-vzdelavani"
+      },
+      "salary": {
+        "@type": "SearchOfferSalary",
+        "@id": "/api/.well-known/genid/0b860c89894058c37dbc",
+        "min": 3500000,
+        "max": 4200000,
+        "currency": "CZK",
+        "period": "month"
+      },
+      "seniorities": [
+        "junior"
+      ],
+      "hours": [
+        "full-time",
+        "part-time"
+      ],
+      "contracts": [
+        "contract",
+        "freelance"
+      ],
+      "locationPreferences": [
+        "remote"
+      ],
+      "locations": [],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/f97570ff05814e673b4c",
+        "startup": false,
+        "name": "EDU Effective",
+        "slug": "edu-effective",
+        "logo": "https://assets.startupjobs.cz/LOGO/9436/2759c87971ee63c92fe222e9f5500782523bffab18c4636c4229d98bfb37aa0e.jpg"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    }
+  ],
+  "view": {
+    "@id": "/api/search-offers?page=1",
+    "@type": "PartialCollectionView",
+    "first": "/api/search-offers?page=1",
+    "last": "/api/search-offers?page=3",
+    "next": "/api/search-offers?page=2"
+  }
+}

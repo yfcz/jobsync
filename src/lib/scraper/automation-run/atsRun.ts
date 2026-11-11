@@ -94,7 +94,7 @@ export async function runAtsRun(
       automationLogger.log(automation.id, "info", `${label} Rejected '${rejection.name}' [${rejection.key}]: ${rejection.reason}`, rejection);
     };
     if (startup) {
-      automationLogger.log(automation.id, "info", `${label} Public sitemap discovery matches OR terms in URL titles; portal full-text search coverage is unavailable`);
+      automationLogger.log(automation.id, "info", `${label} Native public portal search: separate OR queries with location/work-mode filters; results are interleaved before the bounded detail budget`);
       duplicates.forEach(logRejection);
     }
 

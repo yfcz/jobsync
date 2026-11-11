@@ -3,6 +3,7 @@ import pLimit from "p-limit";
 import { APP_CONSTANTS } from "@/lib/constants";
 import type { ScraperError, ScraperResult } from "../types";
 import { allowedStartupJobsUrl } from "./parser";
+import type { StartupJobsSearchCriteria } from "./types";
 
 // Shared across all automations in this process, including redirects. No retries.
 const connection = pLimit(1);
@@ -32,7 +33,8 @@ export function robotsAllows(text: string, value: string): boolean {
   const applicable = longest ? groups.filter((g) => specificity(g) === longest) : groups.filter((g) => g.agents.includes("*"));
   // Refuse rather than violate a publisher's slower crawl requirement.
   if (applicable.some((g) => g.delay * 1000 > APP_CONSTANTS.STARTUPJOBS_REQUEST_INTERVAL_MS)) return false;
-  const path = new URL(value).pathname;
+  const target = new URL(value);
+  const path = target.pathname + target.search;
   const matches = applicable.flatMap((g) => g.rules).filter((rule) => {
     const pattern = rule.path.replace(/[.+?^${}()|[\]\\]/g, "\\$&").replace(/\*/g, ".*").replace(/\\\$$/, "$");
     return new RegExp(`^${pattern}`).test(path);
@@ -62,12 +64,25 @@ async function readLimited(response: Response): Promise<string> {
   } finally { reader.releaseLock(); }
 }
 
-export async function fetchStartupJobsText(url: string, parentSignal?: AbortSignal, robots?: string): Promise<ScraperResult<string>> {
+export async function fetchStartupJobsText(
+  url: string,
+  parentSignal?: AbortSignal,
+  robots?: string,
+  criteria?: StartupJobsSearchCriteria,
+): Promise<ScraperResult<string>> {
   return connection(async () => {
     const controller = new AbortController();
     const signal = parentSignal ? AbortSignal.any([parentSignal, controller.signal]) : controller.signal;
     let timer: ReturnType<typeof setTimeout> | undefined;
     try {
+      if (!allowedStartupJobsUrl(url)) {
+        return { success: false, error: { type: "blocked", reason: "StartupJobs URL is not permitted" } };
+      }
+      const origin = new URL(url).origin;
+      const search = new URL(url).pathname === "/api/search-offers";
+      if (search !== Boolean(criteria)) {
+        return { success: false, error: { type: "parse", message: "StartupJobs search requires a POST search body" } };
+      }
       let next = url;
       for (let hop = 0; hop <= 3; hop++) {
         signal.throwIfAborted();
@@ -78,10 +93,20 @@ export async function fetchStartupJobsText(url: string, parentSignal?: AbortSign
         if (wait) await delay(wait, undefined, { signal });
         lastRequestAt = Date.now();
         timer = setTimeout(() => controller.abort(), APP_CONSTANTS.STARTUPJOBS_FETCH_TIMEOUT_MS);
-        const response = await fetch(next, { signal, redirect: "manual", headers: {
-          "user-agent": "JobSync/1.2 personal job-search automation",
-          accept: "text/html,application/xml,text/xml,text/plain",
-        } });
+        const response = await fetch(next, {
+          signal,
+          redirect: "manual",
+          credentials: "omit",
+          method: search ? "POST" : "GET",
+          ...(criteria ? { body: JSON.stringify(criteria) } : {}),
+          headers: {
+            "user-agent": "JobSync/1.2 personal job-search automation",
+            accept: search
+              ? "application/ld+json,application/json"
+              : "text/html,application/xhtml+xml,text/plain",
+            ...(search ? { "content-type": "application/ld+json" } : {}),
+          },
+        });
         const cancel = () => response.body?.cancel();
         if (response.status === 429) {
           const raw = response.headers.get("retry-after");
@@ -98,14 +123,23 @@ export async function fetchStartupJobsText(url: string, parentSignal?: AbortSign
         if (response.status >= 300 && response.status < 400) {
           const location = response.headers.get("location");
           await cancel();
+          if (search) {
+            return { success: false, error: { type: "blocked", reason: "StartupJobs search POST redirect was refused" } };
+          }
           if (!location) throw new Error("StartupJobs redirect has no location");
           next = new URL(location, next).toString();
+          if (new URL(next).origin !== origin) {
+            return { success: false, error: { type: "blocked", reason: "StartupJobs cross-origin redirect was refused" } };
+          }
           clearTimeout(timer);
           continue;
         }
         if (!response.ok) { await cancel(); throw new Error(`StartupJobs returned HTTP ${response.status}`); }
         const type = response.headers.get("content-type");
-        if (type && !/^(?:text\/(?:html|plain|xml)|application\/(?:xml|xhtml\+xml))(?:;|$)/i.test(type)) {
+        const expectedType = search
+          ? /^application\/(?:ld\+json|json)(?:;|$)/i
+          : /^(?:text\/(?:html|plain)|application\/xhtml\+xml)(?:;|$)/i;
+        if (type && !expectedType.test(type)) {
           await cancel();
           return { success: false, error: { type: "parse", message: "Unexpected StartupJobs response content type" } };
         }

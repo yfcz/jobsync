@@ -3,7 +3,7 @@ type: how-to
 title: StartupJobs.cz
 description: Nastavení automatizací StartupJobs.cz, pravidla lokalit, omezení veřejného vyhledávání, ověření a nasazení Docker image.
 feature: automations
-tags: [startupjobs, automations, brno, prague, remote, sitemap, docker, ghcr]
+tags: [startupjobs, automations, brno, prague, remote, search, docker, ghcr]
 aliases: [StartupJobs.cz integrace, StartupJobs automatizace]
 status: stable
 stale_after: 2027-02-10
@@ -13,17 +13,24 @@ stale_after: 2027-02-10
 
 ## Jaký veřejný zdroj integrace používá?
 
-Ověřeno 10. 11. 2026:
+Ověřeno 11. 11. 2026:
 
-- [robots.txt](https://www.startupjobs.cz/robots.txt) povoluje veřejné cesty a odkazuje na [index sitemap](https://www.startupjobs.cz/sitemap_index.xml). Index obsahuje [sitemapu aktivních nabídek](https://www.startupjobs.cz/sitemap/offers.xml).
+- [robots.txt webu](https://www.startupjobs.cz/robots.txt) i [robots.txt vyhledávacího backendu](https://back.startupjobs.cz/robots.txt) povolují používané veřejné cesty. Každý běh kontroluje obě pravidla samostatně.
 - [Podmínky pro uchazeče](https://www.startupjobs.cz/vop) byly zkontrolovány; veřejné čtení není v prohlédnuté části výslovně zakázané. To není licence k další publikaci obsahu. JobSync používá data pro osobní vyhledávání, zachovává původní odkazy a neposílá přihlášky.
 - [Oficiální Public API](https://www.startupjobs.cz/for-companies/dev) vyžaduje firemní Bearer token a poskytuje nabídky dané firmy. Není použito jako celotržní vyhledávač.
-- Veřejné HTML vyhledávání `/nabidky?klicove-slovo=java` uvádí parametr v `SearchAction`, ale při ověření neobsahovalo výsledky. JobSync nevolá interní backend a nespouští prohlížeč.
+- Veřejné HTML stránky `/nabidky?klicove-slovo=java` neobsahuje výsledky. Její veřejný JavaScript používá anonymní `POST https://back.startupjobs.cz/api/search-offers?page=1` s JSON-LD tělem. Tento požadavek byl ověřen bez přihlášení, cookies či tokenu a JobSync nyní používá stejné vyhledávání. Sitemapu nepoužívá a nespouští prohlížeč.
+- Skutečné tělo obsahuje `query` a pro město `locations: [{ locationId, radiusKm: 0 }]`; remote používá `locationPreferences: ["remote"]` bez omezení na město. ID Brna a Prahy pocházejí ze strukturovaných dat portálu a funkčnost filtrů byla ověřena živými dotazy. Stránkování používá `page` a ověřená pole `view.next`.
 - Detaily obsahují veřejný Nuxt JSON v `script#__NUXT_DATA__`. Parser čte JSON a odkazy v jeho tabulce; nespouští skripty. Kontroluje identitu dotazu a stav `published`. Nabídka `108443/java-fintech-developer` poskytla lokalitu Brno, pracovní režimy a technologie; starší nabídka `106101/backend-developer` již měla stav `expired`.
 
-**Pokrytí vyhledávání je omezené:** OR výrazy vybírají celé normalizované výrazy v názvu obsaženém v URL sitemapy. Detaily následně musí obsahovat alespoň jeden výraz. Nabídka zmiňující technologii pouze v těle, ale bez výrazu v URL názvu, se nemusí objevit. Sitemapové kandidáty řadíme sestupně podle číselného ID, což není zaručené pořadí posledních aktualizací. Z nejvýše deseti detailů pak mohou všechny nevyhovovat lokalitě. Počet nalezených výsledků se nerovná úplnému počtu výsledků portálu.
+Každý výraz spouští samostatné hledání, výsledky se spojí se sémantikou OR a odstraní se duplicity. Zachovává se pořadí portálu uvnitř každého dotazu; mezi dotazy se nabídky střídají, aby první výraz nespotřeboval celý limit detailů. Název ani URL nemusí obsahovat zadané slovo. Širší výsledky vyhledávače dále hodnotí společná relevance a AI pipeline.
 
-Pro úplné plnotextové pokrytí je vhodnou alternativou dohodnout s provozovatelem autorizovaný agregovaný feed či vyhledávací rozhraní. Firemní API samo tento problém neřeší. Při změně veřejné struktury se chyba objeví v Logs a Run History; prázdná/challenge stránka se nepovažuje za úspěšné prázdné hledání.
+Jde o veřejné anonymní rozhraní frontendu, odlišné od firemního Public API; jeho stabilita není garantovaná. Pořadí se může lišit od přihlášeného či personalizovaného formuláře. Při 401/403/429 nebo změně odpovědi se chyba objeví v Logs a Run History; nepoužíváme obcházení ochrany ani skrytý návrat k sitemapě.
+
+## Proč mohu dostat méně nabídek než ve formuláři?
+
+Načítají se nejvýše dvě stránky pro každý výraz a celkem nejvýše deset detailů. Další stránka se načítá jen tehdy, když dosud získané unikátní výsledky nenaplnily limit detailů. Neprochází se celý portál. Počty výsledků jednotlivých výrazů se kvůli překryvům nedají sčítat jako počet unikátních nabídek.
+
+Filtry Brna/Prahy či remote se už posílají vyhledávači před výběrem detailů. Konečná kontrola pracovního režimu a české dostupnosti ale zůstává nad detailními daty: portál může vrátit nabídku s pravidelnou docházkou či nejasnou geografií. Po ní následuje deduplikace proti databázi, předběžné hodnocení, nastavený AI rozpočet a práh shody. Nulový počet uložených nabídek proto neznamená, že portál neobsahuje žádnou další vhodnou nabídku.
 
 ## Jak automatizaci vytvořím a spustím v GUI?
 
@@ -43,7 +50,9 @@ Brno a Praha se ověřují vůči strukturovanému městu pracoviště, včetně
 
 ## Jaké jsou provozní limity a kde uvidím důvody odmítnutí?
 
-Každý běh načte robots.txt, index sitemapy, sitemapu nabídek a nejvýše nastavený počet detailů. Nejvýše jedno spojení za celý proces, odstup alespoň 1 sekunda včetně přesměrování, timeout 12 sekund na požadavek a limit 2 MB na odpověď. Žádné automatické retry. Při 401/403/429 se další detaily již nenačítají; 429 uchovává Retry-After v logu. Přesměrování je omezené na tři a na přesný HTTPS origin a povolené veřejné cesty bez přihlašovacích údajů, vlastního portu či query. Robots se kontrolují i na cíli přesměrování; pomalejší Crawl-delay vyvolá blokování místo jeho porušení.
+Každý běh načte dva robots.txt, nejvýše dvě stránky pro každý ze tří výrazů a nejvýše nastavený počet detailů (1–10). Bez přesměrování tedy nejvýše 18 požadavků. Nejvýše jedno spojení za celý proces, odstup alespoň 1 sekunda včetně přesměrování, timeout 12 sekund na požadavek a limit 2 MB na odpověď. Žádné automatické retry. Při 401/403/429 se zastaví i zbývající vyhledávací dotazy; 429 uchovává Retry-After v logu.
+
+Přesměrování GET je omezené na tři a stejný přesný HTTPS origin. Přesměrování vyhledávacího POST se odmítá. Povoleny jsou pouze robots.txt, veřejné detaily a přesný endpoint vyhledávání s jediným číselným parametrem `page` v mezích limitu. Žádné přihlašovací údaje, vlastní porty, jiné backendové endpointy ani další query parametry. Robots se kontrolují i na cíli přesměrování; pomalejší Crawl-delay vyvolá blokování místo jeho porušení. Cookies se neuchovávají a neposílají.
 
 Historie používá existující `funnelStats`: načtené detaily, odstraněné duplicity, odmítnutí lokality/režimu, neplatné detaily, vyřazení před AI, AI analýzy, nízká AI skóre a skutečně uložené nabídky. U odmítnutí zůstává identifikátor, název a důvod i po vypršení hodinové paměťové retence Logs. Počet Fetched details znamená úspěšně načtené odpovědi detailů před parsováním; neúspěšné HTTP požadavky se vykazují jako chyby. Sloupec New v historii nadále znamená počet po deduplikaci.
 
@@ -51,9 +60,13 @@ Zdroj používá existující deduplikaci, relevance ranking, CV matching, datab
 
 ## Jak bylo ověřeno načítání a jak spustím offline testy?
 
-Živý smoke test poskytovatele 10. 11. 2026 načetl pět detailů pro `java OR backend`: pro Brno přijal nabídky `108443` a `108231` (druhá má více českých lokalit), tři odmítl kvůli lokalitě, bez síťových a parsovacích chyb. Smoke test nevolal AI a nezapisoval do databáze; AI matching a ukládání jsou ověřeny přes společný runner s mockovanými závislostmi. Celý průchod přihlášeným GUI proti uživatelské databázi tímto testem ověřen nebyl.
+Živé anonymní vyhledávání 11. 11. 2026 vrátilo pro `java` v Brně 45 výsledků, pro `backend` v Brně 9, pro `java` v Praze 223 a pro `java` s remote filtrem 56. Neexistující kontrolní výraz vrátil nulu. Byla ověřena také druhá stránka Java/Brno. Tato čísla jsou stavem v okamžiku ověření, nikoli počtem unikátních či AI doporučených nabídek.
 
-`__tests__/fixtures/startupjobs-*` pocházejí z uvedených veřejných odpovědí z 10. 11. 2026. HTML fixtures uchovávají skutečný Nuxt offer query a jeho referenční graf; analytika, styly a ostatní katalogy byly odstraněny. Fixture nabídky `40052` ověřuje skutečný remote s volitelnou kanceláří a mzdu 130–160 tisíc CZK měsíčně; HTML používá pole `minimum`/`maximum`, odlišně od firemní API dokumentace. Sitemapový výřez zachovává všechny tehdejší Java/backend URL a jeden nesouvisející záznam. Další varianty lokalit/režimů/mzdy jsou v testech explicitně upravená data se stejnou strukturou. Testy nevolají StartupJobs ani AI.
+Následný smoke test skutečného poskytovatele pro `java OR backend` použil v každém režimu limit dva detaily: Brno přijalo dvě nabídky, Praha dvě a Remote CZ jednu; druhou remote nabídku správně odmítl kvůli požadované docházce. Všechny tři běhy proběhly bez síťových či parsovacích chyb, vždy se dvěma samostatnými vyhledávacími POST. AI ani databáze se při smoke testu nevolaly.
+
+JSON fixtures `startupjobs-search-*` obsahují skutečné kolekce z těchto dotazů včetně stránkování. HTML fixtures pocházejí z 10. 11. 2026 a uchovávají skutečný Nuxt offer query a referenční graf; analytika, styly a ostatní katalogy byly odstraněny. Nabídka `40052` ověřuje skutečný remote s volitelnou kanceláří a mzdu 130–160 tisíc CZK měsíčně. Další varianty dat jsou explicitně upravené se stejnou strukturou. Testy pokrývají OR, střídání a deduplikaci výsledků, filtr před detaily, omezené stránkování, chyby, oba robots.txt a regresi Jobs.cz. Nevolají StartupJobs ani AI.
+
+AI matching a ukládání ověřují testy společného runneru s mockovanými závislostmi. Celý průchod přihlášeným GUI proti uživatelské databázi tímto ověřen nebyl.
 
 ```sh
 npm test -- --maxWorkers=2

@@ -52,7 +52,7 @@ export function CzechBoardSearchStep({ board = "jobs.cz", value, onChange }: Cze
           <p className="font-medium">{label} search area: {modeLabel}</p>
           <p className="text-muted-foreground">
             {startup
-              ? "Uses the public offers sitemap and bounded detail pages. OR queries select candidates by words in the offer URL; this has less coverage than the portal's full-text search."
+              ? "Uses StartupJobs search with the selected location or remote-work filter. Separate queries are combined with OR semantics, then details are checked before ranking."
               : "Uses one public search page and only a small, bounded number of public detail pages. Java and backend are separate OR queries."}
           </p>
         </div>
@@ -89,7 +89,7 @@ export function CzechBoardSearchStep({ board = "jobs.cz", value, onChange }: Cze
         label={`${label} search queries`}
         placeholder="e.g., java"
         noun="search query"
-        description={startup ? "Required. Up to three OR terms match words in offer URL titles, then are checked against the detail." : "Required. Up to three terms are sent as repeated Jobs.cz search parameters."}
+        description={startup ? "Required. Up to three terms run as separate portal searches; their results are combined and deduplicated." : "Required. Up to three terms are sent as repeated Jobs.cz search parameters."}
         values={value.queries}
         onChange={(queries) => onChange({ ...value, queries: queries.slice(0, 3) })}
         loadOptions={async () => []}
@@ -121,7 +121,7 @@ export function CzechBoardSearchStep({ board = "jobs.cz", value, onChange }: Cze
           }}
         />
         <p className="text-sm text-muted-foreground">
-          Capped at {maxResults} to keep traffic and memory use low. {startup ? "Each run checks robots.txt and two sitemaps, then fetches details sequentially at most once per second." : "Each run uses only one search request plus these detail requests."}
+          Capped at {maxResults} to keep traffic and memory use low. {startup ? `Searches up to ${APP_CONSTANTS.STARTUPJOBS_MAX_SEARCH_PAGES} pages per term, then fetches details sequentially at most once per second.` : "Each run uses only one search request plus these detail requests."}
         </p>
       </div>
 

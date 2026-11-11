@@ -15,7 +15,7 @@ stale_after: 2027-09-30
 
 An automation is a saved search that runs once a day and brings new job postings to you. It reads the public job boards of the companies you pick, drops the listings that have nothing to do with what you asked for, sends the most promising ones to your AI provider to be scored against one of your resumes, and saves the results as **discovered jobs** you can accept into your tracker or dismiss.
 
-For **Greenhouse**, **Lever** and **Ashby**, you choose employers. **Jobs.cz** and **StartupJobs.cz** instead offer searches in Brno, Prague or Remote – Czech Republic. One automation covers one board. StartupJobs discovery uses OR terms in public offer URL titles, with less coverage than the portal's full-text search; see [StartupJobs setup and limitations](startupjobs.md).
+For **Greenhouse**, **Lever** and **Ashby**, you choose employers. **Jobs.cz** and **StartupJobs.cz** instead offer searches in Brno, Prague or Remote – Czech Republic. One automation covers one board. StartupJobs uses the public search behind the portal's form, with separate OR queries and location/work-mode filters before the detail budget; see [StartupJobs setup and limits](startupjobs.md).
 
 An automation needs an AI provider and model set under **Settings → AI Provider**, and a resume in your profile to match against.
 

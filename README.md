@@ -141,7 +141,7 @@ Set up automations that search for new jobs on a schedule and AI-match them agai
 
 - **Jobs.cz** — bounded public searches for Brno, Prague or Remote – Czech Republic, using the same ranking and resume matching pipeline.
 
-- **StartupJobs.cz** — Brno, Prague or Remote – Czech Republic, with OR search terms (defaults: `java`, `backend`), up to ten public details per run and structured location/workplace validation. Discovery uses the public offers sitemap and words in URL titles; it has less coverage than the portal's JavaScript full-text search. [Setup, limitations, GUI verification and GHCR deployment](wiki/startupjobs.md).
+- **StartupJobs.cz** — native public portal search for Brno, Prague or Remote – Czech Republic, with OR search terms (defaults: `java`, `backend`), bounded search pages, up to ten public details per run and structured location/workplace validation. Location/work-mode filters apply before the detail budget; each term gets a separate search. [Setup, limits, GUI verification and GHCR deployment](wiki/startupjobs.md).
 
 More job board sources are on the way. Discovered jobs are surfaced for review — accept the ones you like to promote them into your job tracker, or dismiss the rest.
 
