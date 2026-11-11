@@ -1,0 +1,565 @@
+{
+  "@context": "/api/contexts/SearchOffer",
+  "@id": "/api/search-offers",
+  "@type": "Collection",
+  "totalItems": 9,
+  "member": [
+    {
+      "@id": "/api/offers/108077",
+      "@type": "SearchOffer",
+      "id": 108077,
+      "name": {
+        "cs": "Senior Backend Engineer, Core Services",
+        "en": "Senior Backend Engineer, Core Services"
+      },
+      "slug": {
+        "cs": "senior-backend-engineer-core-services",
+        "en": "senior-backend-engineer-core-services"
+      },
+      "salary": null,
+      "seniorities": [
+        "senior"
+      ],
+      "hours": [
+        "full-time"
+      ],
+      "contracts": [],
+      "locationPreferences": [
+        "hybrid",
+        "onsite"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Praha, Česko",
+            "en": "Prague, Czechia"
+          },
+          "place": {
+            "cs": "Praha",
+            "en": "Prague"
+          }
+        },
+        {
+          "name": {
+            "cs": "Brno, Česko",
+            "en": "Brno, Czechia"
+          },
+          "place": {
+            "cs": "Brno",
+            "en": "Brno"
+          }
+        },
+        {
+          "name": {
+            "cs": "Ostrava, Česko",
+            "en": "Ostrava, Czechia"
+          },
+          "place": {
+            "cs": "Ostrava",
+            "en": "Ostrava"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/9ba40e4ba65148a71552",
+        "startup": false,
+        "name": "Apify",
+        "slug": "apify",
+        "logo": "https://assets.startupjobs.cz/LOGO/2567/53ccc6ddea76800d7d877778d7d89c96.png"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/108231",
+      "@type": "SearchOffer",
+      "id": 108231,
+      "name": {
+        "cs": "Senior Backend Engineer, Billing",
+        "en": ""
+      },
+      "slug": {
+        "cs": "senior-backend-engineer-billing",
+        "en": ""
+      },
+      "salary": null,
+      "seniorities": [
+        "senior"
+      ],
+      "hours": [
+        "full-time"
+      ],
+      "contracts": [
+        "contract",
+        "freelance"
+      ],
+      "locationPreferences": [
+        "hybrid",
+        "onsite"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Praha, Česko",
+            "en": "Prague, Czechia"
+          },
+          "place": {
+            "cs": "Praha",
+            "en": "Prague"
+          }
+        },
+        {
+          "name": {
+            "cs": "Brno, Česko",
+            "en": "Brno, Czechia"
+          },
+          "place": {
+            "cs": "Brno",
+            "en": "Brno"
+          }
+        },
+        {
+          "name": {
+            "cs": "Ostrava, Česko",
+            "en": "Ostrava, Czechia"
+          },
+          "place": {
+            "cs": "Ostrava",
+            "en": "Ostrava"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/ed865725defa6ef56a27",
+        "startup": false,
+        "name": "Apify",
+        "slug": "apify",
+        "logo": "https://assets.startupjobs.cz/LOGO/2567/53ccc6ddea76800d7d877778d7d89c96.png"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/109183",
+      "@type": "SearchOffer",
+      "id": 109183,
+      "name": {
+        "cs": "Ranking Product Manager"
+      },
+      "slug": {
+        "cs": "ranking-product-manager"
+      },
+      "salary": null,
+      "seniorities": [
+        "medior"
+      ],
+      "hours": [
+        "full-time"
+      ],
+      "contracts": [
+        "contract"
+      ],
+      "locationPreferences": [
+        "hybrid"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Brno, Česko",
+            "en": "Brno, Czechia"
+          },
+          "place": {
+            "cs": "Brno",
+            "en": "Brno"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/1b625ff9f4a84cfed683",
+        "startup": false,
+        "name": "Seznam.cz, a.s.",
+        "slug": "seznam-cz-a-s",
+        "logo": "https://assets.startupjobs.cz/LOGO/7086/a8e19ae209ea83acfa3561519a800e2f.png"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/107985",
+      "@type": "SearchOffer",
+      "id": 107985,
+      "name": {
+        "cs": "Python Developer se znalostí sítí",
+        "en": ""
+      },
+      "slug": {
+        "cs": "python-developer-se-znalosti-siti",
+        "en": ""
+      },
+      "salary": null,
+      "seniorities": [
+        "junior",
+        "medior"
+      ],
+      "hours": [
+        "full-time",
+        "part-time"
+      ],
+      "contracts": [
+        "contract"
+      ],
+      "locationPreferences": [
+        "hybrid",
+        "onsite"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Brno, Česko",
+            "en": "Brno, Czechia"
+          },
+          "place": {
+            "cs": "Brno",
+            "en": "Brno"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/805b6570d2816fb71401",
+        "startup": false,
+        "name": "EASYCON Solution s.r.o.",
+        "slug": "easycon-solution-s-r-o",
+        "logo": "https://assets.startupjobs.cz/LOGO/5387/5ZEOWRN5SG6Slogo-color154261472688.png"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/108671",
+      "@type": "SearchOffer",
+      "id": 108671,
+      "name": {
+        "cs": "🧠 Node.js Developer (medior-senior) | Full remote | ⛳ Greenfield projekty 🎯"
+      },
+      "slug": {
+        "cs": "node-js-developer-medior-senior-full-remote-greenfield-projekty"
+      },
+      "salary": {
+        "@type": "SearchOfferSalary",
+        "@id": "/api/.well-known/genid/8243cad3466b0bd96b65",
+        "min": 6000000,
+        "max": 8500000,
+        "currency": "CZK",
+        "period": "month"
+      },
+      "seniorities": [
+        "medior",
+        "senior"
+      ],
+      "hours": [
+        "full-time"
+      ],
+      "contracts": [
+        "freelance"
+      ],
+      "locationPreferences": [
+        "remote"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Praha, Česko",
+            "en": "Prague, Czechia"
+          },
+          "place": {
+            "cs": "Praha",
+            "en": "Prague"
+          }
+        },
+        {
+          "name": {
+            "cs": "Brno, Česko",
+            "en": "Brno, Czechia"
+          },
+          "place": {
+            "cs": "Brno",
+            "en": "Brno"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/775baf3ce212df8e32c5",
+        "startup": false,
+        "name": "Mountain Lift s.r.o.",
+        "slug": "mountain-lift-s-r-o-1",
+        "logo": "https://assets.startupjobs.cz/LOGO/11819/fcce3394359a02d3c95f3a9c41826f9e.png"
+      },
+      "hasPreferentialOrdering": true,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/107587",
+      "@type": "SearchOffer",
+      "id": 107587,
+      "name": {
+        "cs": "Platform Reliability Engineer",
+        "en": ""
+      },
+      "slug": {
+        "cs": "platform-reliability-engineer",
+        "en": ""
+      },
+      "salary": null,
+      "seniorities": [
+        "medior",
+        "senior"
+      ],
+      "hours": [
+        "full-time"
+      ],
+      "contracts": [
+        "contract",
+        "freelance"
+      ],
+      "locationPreferences": [
+        "hybrid",
+        "onsite"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Praha, Česko",
+            "en": "Prague, Czechia"
+          },
+          "place": {
+            "cs": "Praha",
+            "en": "Prague"
+          }
+        },
+        {
+          "name": {
+            "cs": "Brno, Česko",
+            "en": "Brno, Czechia"
+          },
+          "place": {
+            "cs": "Brno",
+            "en": "Brno"
+          }
+        },
+        {
+          "name": {
+            "cs": "Ostrava, Česko",
+            "en": "Ostrava, Czechia"
+          },
+          "place": {
+            "cs": "Ostrava",
+            "en": "Ostrava"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/5e7d6f14798d5f2ae539",
+        "startup": false,
+        "name": "Apify",
+        "slug": "apify",
+        "logo": "https://assets.startupjobs.cz/LOGO/2567/53ccc6ddea76800d7d877778d7d89c96.png"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/108123",
+      "@type": "SearchOffer",
+      "id": 108123,
+      "name": {
+        "cs": ".NET Tech & Team Lead (AI & Cloud Focus)"
+      },
+      "slug": {
+        "cs": "net-tech-team-lead-ai-cloud-focus"
+      },
+      "salary": null,
+      "seniorities": [
+        "medior",
+        "senior"
+      ],
+      "hours": [
+        "full-time"
+      ],
+      "contracts": [
+        "contract"
+      ],
+      "locationPreferences": [
+        "hybrid",
+        "onsite"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Brno, Česko",
+            "en": "Brno, Czechia"
+          },
+          "place": {
+            "cs": "Brno",
+            "en": "Brno"
+          }
+        },
+        {
+          "name": {
+            "cs": "Zlín, Česko",
+            "en": "Zlín, Czechia"
+          },
+          "place": {
+            "cs": "Zlín",
+            "en": "Zlín"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/64d57936e4034b783347",
+        "startup": false,
+        "name": "Papirfly",
+        "slug": "Papirfly",
+        "logo": "https://assets.startupjobs.cz/LOGO/7091/2a50f6086545110d0dbe6ff277e6a4d5.png"
+      },
+      "hasPreferentialOrdering": true,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/108835",
+      "@type": "SearchOffer",
+      "id": 108835,
+      "name": {
+        "cs": "QA / Test Automation Engineer",
+        "en": ""
+      },
+      "slug": {
+        "cs": "qa-test-automation-engineer",
+        "en": ""
+      },
+      "salary": null,
+      "seniorities": [
+        "senior"
+      ],
+      "hours": [
+        "full-time"
+      ],
+      "contracts": [
+        "contract",
+        "freelance"
+      ],
+      "locationPreferences": [
+        "hybrid",
+        "onsite",
+        "remote"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Brno, Česko",
+            "en": "Brno, Czechia"
+          },
+          "place": {
+            "cs": "Brno",
+            "en": "Brno"
+          }
+        },
+        {
+          "name": {
+            "cs": "Ostrava, Česko",
+            "en": "Ostrava, Czechia"
+          },
+          "place": {
+            "cs": "Ostrava",
+            "en": "Ostrava"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/d69ec64b41f0d8c57c5c",
+        "startup": false,
+        "name": "Sounds Good Agency",
+        "slug": "sounds-good-agency",
+        "logo": "https://assets.startupjobs.cz/LOGO/6243/69b53755381674dc68c83a4b77dc059e.png"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/109105",
+      "@type": "SearchOffer",
+      "id": 109105,
+      "name": {
+        "cs": "Senior Developer / Agentic Experience Engineer, Creators",
+        "en": ""
+      },
+      "slug": {
+        "cs": "senior-developer-agentic-experience-engineer-creators",
+        "en": ""
+      },
+      "salary": null,
+      "seniorities": [
+        "senior"
+      ],
+      "hours": [
+        "full-time"
+      ],
+      "contracts": [
+        "contract",
+        "freelance"
+      ],
+      "locationPreferences": [
+        "hybrid"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Praha, Česko",
+            "en": "Prague, Czechia"
+          },
+          "place": {
+            "cs": "Praha",
+            "en": "Prague"
+          }
+        },
+        {
+          "name": {
+            "cs": "Brno, Česko",
+            "en": "Brno, Czechia"
+          },
+          "place": {
+            "cs": "Brno",
+            "en": "Brno"
+          }
+        },
+        {
+          "name": {
+            "cs": "Ostrava, Česko",
+            "en": "Ostrava, Czechia"
+          },
+          "place": {
+            "cs": "Ostrava",
+            "en": "Ostrava"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/782fb8f497477b33e213",
+        "startup": false,
+        "name": "Apify",
+        "slug": "apify",
+        "logo": "https://assets.startupjobs.cz/LOGO/2567/53ccc6ddea76800d7d877778d7d89c96.png"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    }
+  ]
+}

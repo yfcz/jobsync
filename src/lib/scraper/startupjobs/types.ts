@@ -11,6 +11,18 @@ export interface StartupJobsListing {
   title: string;
 }
 
+export interface StartupJobsSearchCriteria {
+  query: string;
+  locations?: { locationId: string; radiusKm: number }[];
+  locationPreferences?: ["remote"];
+}
+
+export interface StartupJobsSearchPage {
+  listings: StartupJobsListing[];
+  totalItems: number;
+  nextPage?: number;
+}
+
 export interface StartupJobsJob extends JobDetails {
   sourceId: string;
   cities: string[];

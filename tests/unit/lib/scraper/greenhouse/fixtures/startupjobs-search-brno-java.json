@@ -1,0 +1,1441 @@
+{
+  "@context": "/api/contexts/SearchOffer",
+  "@id": "/api/search-offers",
+  "@type": "Collection",
+  "totalItems": 45,
+  "member": [
+    {
+      "@id": "/api/offers/108443",
+      "@type": "SearchOffer",
+      "id": 108443,
+      "name": {
+        "cs": "Java Fintech Developer",
+        "en": ""
+      },
+      "slug": {
+        "cs": "java-fintech-developer",
+        "en": ""
+      },
+      "salary": null,
+      "seniorities": [
+        "medior",
+        "senior"
+      ],
+      "hours": [
+        "full-time"
+      ],
+      "contracts": [
+        "contract",
+        "freelance"
+      ],
+      "locationPreferences": [
+        "hybrid",
+        "onsite"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Brno, Česko",
+            "en": "Brno, Czechia"
+          },
+          "place": {
+            "cs": "Brno",
+            "en": "Brno"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/bd943910b6b6bf556191",
+        "startup": false,
+        "name": "Luxonit s.r.o.",
+        "slug": "luxonit-s-r-o",
+        "logo": "https://assets.startupjobs.cz/LOGO/5491/7ca3a6e09de40b92a28737d462130efa.png"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/46096",
+      "@type": "SearchOffer",
+      "id": 46096,
+      "name": {
+        "cs": "C# / .NET Desktop UI Developer pro Fintech Platformu",
+        "en": ""
+      },
+      "slug": {
+        "cs": "c-net-desktop-ui-developer-pro-fintech-platformu",
+        "en": ""
+      },
+      "salary": {
+        "@type": "SearchOfferSalary",
+        "@id": "/api/.well-known/genid/90f74ebf6d7232c7a84b",
+        "min": 8000000,
+        "max": 16000000,
+        "currency": "CZK",
+        "period": "month"
+      },
+      "seniorities": [
+        "medior",
+        "senior"
+      ],
+      "hours": [
+        "full-time"
+      ],
+      "contracts": [
+        "contract",
+        "freelance"
+      ],
+      "locationPreferences": [
+        "hybrid",
+        "onsite"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Brno, Česko",
+            "en": "Brno, Czechia"
+          },
+          "place": {
+            "cs": "Brno",
+            "en": "Brno"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/023d9ab3886c2bba2da6",
+        "startup": false,
+        "name": "Luxonit s.r.o.",
+        "slug": "luxonit-s-r-o",
+        "logo": "https://assets.startupjobs.cz/LOGO/5491/7ca3a6e09de40b92a28737d462130efa.png"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/109277",
+      "@type": "SearchOffer",
+      "id": 109277,
+      "name": {
+        "cs": "IT Helpdesk specialista/tka"
+      },
+      "slug": {
+        "cs": "it-helpdesk-specialista-tka"
+      },
+      "salary": null,
+      "seniorities": [
+        "medior"
+      ],
+      "hours": [
+        "full-time"
+      ],
+      "contracts": [],
+      "locationPreferences": [
+        "onsite"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Brno, Česko",
+            "en": "Brno, Czechia"
+          },
+          "place": {
+            "cs": "Brno",
+            "en": "Brno"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/7e8a388b2ba13516c396",
+        "startup": false,
+        "name": "Air Bank a.s.",
+        "slug": "air-bank-a-s-1",
+        "logo": "https://assets.startupjobs.cz/LOGO/13035/eb01aefe2378836a08ab2554d6bc61ab.png"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/109061",
+      "@type": "SearchOffer",
+      "id": 109061,
+      "name": {
+        "cs": "Obchodní zástupce pro EdTech",
+        "en": ""
+      },
+      "slug": {
+        "cs": "obchodni-zastupce-pro-edtech",
+        "en": ""
+      },
+      "salary": null,
+      "seniorities": [
+        "medior",
+        "senior"
+      ],
+      "hours": [
+        "full-time"
+      ],
+      "contracts": [
+        "contract",
+        "freelance"
+      ],
+      "locationPreferences": [
+        "hybrid"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Brno, Česko",
+            "en": "Brno, Czechia"
+          },
+          "place": {
+            "cs": "Brno",
+            "en": "Brno"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/bbe8144ce698f4f8c6b6",
+        "startup": false,
+        "name": "LIFELIQE CZECH s.r.o.",
+        "slug": "lifeliqe-czech-s-r-o",
+        "logo": "https://assets.startupjobs.cz/LOGO/3913/1d08518f5b0c3dab9208ed525767808a.png"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/108141",
+      "@type": "SearchOffer",
+      "id": 108141,
+      "name": {
+        "cs": "Medior AI Engineer"
+      },
+      "slug": {
+        "cs": "medior-ai-engineer"
+      },
+      "salary": null,
+      "seniorities": [
+        "medior"
+      ],
+      "hours": [
+        "full-time"
+      ],
+      "contracts": [
+        "contract",
+        "freelance"
+      ],
+      "locationPreferences": [
+        "hybrid",
+        "remote"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Praha, Česko",
+            "en": "Prague, Czechia"
+          },
+          "place": {
+            "cs": "Praha",
+            "en": "Prague"
+          }
+        },
+        {
+          "name": {
+            "cs": "Brno, Česko",
+            "en": "Brno, Czechia"
+          },
+          "place": {
+            "cs": "Brno",
+            "en": "Brno"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/8a195f4e263d26fcebdc",
+        "startup": false,
+        "name": "ARTIN",
+        "slug": "artin",
+        "logo": "https://assets.startupjobs.cz/LOGO/731/1aad5fe228281ec8d324f9b4ad952340.png"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/108667",
+      "@type": "SearchOffer",
+      "id": 108667,
+      "name": {
+        "cs": "Akvizice a rozvoj obchodu (napříč sektory)",
+        "en": ""
+      },
+      "slug": {
+        "cs": "akvizice-a-rozvoj-obchodu-napric-sektory",
+        "en": ""
+      },
+      "salary": {
+        "@type": "SearchOfferSalary",
+        "@id": "/api/.well-known/genid/9a5d4051be3ef9b82891",
+        "min": 5000000,
+        "max": 10000000,
+        "currency": "CZK",
+        "period": "month"
+      },
+      "seniorities": [
+        "medior"
+      ],
+      "hours": [
+        "full-time"
+      ],
+      "contracts": [
+        "freelance"
+      ],
+      "locationPreferences": [
+        "hybrid",
+        "onsite"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Brno, Česko",
+            "en": "Brno, Czechia"
+          },
+          "place": {
+            "cs": "Brno",
+            "en": "Brno"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/f56568ba918e5323f503",
+        "startup": false,
+        "name": "DevCors",
+        "slug": "devcors",
+        "logo": "https://assets.startupjobs.cz/LOGO/7337/ab80bfb5d598571ceef015598aff3b1b.png"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/106307",
+      "@type": "SearchOffer",
+      "id": 106307,
+      "name": {
+        "cs": "Prodávej budoucnost bydlení (ve VR) – obchodník/obchodnice pro Moravu",
+        "en": ""
+      },
+      "slug": {
+        "cs": "prodavej-budoucnost-bydleni-ve-vr-obchodnik-obchodnice-pro-moravu",
+        "en": ""
+      },
+      "salary": {
+        "@type": "SearchOfferSalary",
+        "@id": "/api/.well-known/genid/6cbbddef627dc73445a2",
+        "min": 4000000,
+        "max": 9000000,
+        "currency": "CZK",
+        "period": "month"
+      },
+      "seniorities": [
+        "junior",
+        "medior"
+      ],
+      "hours": [
+        "full-time"
+      ],
+      "contracts": [
+        "freelance"
+      ],
+      "locationPreferences": [
+        "remote"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Brno, Česko",
+            "en": "Brno, Czechia"
+          },
+          "place": {
+            "cs": "Brno",
+            "en": "Brno"
+          }
+        },
+        {
+          "name": {
+            "cs": "Ostrava, Česko",
+            "en": "Ostrava, Czechia"
+          },
+          "place": {
+            "cs": "Ostrava",
+            "en": "Ostrava"
+          }
+        },
+        {
+          "name": {
+            "cs": "Olomouc, Česko",
+            "en": "Olomouc, Czechia"
+          },
+          "place": {
+            "cs": "Olomouc",
+            "en": "Olomouc"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/7d3802f2e94470a703ce",
+        "startup": false,
+        "name": "we are Nuveo",
+        "slug": "we-are-nuveo",
+        "logo": "https://assets.startupjobs.cz/LOGO/16579/ef371fa45a31b0a6f902deb86fe15f31.png"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/109291",
+      "@type": "SearchOffer",
+      "id": 109291,
+      "name": {
+        "cs": "🚀 Obchodník po telefonu do brněnské marketingovky",
+        "en": ""
+      },
+      "slug": {
+        "cs": "obchodnik-po-telefonu-do-brnenske-marketingovky",
+        "en": ""
+      },
+      "salary": null,
+      "seniorities": [
+        "medior",
+        "senior"
+      ],
+      "hours": [
+        "full-time",
+        "part-time"
+      ],
+      "contracts": [
+        "contract",
+        "freelance",
+        "internship"
+      ],
+      "locationPreferences": [
+        "hybrid",
+        "onsite",
+        "remote"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Brno, Česko",
+            "en": "Brno, Czechia"
+          },
+          "place": {
+            "cs": "Brno",
+            "en": "Brno"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/8a8d30325e961837c5b1",
+        "startup": false,
+        "name": "Four Bros s.r.o.",
+        "slug": "four-bros-s-r-o",
+        "logo": "https://assets.startupjobs.cz/LOGO/4769/00bd110e500d58f848382e00b8e7e9c6.png"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/107587",
+      "@type": "SearchOffer",
+      "id": 107587,
+      "name": {
+        "cs": "Platform Reliability Engineer",
+        "en": ""
+      },
+      "slug": {
+        "cs": "platform-reliability-engineer",
+        "en": ""
+      },
+      "salary": null,
+      "seniorities": [
+        "medior",
+        "senior"
+      ],
+      "hours": [
+        "full-time"
+      ],
+      "contracts": [
+        "contract",
+        "freelance"
+      ],
+      "locationPreferences": [
+        "hybrid",
+        "onsite"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Praha, Česko",
+            "en": "Prague, Czechia"
+          },
+          "place": {
+            "cs": "Praha",
+            "en": "Prague"
+          }
+        },
+        {
+          "name": {
+            "cs": "Brno, Česko",
+            "en": "Brno, Czechia"
+          },
+          "place": {
+            "cs": "Brno",
+            "en": "Brno"
+          }
+        },
+        {
+          "name": {
+            "cs": "Ostrava, Česko",
+            "en": "Ostrava, Czechia"
+          },
+          "place": {
+            "cs": "Ostrava",
+            "en": "Ostrava"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/98f540f4390aafe9694b",
+        "startup": false,
+        "name": "Apify",
+        "slug": "apify",
+        "logo": "https://assets.startupjobs.cz/LOGO/2567/53ccc6ddea76800d7d877778d7d89c96.png"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/108937",
+      "@type": "SearchOffer",
+      "id": 108937,
+      "name": {
+        "cs": "Outbound Courtesy Caller"
+      },
+      "slug": {
+        "cs": "outbound-courtesy-caller"
+      },
+      "salary": null,
+      "seniorities": [
+        "junior",
+        "medior"
+      ],
+      "hours": [
+        "full-time"
+      ],
+      "contracts": [
+        "freelance"
+      ],
+      "locationPreferences": [
+        "remote"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Praha, Česko",
+            "en": "Prague, Czechia"
+          },
+          "place": {
+            "cs": "Praha",
+            "en": "Prague"
+          }
+        },
+        {
+          "name": {
+            "cs": "Liberec, Česko",
+            "en": "Liberec, Czechia"
+          },
+          "place": {
+            "cs": "Liberec",
+            "en": "Liberec"
+          }
+        },
+        {
+          "name": {
+            "cs": "Brno, Česko",
+            "en": "Brno, Czechia"
+          },
+          "place": {
+            "cs": "Brno",
+            "en": "Brno"
+          }
+        },
+        {
+          "name": {
+            "cs": "Česko",
+            "en": "Czechia"
+          },
+          "place": null
+        },
+        {
+          "name": {
+            "cs": "České Budějovice, Česko",
+            "en": "České Budějovice, Czechia"
+          },
+          "place": {
+            "cs": "České Budějovice",
+            "en": "České Budějovice"
+          }
+        },
+        {
+          "name": {
+            "cs": "Ostrava, Česko",
+            "en": "Ostrava, Czechia"
+          },
+          "place": {
+            "cs": "Ostrava",
+            "en": "Ostrava"
+          }
+        },
+        {
+          "name": {
+            "cs": "Zlín, Česko",
+            "en": "Zlín, Czechia"
+          },
+          "place": {
+            "cs": "Zlín",
+            "en": "Zlín"
+          }
+        },
+        {
+          "name": {
+            "cs": "Hradec Králové, Česko",
+            "en": "Hradec Kralove, Czechia"
+          },
+          "place": {
+            "cs": "Hradec Králové",
+            "en": "Hradec Kralove"
+          }
+        },
+        {
+          "name": {
+            "cs": "Plzeň, Česko",
+            "en": "Plzeň, Czechia"
+          },
+          "place": {
+            "cs": "Plzeň",
+            "en": "Plzeň"
+          }
+        },
+        {
+          "name": {
+            "cs": "Pardubice, Česko",
+            "en": "Pardubice, Czechia"
+          },
+          "place": {
+            "cs": "Pardubice",
+            "en": "Pardubice"
+          }
+        },
+        {
+          "name": {
+            "cs": "Olomouc, Česko",
+            "en": "Olomouc, Czechia"
+          },
+          "place": {
+            "cs": "Olomouc",
+            "en": "Olomouc"
+          }
+        },
+        {
+          "name": {
+            "cs": "Znojmo, Česko",
+            "en": "Znojmo, Czechia"
+          },
+          "place": {
+            "cs": "Znojmo",
+            "en": "Znojmo"
+          }
+        },
+        {
+          "name": {
+            "cs": "Karlovy Vary, Česko",
+            "en": "Karlovy Vary, Czechia"
+          },
+          "place": {
+            "cs": "Karlovy Vary",
+            "en": "Karlovy Vary"
+          }
+        },
+        {
+          "name": {
+            "cs": "Ústí nad Labem, Česko",
+            "en": "Ústí nad Labem, Czechia"
+          },
+          "place": {
+            "cs": "Ústí nad Labem",
+            "en": "Ústí nad Labem"
+          }
+        },
+        {
+          "name": {
+            "cs": "Jihlava, Česko",
+            "en": "Jihlava, Czechia"
+          },
+          "place": {
+            "cs": "Jihlava",
+            "en": "Jihlava"
+          }
+        },
+        {
+          "name": {
+            "cs": "Čechy, Česko",
+            "en": "Čechy, Czechia"
+          },
+          "place": {
+            "cs": "Čechy",
+            "en": "Čechy"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/6c767e9a6573c2d64998",
+        "startup": false,
+        "name": "Newsmatics",
+        "slug": "newsmatics",
+        "logo": "https://assets.startupjobs.cz/LOGO/6362/ab096c709b4fb126fa531d7051cedc41.png"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/108077",
+      "@type": "SearchOffer",
+      "id": 108077,
+      "name": {
+        "cs": "Senior Backend Engineer, Core Services",
+        "en": "Senior Backend Engineer, Core Services"
+      },
+      "slug": {
+        "cs": "senior-backend-engineer-core-services",
+        "en": "senior-backend-engineer-core-services"
+      },
+      "salary": null,
+      "seniorities": [
+        "senior"
+      ],
+      "hours": [
+        "full-time"
+      ],
+      "contracts": [],
+      "locationPreferences": [
+        "hybrid",
+        "onsite"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Praha, Česko",
+            "en": "Prague, Czechia"
+          },
+          "place": {
+            "cs": "Praha",
+            "en": "Prague"
+          }
+        },
+        {
+          "name": {
+            "cs": "Brno, Česko",
+            "en": "Brno, Czechia"
+          },
+          "place": {
+            "cs": "Brno",
+            "en": "Brno"
+          }
+        },
+        {
+          "name": {
+            "cs": "Ostrava, Česko",
+            "en": "Ostrava, Czechia"
+          },
+          "place": {
+            "cs": "Ostrava",
+            "en": "Ostrava"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/61d9b3158e3d26f26c1f",
+        "startup": false,
+        "name": "Apify",
+        "slug": "apify",
+        "logo": "https://assets.startupjobs.cz/LOGO/2567/53ccc6ddea76800d7d877778d7d89c96.png"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/108253",
+      "@type": "SearchOffer",
+      "id": 108253,
+      "name": {
+        "cs": "Obchodník pro Shoptet"
+      },
+      "slug": {
+        "cs": "obchodnik-pro-shoptet"
+      },
+      "salary": {
+        "@type": "SearchOfferSalary",
+        "@id": "/api/.well-known/genid/adcdc730c458b410491d",
+        "min": 8700000,
+        "max": 12000000,
+        "currency": "CZK",
+        "period": "month"
+      },
+      "seniorities": [
+        "junior",
+        "medior"
+      ],
+      "hours": [
+        "full-time"
+      ],
+      "contracts": [],
+      "locationPreferences": [
+        "hybrid",
+        "onsite"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Praha, Česko",
+            "en": "Prague, Czechia"
+          },
+          "place": {
+            "cs": "Praha",
+            "en": "Prague"
+          }
+        },
+        {
+          "name": {
+            "cs": "Brno, Česko",
+            "en": "Brno, Czechia"
+          },
+          "place": {
+            "cs": "Brno",
+            "en": "Brno"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/150d29ca6407aa280af9",
+        "startup": false,
+        "name": "Shoptet",
+        "slug": "shoptet",
+        "logo": "https://assets.startupjobs.cz/LOGO/1747/b9c711dc36b45a8d88306177d092e09f.png"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/109017",
+      "@type": "SearchOffer",
+      "id": 109017,
+      "name": {
+        "cs": "Obchod a komunikace s jednateli a šéfy firem"
+      },
+      "slug": {
+        "cs": "obchod-a-komunikace-s-jednateli-a-sefy-firem"
+      },
+      "salary": {
+        "@type": "SearchOfferSalary",
+        "@id": "/api/.well-known/genid/cd683dc1d2d351368896",
+        "min": 4000000,
+        "max": 12000000,
+        "currency": "CZK",
+        "period": "month"
+      },
+      "seniorities": [
+        "junior",
+        "medior",
+        "senior"
+      ],
+      "hours": [
+        "full-time"
+      ],
+      "contracts": [
+        "contract",
+        "freelance"
+      ],
+      "locationPreferences": [
+        "remote"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Praha, Česko",
+            "en": "Prague, Czechia"
+          },
+          "place": {
+            "cs": "Praha",
+            "en": "Prague"
+          }
+        },
+        {
+          "name": {
+            "cs": "Liberec, Česko",
+            "en": "Liberec, Czechia"
+          },
+          "place": {
+            "cs": "Liberec",
+            "en": "Liberec"
+          }
+        },
+        {
+          "name": {
+            "cs": "Brno, Česko",
+            "en": "Brno, Czechia"
+          },
+          "place": {
+            "cs": "Brno",
+            "en": "Brno"
+          }
+        },
+        {
+          "name": {
+            "cs": "České Budějovice, Česko",
+            "en": "České Budějovice, Czechia"
+          },
+          "place": {
+            "cs": "České Budějovice",
+            "en": "České Budějovice"
+          }
+        },
+        {
+          "name": {
+            "cs": "Ostrava, Česko",
+            "en": "Ostrava, Czechia"
+          },
+          "place": {
+            "cs": "Ostrava",
+            "en": "Ostrava"
+          }
+        },
+        {
+          "name": {
+            "cs": "Zlín, Česko",
+            "en": "Zlín, Czechia"
+          },
+          "place": {
+            "cs": "Zlín",
+            "en": "Zlín"
+          }
+        },
+        {
+          "name": {
+            "cs": "Plzeň, Česko",
+            "en": "Plzeň, Czechia"
+          },
+          "place": {
+            "cs": "Plzeň",
+            "en": "Plzeň"
+          }
+        },
+        {
+          "name": {
+            "cs": "Olomouc, Česko",
+            "en": "Olomouc, Czechia"
+          },
+          "place": {
+            "cs": "Olomouc",
+            "en": "Olomouc"
+          }
+        },
+        {
+          "name": {
+            "cs": "Karlovy Vary, Česko",
+            "en": "Karlovy Vary, Czechia"
+          },
+          "place": {
+            "cs": "Karlovy Vary",
+            "en": "Karlovy Vary"
+          }
+        },
+        {
+          "name": {
+            "cs": "Ústí nad Labem, Česko",
+            "en": "Ústí nad Labem, Czechia"
+          },
+          "place": {
+            "cs": "Ústí nad Labem",
+            "en": "Ústí nad Labem"
+          }
+        },
+        {
+          "name": {
+            "cs": "Jihlava, Česko",
+            "en": "Jihlava, Czechia"
+          },
+          "place": {
+            "cs": "Jihlava",
+            "en": "Jihlava"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/60796158f6cc437f6ed7",
+        "startup": false,
+        "name": "Porto MMXVII s.r.o.",
+        "slug": "porto-mmxvii-s-r-o",
+        "logo": "https://assets.startupjobs.cz/LOGO/13957/b17a082ed46bf0979cc95ef7e86fb013.png"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/49819",
+      "@type": "SearchOffer",
+      "id": 49819,
+      "name": {
+        "cs": "Embedded C Developer",
+        "en": ""
+      },
+      "slug": {
+        "cs": "embedded-c-developer",
+        "en": ""
+      },
+      "salary": null,
+      "seniorities": [
+        "junior",
+        "medior",
+        "senior"
+      ],
+      "hours": [
+        "full-time",
+        "part-time"
+      ],
+      "contracts": [
+        "contract",
+        "freelance"
+      ],
+      "locationPreferences": [
+        "hybrid",
+        "onsite"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Brno, Česko",
+            "en": "Brno, Czechia"
+          },
+          "place": {
+            "cs": "Brno",
+            "en": "Brno"
+          }
+        },
+        {
+          "name": {
+            "cs": "Olomouc, Česko",
+            "en": "Olomouc, Czechia"
+          },
+          "place": {
+            "cs": "Olomouc",
+            "en": "Olomouc"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/69d2ff1182ccf6764a89",
+        "startup": false,
+        "name": "DIVELIT system s.r.o.",
+        "slug": "divelit-system-s-r-o",
+        "logo": "https://assets.startupjobs.cz/LOGO/9185/e229cf418b3e6e55a0ae7d009b2c660b.png"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/109169",
+      "@type": "SearchOffer",
+      "id": 109169,
+      "name": {
+        "cs": "Head of Marketing and Communications"
+      },
+      "slug": {
+        "cs": "head-of-marketing-and-communications"
+      },
+      "salary": {
+        "@type": "SearchOfferSalary",
+        "@id": "/api/.well-known/genid/80904756ee3ef88254f7",
+        "min": 9000000,
+        "max": 15000000,
+        "currency": "CZK",
+        "period": "month"
+      },
+      "seniorities": [
+        "medior",
+        "senior"
+      ],
+      "hours": [
+        "full-time"
+      ],
+      "contracts": [
+        "contract"
+      ],
+      "locationPreferences": [
+        "hybrid"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Brno, Česko",
+            "en": "Brno, Czechia"
+          },
+          "place": {
+            "cs": "Brno",
+            "en": "Brno"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/954c5d87de8ac54636a4",
+        "startup": false,
+        "name": "Zaitra s.r.o.",
+        "slug": "zaitra-s-r-o",
+        "logo": "https://assets.startupjobs.cz/LOGO/9529/bb4deb904944b9368fb0761dca9696fc.png"
+      },
+      "hasPreferentialOrdering": true,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/108529",
+      "@type": "SearchOffer",
+      "id": 108529,
+      "name": {
+        "cs": "AI Strategy Consultant (Praha, Brno, Manila)",
+        "en": ""
+      },
+      "slug": {
+        "cs": "ai-strategy-consultant-praha-brno-manila",
+        "en": ""
+      },
+      "salary": {
+        "@type": "SearchOfferSalary",
+        "@id": "/api/.well-known/genid/f564363f0f503a21fc55",
+        "min": 8000000,
+        "max": 13000000,
+        "currency": "CZK",
+        "period": "month"
+      },
+      "seniorities": [
+        "medior"
+      ],
+      "hours": [
+        "full-time"
+      ],
+      "contracts": [
+        "contract",
+        "freelance"
+      ],
+      "locationPreferences": [
+        "hybrid",
+        "onsite"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Praha, Česko",
+            "en": "Prague, Czechia"
+          },
+          "place": {
+            "cs": "Praha",
+            "en": "Prague"
+          }
+        },
+        {
+          "name": {
+            "cs": "Brno, Česko",
+            "en": "Brno, Czechia"
+          },
+          "place": {
+            "cs": "Brno",
+            "en": "Brno"
+          }
+        },
+        {
+          "name": {
+            "cs": "Manila, Metro Manila, Filipíny",
+            "en": "Manila, Metro Manila, Philippines"
+          },
+          "place": {
+            "cs": "Manila",
+            "en": "Manila"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/a2ee8b391bd3d3afcfa5",
+        "startup": false,
+        "name": "Addvery",
+        "slug": "addvery",
+        "logo": "https://assets.startupjobs.cz/LOGO/7125/90f676e3726467b6202b6060a3073561.png"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/108711",
+      "@type": "SearchOffer",
+      "id": 108711,
+      "name": {
+        "cs": "🐍 Digital Solutions Developer – Full-stack 🐍",
+        "en": ""
+      },
+      "slug": {
+        "cs": "digital-solutions-developer-full-stack",
+        "en": ""
+      },
+      "salary": null,
+      "seniorities": [
+        "medior",
+        "senior"
+      ],
+      "hours": [
+        "full-time"
+      ],
+      "contracts": [
+        "freelance"
+      ],
+      "locationPreferences": [
+        "hybrid",
+        "remote"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Brno, Česko",
+            "en": "Brno, Czechia"
+          },
+          "place": {
+            "cs": "Brno",
+            "en": "Brno"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/52e84826a51becb46128",
+        "startup": false,
+        "name": "Krejta",
+        "slug": "krejta-reklamni-agentura",
+        "logo": "https://assets.startupjobs.cz/LOGO/7651/2b82a1b070c332ce187933780352ae3f.png"
+      },
+      "hasPreferentialOrdering": true,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/105625",
+      "@type": "SearchOffer",
+      "id": 105625,
+      "name": {
+        "cs": "Project Lead"
+      },
+      "slug": {
+        "cs": "project-lead"
+      },
+      "salary": null,
+      "seniorities": [
+        "medior",
+        "senior"
+      ],
+      "hours": [
+        "full-time"
+      ],
+      "contracts": [
+        "contract",
+        "freelance"
+      ],
+      "locationPreferences": [
+        "hybrid",
+        "onsite"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Brno, Česko",
+            "en": "Brno, Czechia"
+          },
+          "place": {
+            "cs": "Brno",
+            "en": "Brno"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/2aab59d463a3eb48d081",
+        "startup": false,
+        "name": "Datamole",
+        "slug": "datamole",
+        "logo": "https://assets.startupjobs.cz/LOGO/4340/7a9ee5cb6d713e3bef8b6492accdfd2a.png"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/108465",
+      "@type": "SearchOffer",
+      "id": 108465,
+      "name": {
+        "cs": "Test Automation Consultant",
+        "en": ""
+      },
+      "slug": {
+        "cs": "test-automation-consultant",
+        "en": ""
+      },
+      "salary": null,
+      "seniorities": [
+        "medior"
+      ],
+      "hours": [
+        "full-time"
+      ],
+      "contracts": [
+        "contract"
+      ],
+      "locationPreferences": [
+        "hybrid"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Brno, Česko",
+            "en": "Brno, Czechia"
+          },
+          "place": {
+            "cs": "Brno",
+            "en": "Brno"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/05f73a089d012b16ed58",
+        "startup": false,
+        "name": "Automators s.r.o.",
+        "slug": "automators-s-r-o-1",
+        "logo": "https://assets.startupjobs.cz/LOGO/14821/28412da22567b3ef61c5939a448902a2.png"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/104411",
+      "@type": "SearchOffer",
+      "id": 104411,
+      "name": {
+        "cs": "Sales Representative / Business development",
+        "en": ""
+      },
+      "slug": {
+        "cs": "sales-representative-business-development",
+        "en": ""
+      },
+      "salary": null,
+      "seniorities": [
+        "junior",
+        "medior"
+      ],
+      "hours": [
+        "full-time"
+      ],
+      "contracts": [],
+      "locationPreferences": [
+        "remote"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Praha, Česko",
+            "en": "Prague, Czechia"
+          },
+          "place": {
+            "cs": "Praha",
+            "en": "Prague"
+          }
+        },
+        {
+          "name": {
+            "cs": "Brno, Česko",
+            "en": "Brno, Czechia"
+          },
+          "place": {
+            "cs": "Brno",
+            "en": "Brno"
+          }
+        },
+        {
+          "name": {
+            "cs": "Ústí nad Labem, Česko",
+            "en": "Ústí nad Labem, Czechia"
+          },
+          "place": {
+            "cs": "Ústí nad Labem",
+            "en": "Ústí nad Labem"
+          }
+        },
+        {
+          "name": {
+            "cs": "Teplice, Česko",
+            "en": "Teplice, Czechia"
+          },
+          "place": {
+            "cs": "Teplice",
+            "en": "Teplice"
+          }
+        },
+        {
+          "name": {
+            "cs": "Jihlava, Česko",
+            "en": "Jihlava, Czechia"
+          },
+          "place": {
+            "cs": "Jihlava",
+            "en": "Jihlava"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/7946817a68dbc868d062",
+        "startup": false,
+        "name": "Urban Advert s.r.o.",
+        "slug": "urban-advert-s-r-o",
+        "logo": "https://assets.startupjobs.cz/LOGO/13457/b757188c0dae479ad24227cd731bb20a.png"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    }
+  ],
+  "view": {
+    "@id": "/api/search-offers?page=1",
+    "@type": "PartialCollectionView",
+    "first": "/api/search-offers?page=1",
+    "last": "/api/search-offers?page=3",
+    "next": "/api/search-offers?page=2"
+  }
+}

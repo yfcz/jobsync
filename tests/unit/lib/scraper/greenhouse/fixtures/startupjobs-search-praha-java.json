@@ -1,0 +1,1065 @@
+{
+  "@context": "/api/contexts/SearchOffer",
+  "@id": "/api/search-offers",
+  "@type": "Collection",
+  "totalItems": 223,
+  "member": [
+    {
+      "@id": "/api/offers/109091",
+      "@type": "SearchOffer",
+      "id": 109091,
+      "name": {
+        "cs": "Fullstack (Java+React+AI) Engineer",
+        "en": ""
+      },
+      "slug": {
+        "cs": "fullstack-java-react-ai-engineer",
+        "en": ""
+      },
+      "salary": null,
+      "seniorities": [
+        "medior",
+        "senior"
+      ],
+      "hours": [
+        "full-time"
+      ],
+      "contracts": [
+        "contract",
+        "freelance"
+      ],
+      "locationPreferences": [
+        "hybrid",
+        "onsite"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Praha, Česko",
+            "en": "Prague, Czechia"
+          },
+          "place": {
+            "cs": "Praha",
+            "en": "Prague"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/3a9a4c5513f291e5f574",
+        "startup": false,
+        "name": "Avenga Czechia s.r.o.",
+        "slug": "cleverlance-enterprise-solutions-a-s",
+        "logo": "https://assets.startupjobs.cz/LOGO/2147/2421b222ec52294f9945317d676d596e.png"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/108555",
+      "@type": "SearchOffer",
+      "id": 108555,
+      "name": {
+        "cs": "IT PROJECT MANAGER / KA - FTFP projekty",
+        "en": ""
+      },
+      "slug": {
+        "cs": "it-project-manager-ka-ftfp-projekty",
+        "en": ""
+      },
+      "salary": null,
+      "seniorities": [
+        "medior",
+        "senior"
+      ],
+      "hours": [
+        "full-time"
+      ],
+      "contracts": [
+        "freelance"
+      ],
+      "locationPreferences": [
+        "hybrid",
+        "onsite"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Praha, Česko",
+            "en": "Prague, Czechia"
+          },
+          "place": {
+            "cs": "Praha",
+            "en": "Prague"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/27d5ccf9d750e237fdab",
+        "startup": false,
+        "name": "Coding Bear",
+        "slug": "coding-bear-s-r-o",
+        "logo": "https://assets.startupjobs.cz/LOGO/4229/d9570f67f26400181b48e6755dec0571.png"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/108567",
+      "@type": "SearchOffer",
+      "id": 108567,
+      "name": {
+        "cs": "🧠 Generative AI & ML Developer | 🌍 Shape the Future of AI Solutions | Hybrid | 📍 Prague",
+        "en": "🧠 Generative AI & ML Developer | 🌍 Shape the Future of AI Solutions | Hybrid | 📍 Prague"
+      },
+      "slug": {
+        "cs": "generative-ai-ml-developer-shape-the-future-of-ai-solutions-hybrid-prague",
+        "en": "generative-ai-ml-developer-shape-the-future-of-ai-solutions-hybrid-prague"
+      },
+      "salary": {
+        "@type": "SearchOfferSalary",
+        "@id": "/api/.well-known/genid/30d3ce616ffa8fe4864d",
+        "min": 8000000,
+        "max": 12000000,
+        "currency": "CZK",
+        "period": "month"
+      },
+      "seniorities": [
+        "medior"
+      ],
+      "hours": [
+        "full-time",
+        "part-time"
+      ],
+      "contracts": [
+        "contract",
+        "freelance"
+      ],
+      "locationPreferences": [
+        "hybrid",
+        "onsite"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Praha, Česko",
+            "en": "Prague, Czechia"
+          },
+          "place": {
+            "cs": "Praha",
+            "en": "Prague"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/86f75b99542c940dda6d",
+        "startup": false,
+        "name": "Blindspot Solutions",
+        "slug": "blindspot-solutions",
+        "logo": "https://assets.startupjobs.cz/LOGO/3467/c2a28f52559de42e2a4fea66fb146637.png"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/108943",
+      "@type": "SearchOffer",
+      "id": 108943,
+      "name": {
+        "en": "Senior Full Stack Engineer"
+      },
+      "slug": {
+        "en": "senior-full-stack-engineer"
+      },
+      "salary": null,
+      "seniorities": [
+        "senior"
+      ],
+      "hours": [
+        "full-time"
+      ],
+      "contracts": [
+        "contract"
+      ],
+      "locationPreferences": [
+        "hybrid",
+        "onsite",
+        "remote"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Praha, Česko",
+            "en": "Prague, Czechia"
+          },
+          "place": {
+            "cs": "Praha",
+            "en": "Prague"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/d7fb78e0875240743b72",
+        "startup": false,
+        "name": "Ciklum",
+        "slug": "cn-group-cz",
+        "logo": "https://assets.startupjobs.cz/LOGO/1523/db30a55a9f438e8f85eb7a5ef8ca02d6.png"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/108697",
+      "@type": "SearchOffer",
+      "id": 108697,
+      "name": {
+        "cs": "AI vývojář"
+      },
+      "slug": {
+        "cs": "ai-vyvojar"
+      },
+      "salary": null,
+      "seniorities": [
+        "medior"
+      ],
+      "hours": [
+        "full-time"
+      ],
+      "contracts": [],
+      "locationPreferences": [
+        "hybrid"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Praha, Česko",
+            "en": "Prague, Czechia"
+          },
+          "place": {
+            "cs": "Praha",
+            "en": "Prague"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/ad293acb6fb0f0c5c943",
+        "startup": false,
+        "name": "Air Bank a.s.",
+        "slug": "air-bank-a-s-1",
+        "logo": "https://assets.startupjobs.cz/LOGO/13035/eb01aefe2378836a08ab2554d6bc61ab.png"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/108491",
+      "@type": "SearchOffer",
+      "id": 108491,
+      "name": {
+        "cs": "🤖 AI Product Engineer | AI Applications & Platforms",
+        "en": ""
+      },
+      "slug": {
+        "cs": "ai-product-engineer-ai-applications-platforms",
+        "en": ""
+      },
+      "salary": {
+        "@type": "SearchOfferSalary",
+        "@id": "/api/.well-known/genid/6b25d092f9153318248c",
+        "min": 8000000,
+        "max": 12000000,
+        "currency": "CZK",
+        "period": "month"
+      },
+      "seniorities": [
+        "medior",
+        "senior"
+      ],
+      "hours": [
+        "full-time"
+      ],
+      "contracts": [
+        "contract",
+        "freelance"
+      ],
+      "locationPreferences": [
+        "hybrid",
+        "onsite"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Praha, Česko",
+            "en": "Prague, Czechia"
+          },
+          "place": {
+            "cs": "Praha",
+            "en": "Prague"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/7afae36a26d0a395c044",
+        "startup": false,
+        "name": "Blindspot Solutions",
+        "slug": "blindspot-solutions",
+        "logo": "https://assets.startupjobs.cz/LOGO/3467/c2a28f52559de42e2a4fea66fb146637.png"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/105167",
+      "@type": "SearchOffer",
+      "id": 105167,
+      "name": {
+        "cs": "Principal QA Engineer",
+        "en": "Principal QA Engineer"
+      },
+      "slug": {
+        "cs": "principal-qa-engineer"
+      },
+      "salary": {
+        "@type": "SearchOfferSalary",
+        "@id": "/api/.well-known/genid/9a09c240a1c948e0f5f8",
+        "min": 8000000,
+        "max": 12000000,
+        "currency": "CZK",
+        "period": "month"
+      },
+      "seniorities": [
+        "medior",
+        "senior"
+      ],
+      "hours": [
+        "full-time"
+      ],
+      "contracts": [],
+      "locationPreferences": [
+        "hybrid",
+        "remote"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Praha, Česko",
+            "en": "Prague, Czechia"
+          },
+          "place": {
+            "cs": "Praha",
+            "en": "Prague"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/7af01e84aa84a5f01c25",
+        "startup": false,
+        "name": "Wultra",
+        "slug": "wultra-s-r-o",
+        "logo": "https://assets.startupjobs.cz/LOGO/8158/4df424a3d2ac180b313f52c8be848ab4.png"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/100083",
+      "@type": "SearchOffer",
+      "id": 100083,
+      "name": {
+        "cs": "Tester / QA Engineer (Manual + API Testing)",
+        "en": ""
+      },
+      "slug": {
+        "cs": "tester-qa-engineer-manual-api-testing",
+        "en": ""
+      },
+      "salary": {
+        "@type": "SearchOfferSalary",
+        "@id": "/api/.well-known/genid/0df9ef1978963867fe3e",
+        "min": 4500000,
+        "max": 7500000,
+        "currency": "CZK",
+        "period": "month"
+      },
+      "seniorities": [
+        "medior",
+        "senior"
+      ],
+      "hours": [
+        "full-time"
+      ],
+      "contracts": [
+        "contract",
+        "freelance"
+      ],
+      "locationPreferences": [
+        "hybrid"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Praha, Česko",
+            "en": "Prague, Czechia"
+          },
+          "place": {
+            "cs": "Praha",
+            "en": "Prague"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/29958922c7c280cd8d10",
+        "startup": false,
+        "name": "Scormium",
+        "slug": "scormium",
+        "logo": "https://assets.startupjobs.cz/LOGO/1078/aaf1670b512f23db75b8440d89084e68.png"
+      },
+      "hasPreferentialOrdering": true,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/108621",
+      "@type": "SearchOffer",
+      "id": 108621,
+      "name": {
+        "cs": "SEO & AI Search Specialista (AEO/GEO)",
+        "en": ""
+      },
+      "slug": {
+        "cs": "seo-ai-search-specialista-aeo-geo",
+        "en": ""
+      },
+      "salary": null,
+      "seniorities": [
+        "medior",
+        "senior"
+      ],
+      "hours": [
+        "full-time",
+        "part-time"
+      ],
+      "contracts": [],
+      "locationPreferences": [
+        "onsite"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Praha, Česko",
+            "en": "Prague, Czechia"
+          },
+          "place": {
+            "cs": "Praha",
+            "en": "Prague"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/5e4351d4adc8bdc86f00",
+        "startup": false,
+        "name": "Prochazka & Partners s.r.o.",
+        "slug": "prochazka-partners-s-r-o-1",
+        "logo": "https://assets.startupjobs.cz/LOGO/11667/a48c59b1b6cc110ade121ead69d84257.png"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/108719",
+      "@type": "SearchOffer",
+      "id": 108719,
+      "name": {
+        "cs": "Marketing Partnership Manager 🤝 💜",
+        "en": ""
+      },
+      "slug": {
+        "cs": "marketing-partnership-manager",
+        "en": ""
+      },
+      "salary": {
+        "@type": "SearchOfferSalary",
+        "@id": "/api/.well-known/genid/5ef2ae2d0e2238d8114c",
+        "min": 5000000,
+        "max": 8000000,
+        "currency": "CZK",
+        "period": "month"
+      },
+      "seniorities": [
+        "medior",
+        "senior"
+      ],
+      "hours": [
+        "full-time"
+      ],
+      "contracts": [
+        "contract",
+        "freelance"
+      ],
+      "locationPreferences": [
+        "hybrid",
+        "onsite"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Praha, Česko",
+            "en": "Prague, Czechia"
+          },
+          "place": {
+            "cs": "Praha",
+            "en": "Prague"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/bc34e0fb6b0675f4d83e",
+        "startup": false,
+        "name": "Retino",
+        "slug": "retino",
+        "logo": "https://assets.startupjobs.cz/LOGO/4115/f37f77be155cd1849df3225e25bb6790.png"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/40052",
+      "@type": "SearchOffer",
+      "id": 40052,
+      "name": {
+        "cs": "⚙️ Senior vývojář/ka eSales platformy – PHP | remote | 130–160 000 Kč"
+      },
+      "slug": {
+        "cs": "senior-vyvojar-ka-esales-platformy-php-remote-130-160-000-kc"
+      },
+      "salary": {
+        "@type": "SearchOfferSalary",
+        "@id": "/api/.well-known/genid/6b5f124b3ed7eccd4208",
+        "min": 13000000,
+        "max": 16000000,
+        "currency": "CZK",
+        "period": "month"
+      },
+      "seniorities": [
+        "senior"
+      ],
+      "hours": [
+        "full-time"
+      ],
+      "contracts": [
+        "freelance"
+      ],
+      "locationPreferences": [
+        "remote"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Praha, Česko",
+            "en": "Prague, Czechia"
+          },
+          "place": {
+            "cs": "Praha",
+            "en": "Prague"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/da96e6474da63f62d7d3",
+        "startup": false,
+        "name": "Emorfiq - e-commerce řešení nové generace",
+        "slug": "webtown-autonomni-e-shopy",
+        "logo": "https://assets.startupjobs.cz/LOGO/6793/f09264129655f6b88b3621e669bd99ff.png"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/93697",
+      "@type": "SearchOffer",
+      "id": 93697,
+      "name": {
+        "cs": "Front Office Specialist",
+        "en": ""
+      },
+      "slug": {
+        "cs": "front-office-specialist",
+        "en": ""
+      },
+      "salary": {
+        "@type": "SearchOfferSalary",
+        "@id": "/api/.well-known/genid/639f7a7b26aa7f4d11ac",
+        "min": 3800000,
+        "max": 5200000,
+        "currency": "CZK",
+        "period": "month"
+      },
+      "seniorities": [
+        "junior",
+        "medior"
+      ],
+      "hours": [
+        "full-time"
+      ],
+      "contracts": [
+        "contract"
+      ],
+      "locationPreferences": [
+        "onsite"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Praha, Česko",
+            "en": "Prague, Czechia"
+          },
+          "place": {
+            "cs": "Praha",
+            "en": "Prague"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/59e40769b1f88b5843b1",
+        "startup": false,
+        "name": "Portu",
+        "slug": "portu",
+        "logo": "https://assets.startupjobs.cz/LOGO/5827/d3e1c3b988f67c52217afaec8cf546f4.png"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/109055",
+      "@type": "SearchOffer",
+      "id": 109055,
+      "name": {
+        "cs": "Senior Enterprise Sales Manager @ Base.com"
+      },
+      "slug": {
+        "cs": "senior-enterprise-sales-manager-base-com"
+      },
+      "salary": null,
+      "seniorities": [
+        "senior"
+      ],
+      "hours": [
+        "full-time"
+      ],
+      "contracts": [
+        "contract",
+        "freelance"
+      ],
+      "locationPreferences": [
+        "hybrid",
+        "onsite",
+        "remote"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Praha, Česko",
+            "en": "Prague, Czechia"
+          },
+          "place": {
+            "cs": "Praha",
+            "en": "Prague"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/138a0af1ddec1691d6d5",
+        "startup": false,
+        "name": "base.com",
+        "slug": "baseliker-cz",
+        "logo": "https://assets.startupjobs.cz/LOGO/8892/035149fc19f5ba9cf02bed54b5dd040f.png"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/109241",
+      "@type": "SearchOffer",
+      "id": 109241,
+      "name": {
+        "cs": "🤖 Linux & DevOps nadšenec",
+        "en": ""
+      },
+      "slug": {
+        "cs": "linux-devops-nadsenec",
+        "en": ""
+      },
+      "salary": null,
+      "seniorities": [
+        "junior",
+        "medior",
+        "senior"
+      ],
+      "hours": [
+        "full-time",
+        "part-time"
+      ],
+      "contracts": [
+        "freelance"
+      ],
+      "locationPreferences": [
+        "hybrid",
+        "onsite",
+        "remote"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Praha, Česko",
+            "en": "Prague, Czechia"
+          },
+          "place": {
+            "cs": "Praha",
+            "en": "Prague"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/b3e1f83634c35fb2568f",
+        "startup": false,
+        "name": "COex",
+        "slug": "coex",
+        "logo": "https://assets.startupjobs.cz/LOGO/1297/6e3b8be1f4ef64cd023f1361ee001a04.png"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/108961",
+      "@type": "SearchOffer",
+      "id": 108961,
+      "name": {
+        "cs": "People & Office generalista/ka"
+      },
+      "slug": {
+        "cs": "people-office-generalista-ka"
+      },
+      "salary": {
+        "@type": "SearchOfferSalary",
+        "@id": "/api/.well-known/genid/fc055f93b58e2d015448",
+        "min": 4000000,
+        "max": 6000000,
+        "currency": "CZK",
+        "period": "month"
+      },
+      "seniorities": [
+        "junior"
+      ],
+      "hours": [
+        "full-time"
+      ],
+      "contracts": [],
+      "locationPreferences": [
+        "hybrid",
+        "onsite"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Praha, Česko",
+            "en": "Prague, Czechia"
+          },
+          "place": {
+            "cs": "Praha",
+            "en": "Prague"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/3c1f7f5ce2f74c328217",
+        "startup": false,
+        "name": "Reas.cz",
+        "slug": "reas-cz",
+        "logo": "https://assets.startupjobs.cz/LOGO/3294/GN7B8C7F4FV3reas-png-pozitivni152542575840.png"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/108565",
+      "@type": "SearchOffer",
+      "id": 108565,
+      "name": {
+        "cs": "Senior AI Engineer",
+        "en": ""
+      },
+      "slug": {
+        "cs": "senior-ai-engineer",
+        "en": ""
+      },
+      "salary": null,
+      "seniorities": [
+        "medior",
+        "senior"
+      ],
+      "hours": [
+        "full-time"
+      ],
+      "contracts": [
+        "freelance"
+      ],
+      "locationPreferences": [
+        "hybrid",
+        "onsite",
+        "remote"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Praha, Česko",
+            "en": "Prague, Czechia"
+          },
+          "place": {
+            "cs": "Praha",
+            "en": "Prague"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/0b521a73379371e34d71",
+        "startup": false,
+        "name": "Oddin.gg",
+        "slug": "oddin-gg",
+        "logo": "https://assets.startupjobs.cz/LOGO/6106/cef1224db9df27de6349d2983629d125.png"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/108755",
+      "@type": "SearchOffer",
+      "id": 108755,
+      "name": {
+        "cs": "Samostatný QA Tester s AI"
+      },
+      "slug": {
+        "cs": "samostatny-qa-tester-s-ai"
+      },
+      "salary": null,
+      "seniorities": [
+        "junior",
+        "medior"
+      ],
+      "hours": [
+        "full-time"
+      ],
+      "contracts": [
+        "contract",
+        "freelance"
+      ],
+      "locationPreferences": [
+        "hybrid",
+        "onsite"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Praha, Česko",
+            "en": "Prague, Czechia"
+          },
+          "place": {
+            "cs": "Praha",
+            "en": "Prague"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/942e956e47fcf0e54e74",
+        "startup": false,
+        "name": "eM Client",
+        "slug": "em-client",
+        "logo": "https://assets.startupjobs.cz/LOGO/795/bc828a7fdf40ef50c068851cb9d45e09.png"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/108595",
+      "@type": "SearchOffer",
+      "id": 108595,
+      "name": {
+        "cs": "Customer Care Specialist | Direct Fidoo",
+        "en": ""
+      },
+      "slug": {
+        "cs": "customer-care-specialist-direct-fidoo",
+        "en": ""
+      },
+      "salary": {
+        "@type": "SearchOfferSalary",
+        "@id": "/api/.well-known/genid/e1998ef691fb09b4658b",
+        "min": 2000000,
+        "max": 4000000,
+        "currency": "CZK",
+        "period": "month"
+      },
+      "seniorities": [
+        "junior"
+      ],
+      "hours": [
+        "full-time"
+      ],
+      "contracts": [
+        "contract"
+      ],
+      "locationPreferences": [
+        "hybrid",
+        "onsite"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Praha, Česko",
+            "en": "Prague, Czechia"
+          },
+          "place": {
+            "cs": "Praha",
+            "en": "Prague"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/99b75bd072c5a7e6444e",
+        "startup": false,
+        "name": "Direct",
+        "slug": "direct-technologies",
+        "logo": "https://assets.startupjobs.cz/LOGO/13329/6751b2f8919f777f944a3e5f9e2b5f8b.png"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/108965",
+      "@type": "SearchOffer",
+      "id": 108965,
+      "name": {
+        "cs": "GTM Engineer (junior)"
+      },
+      "slug": {
+        "cs": "gtm-engineer-junior"
+      },
+      "salary": null,
+      "seniorities": [
+        "junior"
+      ],
+      "hours": [
+        "full-time"
+      ],
+      "contracts": [
+        "freelance"
+      ],
+      "locationPreferences": [
+        "hybrid",
+        "onsite"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Praha, Česko",
+            "en": "Prague, Czechia"
+          },
+          "place": {
+            "cs": "Praha",
+            "en": "Prague"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/62d304597b48d5515a31",
+        "startup": false,
+        "name": "DecisionRules",
+        "slug": "decisionrules-services-s-r-o",
+        "logo": "https://assets.startupjobs.cz/LOGO/13421/ce55aae231b5978205f2d8c121638035.png"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    },
+    {
+      "@id": "/api/offers/108141",
+      "@type": "SearchOffer",
+      "id": 108141,
+      "name": {
+        "cs": "Medior AI Engineer"
+      },
+      "slug": {
+        "cs": "medior-ai-engineer"
+      },
+      "salary": null,
+      "seniorities": [
+        "medior"
+      ],
+      "hours": [
+        "full-time"
+      ],
+      "contracts": [
+        "contract",
+        "freelance"
+      ],
+      "locationPreferences": [
+        "hybrid",
+        "remote"
+      ],
+      "locations": [
+        {
+          "name": {
+            "cs": "Praha, Česko",
+            "en": "Prague, Czechia"
+          },
+          "place": {
+            "cs": "Praha",
+            "en": "Prague"
+          }
+        },
+        {
+          "name": {
+            "cs": "Brno, Česko",
+            "en": "Brno, Czechia"
+          },
+          "place": {
+            "cs": "Brno",
+            "en": "Brno"
+          }
+        }
+      ],
+      "company": {
+        "@type": "SearchOfferCompany",
+        "@id": "/api/.well-known/genid/b0a93312802c4bed23ce",
+        "startup": false,
+        "name": "ARTIN",
+        "slug": "artin",
+        "logo": "https://assets.startupjobs.cz/LOGO/731/1aad5fe228281ec8d324f9b4ad952340.png"
+      },
+      "hasPreferentialOrdering": false,
+      "isPartialMatch": false
+    }
+  ],
+  "view": {
+    "@id": "/api/search-offers?page=1",
+    "@type": "PartialCollectionView",
+    "first": "/api/search-offers?page=1",
+    "last": "/api/search-offers?page=12",
+    "next": "/api/search-offers?page=2"
+  }
+}

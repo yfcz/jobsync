@@ -1,7 +1,8 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { searchStartupJobs } from "@/lib/scraper/startupjobs";
-import { allowedStartupJobsUrl, matchesStartupJobsQueries, parseStartupJobsDetail, parseStartupJobsSearch, parseStartupJobsSitemapIndex } from "@/lib/scraper/startupjobs/parser";
+import { allowedStartupJobsUrl, parseStartupJobsDetail } from "@/lib/scraper/startupjobs/parser";
+import { buildStartupJobsSearchRequest, STARTUPJOBS_SEARCH_ORIGIN } from "@/lib/scraper/startupjobs/search";
 import { startupJobsRejectionReason } from "@/lib/scraper/startupjobs/filter";
 import { fetchStartupJobsText, robotsAllows } from "@/lib/scraper/startupjobs/http";
 import { dedupeJobs, jobDedupeKey } from "@/lib/scraper/utils";
@@ -15,15 +16,16 @@ vi.mock("node:timers/promises", async (original) => {
 
 const fixture = (name: string) => readFileSync(join(process.cwd(), "__tests__/fixtures", name), "utf8");
 const detail = fixture("startupjobs-detail.html");
-const sitemap = fixture("startupjobs-offers.xml");
-const index = fixture("startupjobs-sitemap-index.xml");
+const javaSearch = fixture("startupjobs-search-brno-java.json");
+const backendSearch = fixture("startupjobs-search-brno-backend.json");
 const robots = fixture("startupjobs-robots.txt");
+const searchRobots = fixture("startupjobs-search-robots.txt");
 const listing = { id: "108443", title: "java fintech developer", url: "https://www.startupjobs.cz/nabidka/108443/java-fintech-developer" };
 const config: StartupJobsRunConfig = { kind: "startupjobs.cz", queries: ["java", "backend"], searchMode: "brno", targetTitles: ["Java Developer"], keywords: ["Java"], locations: [], strictLocation: false, topK: 5, saveUnanalyzed: true, maxResults: 2 };
 
 // Variants change fields in the captured public Nuxt offer graph, preserving
 // the actual devalue layout rather than inventing a different feed schema.
-function withOffer(patch: Record<string, unknown>): string {
+function withOffer(patch: Record<string, unknown>, id = listing.id): string {
   const table = JSON.parse(detail.match(/<script[^>]*>([\s\S]*?)<\/script>/)![1]);
   const offer = table.find((entry: Record<string, unknown>) => entry && typeof entry === "object" && "createdAt" in entry && "collaborations" in entry);
   function encode(value: unknown): number {
@@ -32,26 +34,17 @@ function withOffer(patch: Record<string, unknown>): string {
     return i;
   }
   for (const [key, value] of Object.entries(patch)) offer[key] = encode(value);
+  const request = table.find((entry: Record<string, unknown>) => entry && typeof entry === "object" && "_id" in entry && table[entry._id as number] === "apiOffersIdGet");
+  table[request.path].id = encode(id);
   return `<script id="__NUXT_DATA__" type="application/json">${JSON.stringify(table).replaceAll("<", "\\u003C")}</script>`;
 }
 const location = (place: string, country = "Česko") => ({ name: { cs: `${place}, ${country}` }, place: { cs: place }, country: { cs: country } });
 const response = (body: string, status = 200) => new Response(body, { status });
+const jsonResponse = (body: string) => new Response(body, { headers: { "content-type": "application/ld+json" } });
+const publicPolicies = () => vi.fn().mockResolvedValueOnce(response(robots)).mockResolvedValueOnce(response(searchRobots));
 
 describe("StartupJobs public data", () => {
   afterEach(() => { vi.unstubAllGlobals(); vi.useRealTimers(); });
-
-  it("parses captured sitemap search results using OR, newest IDs first", () => {
-    expect(parseStartupJobsSitemapIndex(index)).toBe("https://www.startupjobs.cz/sitemap/offers.xml");
-    const listings = parseStartupJobsSearch(sitemap, ["java", "backend"]);
-    expect(listings).toHaveLength(11);
-    expect(listings[0].id).toBe("109091");
-    expect(listings).toContainEqual(listing);
-    expect(matchesStartupJobsQueries("javascript", ["java"])).toBe(false);
-    expect(matchesStartupJobsQueries("Back-end vývojář", ["back end"])).toBe(true);
-    expect(parseStartupJobsSearch(sitemap, ["nonexistent"])).toEqual([]);
-    expect(() => parseStartupJobsSearch("<html>challenge</html>", ["java"])).toThrow();
-    expect(() => parseStartupJobsSearch('<!DOCTYPE xml [<!ENTITY x "x">]><urlset/>', ["java"])).toThrow();
-  });
 
   it("parses a real public detail, preserving structured fields and skills", () => {
     const job = parseStartupJobsDetail(detail, listing);
@@ -129,37 +122,129 @@ describe("StartupJobs public data", () => {
     expect(dedupeJobs([edited], new Set([jobDedupeKey(job)]))).toEqual([]);
   });
 
-  it("fetches robots, the published sitemap pair and only the detail cap", async () => {
-    const one = `<urlset><url><loc>${listing.url}</loc></url><url><loc>${listing.url}</loc></url></urlset>`;
-    const fetchMock = vi.fn().mockResolvedValueOnce(response(robots)).mockResolvedValueOnce(response(index)).mockResolvedValueOnce(response(one)).mockResolvedValueOnce(response(detail));
+  it("runs separate OR searches with Brno filtering, deduplicates and respects the detail cap", async () => {
+    const fetchMock = publicPolicies().mockResolvedValueOnce(jsonResponse(javaSearch)).mockResolvedValueOnce(jsonResponse(backendSearch)).mockResolvedValueOnce(response(detail));
     vi.stubGlobal("fetch", fetchMock);
     const result = await searchStartupJobs({ ...config, maxResults: 1 });
     expect(result.jobs).toHaveLength(1);
-    expect(result.duplicates).toHaveLength(1);
+    expect(result.duplicates).toHaveLength(2);
     expect(result.errors).toEqual([]);
     expect(result.fetchedCount).toBe(1);
-    expect(fetchMock).toHaveBeenCalledTimes(4);
+    expect(fetchMock).toHaveBeenCalledTimes(5);
+    const searches = fetchMock.mock.calls.filter(([, options]) => options.method === "POST");
+    expect(searches.map(([, options]) => JSON.parse(options.body))).toEqual([
+      { query: "java", locations: [{ locationId: "ChIJEVE_wDqUEkcRsLEUZg-vAAQ", radiusKm: 0 }] },
+      { query: "backend", locations: [{ locationId: "ChIJEVE_wDqUEkcRsLEUZg-vAAQ", radiusKm: 0 }] },
+    ]);
+    expect(fetchMock.mock.calls.every(([url]) => !url.includes("sitemap"))).toBe(true);
     expect(fetchMock.mock.calls.every(([, options]) => options.redirect === "manual")).toBe(true);
+    expect(fetchMock.mock.calls.every(([, options]) => options.credentials === "omit" && !options.headers.authorization)).toBe(true);
+  });
+
+  it("interleaves ranked OR results so the first query does not consume the budget", async () => {
+    const fetchMock = publicPolicies().mockResolvedValueOnce(jsonResponse(javaSearch)).mockResolvedValueOnce(jsonResponse(backendSearch))
+      .mockResolvedValueOnce(response(detail)).mockResolvedValueOnce(response(withOffer({}, "108077")));
+    vi.stubGlobal("fetch", fetchMock);
+    const result = await searchStartupJobs(config);
+    expect(result.jobs.map((job) => job.sourceId)).toEqual(["108443", "108077"]);
+    expect(fetchMock.mock.calls.slice(-2).map(([url]) => url)).toEqual([
+      listing.url, "https://www.startupjobs.cz/nabidka/108077/senior-backend-engineer-core-services",
+    ]);
+  });
+
+  it("accepts native matches without the query in their URL/title and leaves relevance to the shared pipeline", async () => {
+    const page = JSON.parse(javaSearch);
+    page.member = [page.member[1]];
+    delete page.view;
+    const fetchMock = publicPolicies().mockResolvedValueOnce(jsonResponse(JSON.stringify(page)))
+      .mockResolvedValueOnce(response(withOffer({ name: { cs: "Software Engineer" }, description: { cs: "Distributed systems" }, skills: [] }, "46096")));
+    vi.stubGlobal("fetch", fetchMock);
+    const result = await searchStartupJobs({ ...config, queries: ["java"], maxResults: 1 });
+    expect(result.jobs[0]).toMatchObject({ sourceId: "46096", title: "Software Engineer" });
+    expect(result.jobs[0].url).not.toContain("java");
+    expect(result.rejected).toEqual([]);
+  });
+
+  it.each(["praha", "remote_cz"] as const)("sends the native %s filter before fetching details", async (searchMode) => {
+    const raw = fixture(`startupjobs-search-${searchMode === "praha" ? "praha" : "remote"}-java.json`);
+    const id = String(JSON.parse(raw).member[0].id);
+    const fetchMock = publicPolicies().mockResolvedValueOnce(jsonResponse(raw))
+      .mockResolvedValueOnce(response(withOffer({ locations: [location("Praha")], collaborations: ["remote"], description: { cs: "Work from anywhere in Czechia." } }, id)));
+    vi.stubGlobal("fetch", fetchMock);
+    const result = await searchStartupJobs({ ...config, queries: ["java"], searchMode, maxResults: 1 });
+    expect(result.jobs).toHaveLength(1);
+    expect(JSON.parse(fetchMock.mock.calls[2][1].body)).toEqual(searchMode === "praha"
+      ? { query: "java", locations: [{ locationId: "ChIJi3lwCZyTC0cRkEAWZg-vAAQ", radiusKm: 0 }] }
+      : { query: "java", locationPreferences: ["remote"] });
+  });
+
+  it("recognizes a real empty search without loading details or falling back to a sitemap", async () => {
+    const fetchMock = publicPolicies().mockResolvedValueOnce(jsonResponse(fixture("startupjobs-search-empty.json")));
+    vi.stubGlobal("fetch", fetchMock);
+    const result = await searchStartupJobs({ ...config, queries: ["java"] });
+    expect(result.jobs).toEqual([]);
+    expect(result.errors).toEqual([]);
+    expect(fetchMock).toHaveBeenCalledTimes(3);
+  });
+
+  it("follows safe pages only when needed and never exceeds two pages per term", async () => {
+    const first = JSON.parse(javaSearch);
+    first.member = first.member.slice(0, 1);
+    const second = { ...first, view: { next: "/api/search-offers?page=3" } };
+    const fetchMock = publicPolicies().mockResolvedValueOnce(jsonResponse(JSON.stringify(first)))
+      .mockResolvedValueOnce(jsonResponse(JSON.stringify(second))).mockResolvedValueOnce(response(detail));
+    vi.stubGlobal("fetch", fetchMock);
+    const result = await searchStartupJobs({ ...config, queries: ["java"] });
+    expect(result.jobs).toHaveLength(1);
+    expect(result.errors).toEqual([]);
+    expect(fetchMock.mock.calls.filter(([, options]) => options.method === "POST").map(([url]) => url)).toEqual([
+      `${STARTUPJOBS_SEARCH_ORIGIN}/api/search-offers?page=1`, `${STARTUPJOBS_SEARCH_ORIGIN}/api/search-offers?page=2`,
+    ]);
+    expect(fetchMock).toHaveBeenCalledTimes(5);
+  });
+
+  it("keeps successful query results when another query has a malformed response", async () => {
+    const fetchMock = publicPolicies().mockResolvedValueOnce(jsonResponse("{bad json"))
+      .mockResolvedValueOnce(jsonResponse(javaSearch)).mockResolvedValueOnce(response(detail));
+    vi.stubGlobal("fetch", fetchMock);
+    const result = await searchStartupJobs({ ...config, maxResults: 1 });
+    expect(result.jobs).toHaveLength(1);
+    expect(result.errors[0].kind).toBe("parse");
   });
 
   it.each([403, 429])("stops all detail requests after HTTP %s without retrying", async (status) => {
-    const fetchMock = vi.fn().mockResolvedValueOnce(response(robots)).mockResolvedValueOnce(response(index)).mockResolvedValueOnce(response(sitemap)).mockResolvedValueOnce(new Response("Stop", { status, headers: { "retry-after": "120" } }));
+    const fetchMock = publicPolicies().mockResolvedValueOnce(jsonResponse(javaSearch)).mockResolvedValueOnce(jsonResponse(backendSearch)).mockResolvedValueOnce(new Response("Stop", { status, headers: { "retry-after": "120" } }));
     vi.stubGlobal("fetch", fetchMock);
     const result = await searchStartupJobs(config);
-    expect(fetchMock).toHaveBeenCalledTimes(4);
+    expect(fetchMock).toHaveBeenCalledTimes(5);
     expect(result.errors[0].kind).toBe(status === 403 ? "blocked" : "rate_limited");
     if (status === 429) expect(result.errors[0].reason).toContain("retry after 120s");
   });
 
-  it("refuses a changed robots policy before fetching sitemaps", async () => {
+  it.each([403, 429])("stops the whole search after HTTP %s without the next query or any details", async (status) => {
+    const fetchMock = publicPolicies().mockResolvedValueOnce(new Response("Stop", { status }));
+    vi.stubGlobal("fetch", fetchMock);
+    const result = await searchStartupJobs(config);
+    expect(result.errors[0].kind).toBe(status === 403 ? "blocked" : "rate_limited");
+    expect(fetchMock).toHaveBeenCalledTimes(3);
+  });
+
+  it("refuses a changed website robots policy before searching", async () => {
     const fetchMock = vi.fn().mockResolvedValue(response("User-agent: *\nDisallow: /"));
     vi.stubGlobal("fetch", fetchMock);
     const result = await searchStartupJobs(config);
     expect(fetchMock).toHaveBeenCalledTimes(1);
     expect(result.errors[0].kind).toBe("blocked");
-    expect(robotsAllows("User-agent: *\nAllow: /\nUser-agent: JobSync\nDisallow: /sitemap/", "https://www.startupjobs.cz/sitemap/offers.xml")).toBe(false);
-    expect(robotsAllows("User-agent: *\nDisallow: /*\nAllow: /sitemap/offers.xml$", "https://www.startupjobs.cz/sitemap/offers.xml")).toBe(true);
+    expect(robotsAllows("User-agent: *\nAllow: /\nUser-agent: JobSync\nDisallow: /api/", `${STARTUPJOBS_SEARCH_ORIGIN}/api/search-offers?page=1`)).toBe(false);
+    expect(robotsAllows("User-agent: *\nDisallow: /*\nAllow: /api/search-offers?page=1$", `${STARTUPJOBS_SEARCH_ORIGIN}/api/search-offers?page=1`)).toBe(true);
     expect(robotsAllows("User-agent: *\nCrawl-delay: 10", listing.url)).toBe(false);
+  });
+
+  it("checks the search origin's robots policy independently", async () => {
+    const fetchMock = vi.fn().mockResolvedValueOnce(response(robots)).mockResolvedValueOnce(response("User-agent: *\nDisallow: /api/"));
+    vi.stubGlobal("fetch", fetchMock);
+    expect((await searchStartupJobs(config)).errors[0].kind).toBe("blocked");
+    expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 
   it.each(["https://example.com/private", "http://www.startupjobs.cz/sitemap/offers.xml", "https://www.startupjobs.cz:8443/sitemap/offers.xml", "https://user:password@www.startupjobs.cz/sitemap/offers.xml", "https://back.startupjobs.cz/api/offers", "https://www.startupjobs.cz/admin/", "https://www.startupjobs.cz/nabidka/108443/java?secret=x"])("refuses unsafe URL or redirect %s", async (url) => {
@@ -179,8 +264,19 @@ describe("StartupJobs public data", () => {
     vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("DNS failure")));
     const result = await fetchStartupJobsText(listing.url);
     expect(result).toMatchObject({ success: false, error: { type: "network", message: "DNS failure" } });
-    vi.stubGlobal("fetch", vi.fn().mockResolvedValueOnce(response(robots)).mockResolvedValueOnce(response("<html>challenge</html>")));
+    vi.stubGlobal("fetch", publicPolicies().mockResolvedValue(jsonResponse("<html>challenge</html>")));
     expect((await searchStartupJobs(config)).errors[0].kind).toBe("parse");
+  });
+
+  it("never replays search POSTs through redirects or crosses origins on GET", async () => {
+    const request = buildStartupJobsSearchRequest("java", "brno");
+    const fetchMock = vi.fn().mockResolvedValue(new Response(null, { status: 307, headers: { location: request.url } }));
+    vi.stubGlobal("fetch", fetchMock);
+    expect(await fetchStartupJobsText(request.url, undefined, searchRobots, request.body)).toMatchObject({ success: false, error: { type: "blocked" } });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    fetchMock.mockClear().mockResolvedValue(new Response(null, { status: 302, headers: { location: `${STARTUPJOBS_SEARCH_ORIGIN}/robots.txt` } }));
+    expect(await fetchStartupJobsText(listing.url)).toMatchObject({ success: false, error: { type: "blocked" } });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
   it("times out an unresponsive request and propagates cancellation", async () => {

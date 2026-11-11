@@ -1,53 +1,62 @@
 import { parse } from "parse5";
 import { flattenHtml } from "../html";
-import type { StartupJobsJob, StartupJobsListing } from "./types";
+import { APP_CONSTANTS } from "@/lib/constants";
+import { STARTUPJOBS_SEARCH_ORIGIN } from "./search";
+import type { StartupJobsJob, StartupJobsListing, StartupJobsSearchPage } from "./types";
 
 export const STARTUPJOBS_ORIGIN = "https://www.startupjobs.cz";
 
 export function allowedStartupJobsUrl(value: string): boolean {
   try {
     const url = new URL(value);
-    return url.origin === STARTUPJOBS_ORIGIN && !url.username && !url.password &&
-      (url.pathname === "/robots.txt" || url.pathname === "/sitemap_index.xml" ||
-        url.pathname === "/sitemap/offers.xml" || /^\/nabidka\/\d+\/[a-z0-9-]+\/?$/.test(url.pathname)) &&
-      !url.search && !url.hash;
+    if (url.username || url.password || url.hash) return false;
+    if (url.origin === STARTUPJOBS_ORIGIN) {
+      return !url.search && (url.pathname === "/robots.txt" ||
+        /^\/nabidka\/\d+\/[a-z0-9-]+\/?$/.test(url.pathname));
+    }
+    if (url.origin !== STARTUPJOBS_SEARCH_ORIGIN) return false;
+    if (url.pathname === "/robots.txt") return !url.search;
+    if (url.pathname !== "/api/search-offers" || !/^\?page=[1-9]\d*$/.test(url.search)) return false;
+    const page = Number(url.searchParams.get("page"));
+    return page <= APP_CONSTANTS.STARTUPJOBS_MAX_SEARCH_PAGES;
   } catch {
     return false;
   }
-}
-
-function locs(xml: string): string[] {
-  // No DTD/entity expansion. The observed sitemaps use plain absolute URLs.
-  if (/<!DOCTYPE|<!ENTITY/i.test(xml)) throw new Error("Unsupported sitemap declarations");
-  return [...xml.matchAll(/<loc>\s*([^<]+?)\s*<\/loc>/g)].map((match) => match[1].replace(/&amp;/g, "&"));
-}
-
-export function parseStartupJobsSitemapIndex(xml: string): string {
-  if (!/<sitemapindex\b/.test(xml)) throw new Error("Invalid StartupJobs sitemap index");
-  const offers = locs(xml).find((url) => url === `${STARTUPJOBS_ORIGIN}/sitemap/offers.xml`);
-  if (!offers) throw new Error("StartupJobs offers sitemap is unavailable");
-  return offers;
 }
 
 export function normalizeSearchText(value: string): string {
   return value.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase().replace(/[^a-z0-9+#]+/g, " ").trim();
 }
 
-export function matchesStartupJobsQueries(value: string, queries: string[]): boolean {
-  const text = ` ${normalizeSearchText(value)} `;
-  return queries.some((query) => {
-    const normalized = normalizeSearchText(query);
-    return normalized.length > 0 && text.includes(` ${normalized} `);
+export function parseStartupJobsSearchPage(json: string, page = 1): StartupJobsSearchPage {
+  const result = object(JSON.parse(json));
+  if (result["@type"] !== "Collection" || result["@id"] !== "/api/search-offers" ||
+      !Array.isArray(result.member) || result.member.length > 100 ||
+      !Number.isSafeInteger(result.totalItems) || Number(result.totalItems) < result.member.length) {
+    throw new Error("Invalid StartupJobs search collection");
+  }
+  const listings = result.member.map((value) => {
+    const item = object(value);
+    const id = String(item.id ?? "");
+    const slug = localized(item.slug);
+    const title = localized(item.name);
+    if (item["@type"] !== "SearchOffer" || !/^[1-9]\d{0,14}$/.test(id) ||
+        !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug) || !title ||
+        (item["@id"] !== undefined && item["@id"] !== `/api/offers/${id}`)) {
+      throw new Error(`Invalid StartupJobs search listing (${id || "missing identity"})`);
+    }
+    return { id, title, url: `${STARTUPJOBS_ORIGIN}/nabidka/${id}/${slug}` };
   });
-}
-
-export function parseStartupJobsSearch(xml: string, queries: string[]): StartupJobsListing[] {
-  if (!/<urlset\b/.test(xml)) throw new Error("Invalid StartupJobs offers sitemap");
-  return locs(xml).filter(allowedStartupJobsUrl).flatMap((url) => {
-    const match = new URL(url).pathname.match(/^\/nabidka\/(\d+)\/([a-z0-9-]+)\/?$/);
-    if (!match || !matchesStartupJobsQueries(match[2], queries)) return [];
-    return [{ id: match[1], title: match[2].replace(/-/g, " "), url: `${STARTUPJOBS_ORIGIN}/nabidka/${match[1]}/${match[2]}` }];
-  }).sort((a, b) => Number(b.id) - Number(a.id));
+  let nextPage: number | undefined;
+  const next = object(result.view).next;
+  if (next !== undefined) {
+    if (typeof next !== "string") throw new Error("Invalid StartupJobs next page");
+    const url = new URL(next, STARTUPJOBS_SEARCH_ORIGIN);
+    const expected = `${STARTUPJOBS_SEARCH_ORIGIN}/api/search-offers?page=${page + 1}`;
+    if (url.href !== expected) throw new Error("Unsafe or unexpected StartupJobs next page");
+    nextPage = page + 1;
+  }
+  return { listings, totalItems: Number(result.totalItems), nextPage };
 }
 
 type HtmlNode = { tagName?: string; attrs?: { name: string; value: string }[]; childNodes?: HtmlNode[]; value?: string };
