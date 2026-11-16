@@ -45,6 +45,7 @@ vi.mock("@/lib/scraper/jobscz", () => ({
   searchJobsCzJobs: vi.fn(),
 }));
 vi.mock("@/lib/scraper/startupjobs", () => ({ searchStartupJobs: vi.fn() }));
+vi.mock("@/lib/scraper/xitee", () => ({ searchXiteeJobs: vi.fn() }));
 
 vi.mock("@/lib/api-key-resolver", () => ({
   resolveApiKey: vi.fn().mockResolvedValue(undefined),
@@ -70,6 +71,10 @@ import { searchGreenhouseJobs } from "@/lib/scraper/greenhouse";
 import { searchLeverJobs } from "@/lib/scraper/lever";
 import { searchJobsCzJobs } from "@/lib/scraper/jobscz";
 import { searchStartupJobs } from "@/lib/scraper/startupjobs";
+import { searchXiteeJobs } from "@/lib/scraper/xitee";
+import { parseXiteeDetail, parseXiteeListing } from "@/lib/scraper/xitee/parser";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { automationLogger } from "@/lib/automation-logger";
 import { generateText } from "ai";
 import { recordRunNotifications } from "@/lib/notifications/record";
@@ -159,6 +164,82 @@ describe("runAutomation (lever)", () => {
     ...leverAutomation, id: "auto-startupjobs", jobBoard: "startupjobs.cz",
     sourceConfig: JSON.stringify({ "startupjobs.cz": { queries: ["java", "backend"], searchMode: "brno", targetTitles: ["Java Developer"], keywords: ["Java", "Spring"], topK: 5 } }),
   };
+
+  const xiteeAutomation: Automation = {
+    ...leverAutomation, id: "auto-xitee", jobBoard: "xitee", name: "xitee Careers",
+    sourceConfig: JSON.stringify({ xitee: {} }),
+  };
+  const xiteeFixture = (name: string) => readFileSync(join(process.cwd(), "__tests__/fixtures", `xitee-${name}.html`), "utf8");
+  const xiteeListing = parseXiteeListing(xiteeFixture("listing"));
+  const xiteeJob = parseXiteeDetail(xiteeFixture("detail-en"), xiteeListing[1]);
+
+  it("matches captured xitee descriptions against selected CV skills with empty targeting, persists metadata and deduplicates subsequent runs", async () => {
+    vi.mocked(prisma.resume.findUnique).mockResolvedValue({ id: "resume1", title: "QA CV", ContactInfo: null, ResumeSections: [{ sectionType: "skills", skills: [{ order: 0, Tag: { id: "testing", label: "testing" } }] }] } as never);
+    vi.mocked(searchXiteeJobs).mockResolvedValue({ jobs: [xiteeJob], errors: [], totalScopes: 1, listingCount: 2, fetchedCount: 1 });
+    const first = await runAutomation(xiteeAutomation);
+    expect(first).toMatchObject({ status: "completed", jobsProcessed: 1, jobsSaved: 1 });
+    expect(vi.mocked(generateText).mock.calls[0][0].prompt).toContain("Lead and coordinate a team");
+    expect(vi.mocked(generateText).mock.calls[0][0].prompt).toContain("QA CV");
+    const data = vi.mocked(prisma.job.create).mock.calls[0][0].data;
+    expect(data).toMatchObject({ jobUrl: xiteeJob.url.replace(/\/$/, ""), workplaceType: "HYBRID", locationId: null, jobType: "", matchScore: 90 });
+    const metadata = JSON.parse(data.matchData as string);
+    expect(metadata).toMatchObject({ analyzed: true, resumeId: "resume1", applicationUrl: xiteeJob.applicationUrl, dedupeUrls: xiteeJob.dedupeUrls });
+    expect(JSON.parse(first.funnelStats!)).toEqual(expect.arrayContaining([
+      expect.objectContaining({ key: "listing", count: 2 }), expect.objectContaining({ key: "fetched", count: 1 }),
+      expect.objectContaining({ key: "submitted", count: 1 }), expect.objectContaining({ key: "saved", count: 1 }),
+    ]));
+    vi.mocked(prisma.job.findMany).mockResolvedValue([{ id: "saved", jobUrl: data.jobUrl, matchData: data.matchData, JobTitle: { label: xiteeJob.title }, Company: { label: "xitee" } }] as never);
+    vi.mocked(prisma.job.create).mockClear(); vi.mocked(generateText).mockClear();
+    const second = await runAutomation(xiteeAutomation);
+    expect(second.jobsSaved).toBe(0);
+    expect(prisma.job.create).not.toHaveBeenCalled();
+    expect(generateText).not.toHaveBeenCalled();
+  });
+
+  it("skips an xitee vacancy already imported through its exact Jobs.cz advert ID", async () => {
+    vi.mocked(searchXiteeJobs).mockResolvedValue({ jobs: [xiteeJob], errors: [], totalScopes: 1, listingCount: 1, fetchedCount: 1 });
+    vi.mocked(prisma.job.findMany).mockResolvedValue([{ id: "saved-on-jobs-cz", jobUrl: "https://www.jobs.cz/rpd/2001487251/?tracking=abc", JobTitle: { label: "Different localized title" }, Company: { label: "xitee s.r.o." } }] as never);
+    const run = await runAutomation(xiteeAutomation);
+    expect(run.jobsSaved).toBe(0);
+    expect(JSON.parse(run.funnelStats!).find((stage: { key: string }) => stage.key === "duplicates").details[0].reason).toContain("earlier run or source");
+    expect(generateText).not.toHaveBeenCalled();
+  });
+
+  it("retains xitee aliases so a later Jobs.cz run also skips the vacancy", async () => {
+    vi.mocked(prisma.job.findMany).mockResolvedValue([{ id: "saved-xitee", jobUrl: xiteeJob.url, matchData: JSON.stringify({ dedupeUrls: xiteeJob.dedupeUrls }), JobTitle: { label: xiteeJob.title }, Company: { label: "xitee" } }] as never);
+    vi.mocked(searchJobsCzJobs).mockResolvedValue({ jobs: [{ ...xiteeJob, dedupeUrls: undefined, url: "https://www.jobs.cz/rpd/2001487251/" }], errors: [], totalScopes: 1, skipped: 0, fetchedCount: 1, rejected: [] });
+    const run = await runAutomation({ ...xiteeAutomation, jobBoard: "jobs.cz", sourceConfig: JSON.stringify({ "jobs.cz": { queries: ["qa"], searchMode: "praha" } }) });
+    expect(run.jobsSaved).toBe(0);
+    expect(generateText).not.toHaveBeenCalled();
+  });
+
+  it("keeps named xitee pre-ranking and threshold rejections, including strict locations", async () => {
+    const preferences = { xitee: { targetTitles: ["QA Lead"], keywords: ["testing"], locations: ["Brno"], strictLocation: true } };
+    vi.mocked(searchXiteeJobs).mockResolvedValue({ jobs: [xiteeJob, { ...xiteeJob, title: "QA local", url: xiteeJob.url + "local", location: "Brno", dedupeUrls: [] }], errors: [], totalScopes: 1 });
+    vi.mocked(generateText).mockResolvedValue({ text: "SCORES: match=40 recommendation=weak match\n\n## Summary\nThin fit" } as never);
+    const run = await runAutomation({ ...xiteeAutomation, sourceConfig: JSON.stringify(preferences) });
+    expect(run.jobsSaved).toBe(0);
+    expect(JSON.parse(run.funnelStats!)).toEqual(expect.arrayContaining([
+      expect.objectContaining({ key: "pre_ai_rejected", details: [expect.objectContaining({ name: xiteeJob.title, reason: expect.stringContaining("location") })] }),
+      expect.objectContaining({ key: "below_threshold", count: 1 }),
+    ]));
+  });
+
+  it.each(["blocked", "rate_limited", "parse", "network"] as const)("reports xitee %s failures without writing historical jobs", async (kind) => {
+    vi.mocked(searchXiteeJobs).mockResolvedValue({ jobs: [], errors: [{ key: "listing", name: "xitee", reason: "cannot read listing", kind }], totalScopes: 1, listingCount: 0, fetchedCount: 0 });
+    const run = await runAutomation(xiteeAutomation);
+    expect(run.status).toBe(kind === "blocked" || kind === "rate_limited" ? kind : "failed");
+    expect(prisma.job.create).not.toHaveBeenCalled();
+    expect(run.errorMessage).toContain("cannot read listing");
+  });
+
+  it("completes an empty xitee listing without modifying saved jobs or AI history", async () => {
+    vi.mocked(searchXiteeJobs).mockResolvedValue({ jobs: [], errors: [], totalScopes: 1, listingCount: 0, fetchedCount: 0 });
+    const run = await runAutomation(xiteeAutomation);
+    expect(run).toMatchObject({ status: "completed", jobsSaved: 0 });
+    expect(prisma.job.create).not.toHaveBeenCalled();
+    expect(generateText).not.toHaveBeenCalled();
+  });
 
   it("runs StartupJobs through AI, persistence, diagnostics and inter-run dedup", async () => {
     const url = "https://www.startupjobs.cz/nabidka/108443/java-developer";

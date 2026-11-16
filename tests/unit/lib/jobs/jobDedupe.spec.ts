@@ -47,6 +47,18 @@ describe("getExistingJobDedupeMap", () => {
     expect(map.size).toBe(0);
   });
 
+  it("reloads xitee post IDs and advert aliases alongside historical records", async () => {
+    const url = "https://career.xitee.com/cs/volna-mista/original-role/";
+    (prisma.job.findMany as any).mockResolvedValue([
+      { ...row({ id: "xitee-job", jobUrl: url }), matchData: JSON.stringify({ sourceId: "1370", dedupeUrls: ["https://www.jobs.cz/rpd/2001487251/"] }) },
+      { ...row({ id: "legacy", jobUrl: "https://example.com/job" }), matchData: "malformed" },
+    ]);
+    const map = await getExistingJobDedupeMap("user-1");
+    expect(map.get("source:xitee:1370")?.id).toBe("xitee-job");
+    expect(map.get(jobDedupeKey({ url: "https://www.jobs.cz/rpd/2001487251/" }))?.id).toBe("xitee-job");
+    expect(map.get(jobDedupeKey({ url: "https://example.com/job" }))?.id).toBe("legacy");
+  });
+
   it("scopes the query to the given user", async () => {
     mockJobs([]);
     await getExistingJobDedupeMap("user-42");

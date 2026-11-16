@@ -71,6 +71,23 @@ describe("createAutomation schedule-hour uniqueness", () => {
     expect(prisma.automation.create).not.toHaveBeenCalled();
   });
 
+  it("persists xitee configuration without queries/tokens and reloads edited preferences", async () => {
+    (prisma.automation.findFirst as any).mockResolvedValue(null);
+    const sourceConfig = { xitee: { keywords: ["testing"], locations: ["Praha"], strictLocation: true, topK: 3, saveUnanalyzed: false } };
+    const result = await createAutomation(baseInput({ jobBoard: "xitee", sourceConfig }));
+    expect(result.success).toBe(true);
+    const saved = (prisma.automation.create as any).mock.calls[0][0].data;
+    expect(saved.jobBoard).toBe("xitee");
+    expect(JSON.parse(saved.sourceConfig)).toEqual(sourceConfig);
+    expect(saved.nextRunAt).toBeInstanceOf(Date);
+    (prisma.automation.findFirst as any).mockResolvedValue({ id: "auto-1", jobBoard: "xitee" });
+    (prisma.automation.update as any).mockImplementation(async ({ data }: { data: object }) => ({ id: "auto-1", ...data }));
+    const edited = { xitee: { ...sourceConfig.xitee, targetTitles: ["QA Lead"], topK: 2 } };
+    const update = await updateAutomation("auto-1", { jobBoard: "xitee", sourceConfig: edited });
+    expect(update.success).toBe(true);
+    expect(JSON.parse(update.data!.sourceConfig!)).toEqual(edited);
+  });
+
   it("scopes the clash check to the current user and chosen hour", async () => {
     (prisma.automation.findFirst as any).mockResolvedValue(null);
 
