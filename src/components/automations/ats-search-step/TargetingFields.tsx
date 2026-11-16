@@ -20,6 +20,7 @@ interface TargetingFieldsProps<T extends TargetingValue> {
   onChange: (next: T) => void;
   fixedLocation?: string;
   fixedLocationDescription?: string;
+  resumeSkillFallback?: boolean;
 }
 
 export function TargetingFields<T extends TargetingValue>({
@@ -27,6 +28,7 @@ export function TargetingFields<T extends TargetingValue>({
   onChange,
   fixedLocation,
   fixedLocationDescription,
+  resumeSkillFallback,
 }: TargetingFieldsProps<T>) {
   // Without target titles or keywords there is no signal to rank jobs against,
   // so the relevance floor drops everything and nothing is saved.
@@ -70,7 +72,7 @@ export function TargetingFields<T extends TargetingValue>({
         }}
       />
 
-      {noSignal && (
+      {noSignal && !resumeSkillFallback && (
         <div className="flex items-start gap-2 rounded-md border border-amber-500/40 bg-amber-500/10 p-3 text-sm text-amber-700 dark:text-amber-400">
           <TriangleAlert className="h-4 w-4 mt-0.5 shrink-0" />
           <span>
@@ -113,8 +115,9 @@ export function TargetingFields<T extends TargetingValue>({
             <div className="space-y-1">
               <Label>Only show jobs in these locations</Label>
               <p className="text-sm text-muted-foreground">
-                When on, jobs matching none of your locations are dropped
-                before ranking. Remote roles always pass.
+                {resumeSkillFallback
+                  ? "When on, jobs without an explicit matching location are dropped before ranking."
+                  : "When on, jobs matching none of your locations are dropped before ranking. Remote roles always pass."}
               </p>
             </div>
             <Switch

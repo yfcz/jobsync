@@ -1,5 +1,5 @@
 import prisma from "@/lib/db";
-import { jobDedupeKey, normalizeJobUrl } from "@/lib/scraper/utils";
+import { jobDedupeKey, jobDedupeKeys, normalizeJobUrl } from "@/lib/scraper/utils";
 
 export interface ExistingJobRef {
   id: string;
@@ -25,15 +25,32 @@ export async function getExistingJobDedupeMap(
     },
   });
 
+  // Matching bodies can be large. Load metadata only for saved xitee jobs,
+  // rather than pulling every historical AI result into a small VPS's memory.
+  const xiteeRows = jobs.some((job) => job.jobUrl?.startsWith("https://career.xitee.com/"))
+    ? await prisma.job.findMany({
+      where: { userId, jobUrl: { startsWith: "https://career.xitee.com/" } },
+      select: { id: true, matchData: true },
+    }) : [];
+  const metadataById = new Map(xiteeRows.map((job) => [job.id, job.matchData]));
   const map = new Map<string, ExistingJobRef>();
   for (const job of jobs) {
-    const key = jobDedupeKey({
+    let dedupeUrls: string[] = [];
+    let sourceId: string | undefined;
+    try {
+      const metadata = JSON.parse(metadataById.get(job.id) ?? "{}");
+      if (Array.isArray(metadata.dedupeUrls)) dedupeUrls = metadata.dedupeUrls.filter((url: unknown): url is string => typeof url === "string");
+      if (typeof metadata.sourceId === "string") sourceId = metadata.sourceId;
+    } catch { /* Historical/manual jobs may not carry matching metadata. */ }
+    const keys = jobDedupeKeys({
       url: job.jobUrl,
       title: job.JobTitle?.label,
       company: job.Company?.label,
       location: job.Location?.label ?? undefined,
+      dedupeUrls,
+      sourceId,
     });
-    if (!map.has(key)) {
+    for (const key of keys) if (!map.has(key)) {
       map.set(key, {
         id: job.id,
         title: job.JobTitle?.label ?? "",

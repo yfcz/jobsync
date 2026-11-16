@@ -83,9 +83,9 @@ export function AutomationSearchConfig({
         <div className="mt-4 pt-4 border-t grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="col-span-2 md:col-span-4">
             <p className="text-sm text-muted-foreground">
-              {jobsCzConfig ? `${jobBoard === "startupjobs.cz" ? "StartupJobs.cz" : "Jobs.cz"} queries` : "Companies"}
+              {jobBoard === "xitee" ? "Discovery" : jobsCzConfig ? `${jobBoard === "startupjobs.cz" ? "StartupJobs.cz" : "Jobs.cz"} queries` : "Companies"}
             </p>
-            {jobsCzConfig?.queries?.length ? (
+            {jobBoard === "xitee" ? <p className="text-sm font-medium">All current xitee vacancies</p> : jobsCzConfig?.queries?.length ? (
               <div className="mt-1 flex flex-wrap gap-1">
                 {jobsCzConfig.queries.map((query) => (
                   <Badge key={query} variant="secondary">

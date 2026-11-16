@@ -67,6 +67,14 @@ function urlDedupeKey(url: string): string {
     // the URL slug. Compare saved and incoming URLs using that stable identity.
     const startupId = host === "startupjobs.cz" ? parsed.pathname.match(/^\/nabidka\/(\d+)(?:\/|$)/)?.[1] : undefined;
     if (startupId) return `${host}/nabidka/${startupId}`;
+    if (host === "career.xitee.com") {
+      const vacancy = parsed.pathname.match(/^\/(?:cs|en)\/volna-mista\/([a-z0-9-]+)\/?$/i);
+      if (vacancy) return `${host}/cs/volna-mista/${vacancy[1]}`;
+    }
+    if (host === "jobs.cz") {
+      const advert = parsed.pathname.match(/^\/rpd\/(\d+)(?:\/|$)/)?.[1];
+      if (advert) return `${host}/rpd/${advert}`;
+    }
     return `${host}${parsed.pathname}${parsed.search}`;
   } catch {
     return url.trim().toLowerCase();
@@ -78,6 +86,8 @@ interface DedupableJob {
   title?: string;
   company?: string;
   location?: string;
+  dedupeUrls?: string[];
+  sourceId?: string;
 }
 
 // One key per job, shared by both the incoming batch and existing DB records so
@@ -98,6 +108,16 @@ export function jobDedupeKey(job: DedupableJob): string {
   return `meta:${meta}`;
 }
 
+export function jobDedupeKeys(job: DedupableJob): string[] {
+  const primary = jobDedupeKey(job);
+  const keys = [primary, ...(job.dedupeUrls ?? []).map((url) => jobDedupeKey({ url }))];
+  // WordPress's post ID survives edits to the vacancy slug and translation.
+  if (/^url:career\.xitee\.com\/cs\/volna-mista\/[a-z0-9-]+$/i.test(primary) && job.sourceId && /^\d+$/.test(job.sourceId)) {
+    keys.push(`source:xitee:${job.sourceId}`);
+  }
+  return [...new Set(keys)];
+}
+
 // Removes jobs already saved (existingKeys) and collapses duplicates within the
 // batch itself. Every ATS source path runs through here.
 // Accepts any key lookup with `.has` so callers can pass a Set or the
@@ -109,9 +129,10 @@ export function dedupeJobs<T extends DedupableJob>(
   const seen = new Set<string>();
   const result: T[] = [];
   for (const job of jobs) {
-    const key = jobDedupeKey(job);
-    if (existingKeys.has(key) || seen.has(key)) continue;
-    seen.add(key);
+    const keys = jobDedupeKeys(job);
+    const duplicate = keys.some((key) => existingKeys.has(key) || seen.has(key));
+    keys.forEach((key) => seen.add(key));
+    if (duplicate) continue;
     result.push(job);
   }
   return result;

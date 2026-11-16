@@ -18,6 +18,7 @@ import {
   EMPTY_ATS,
   EMPTY_JOBSCZ,
   EMPTY_STARTUPJOBS,
+  EMPTY_XITEE,
   STEPS,
   parseEditSourceConfig,
   type SearchConfigValue,
@@ -118,6 +119,13 @@ export function useWizardForm({
   // the actual form state as soon as the source is selected; otherwise the UI
   // would show the preset while schema validation still saw no sourceConfig.
   useEffect(() => {
+    if (formValues.jobBoard === "xitee") {
+      const sourceConfig = form.getValues("sourceConfig");
+      if (!sourceConfig?.xitee || Object.keys(sourceConfig).length !== 1) {
+        form.setValue("sourceConfig", { xitee: sourceConfig?.xitee ?? EMPTY_XITEE }, { shouldValidate: true });
+      }
+      return;
+    }
     if (
       isCzechJobBoard(formValues.jobBoard) &&
       !form.getValues("sourceConfig")?.[formValues.jobBoard]
@@ -164,16 +172,17 @@ export function useWizardForm({
   const sourceKey: SourceKey = formValues.jobBoard;
   const sourceConfigValue: SearchConfigValue =
     formValues.sourceConfig?.[sourceKey] ??
-    (sourceKey === "startupjobs.cz" ? EMPTY_STARTUPJOBS : sourceKey === "jobs.cz" ? EMPTY_JOBSCZ : EMPTY_ATS);
+    (sourceKey === "xitee" ? EMPTY_XITEE : sourceKey === "startupjobs.cz" ? EMPTY_STARTUPJOBS : sourceKey === "jobs.cz" ? EMPTY_JOBSCZ : EMPTY_ATS);
 
   const canGoNext = () => {
     switch (step) {
       case 0:
         return (formValues.name?.trim().length ?? 0) > 0;
       case 1:
+        if (sourceKey === "xitee") return true;
         return isCzechJobBoard(sourceKey)
-          ? ("queries" in sourceConfigValue && sourceConfigValue.queries.length > 0)
-          : ("companies" in sourceConfigValue && sourceConfigValue.companies.length > 0);
+          ? ("queries" in sourceConfigValue && Array.isArray(sourceConfigValue.queries) && sourceConfigValue.queries.length > 0)
+          : ("companies" in sourceConfigValue && Array.isArray(sourceConfigValue.companies) && sourceConfigValue.companies.length > 0);
       case 2:
         return (formValues.resumeId?.length ?? 0) > 0;
       case 3:

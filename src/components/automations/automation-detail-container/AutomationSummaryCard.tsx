@@ -49,7 +49,7 @@ export function AutomationSummaryCard({
           </div>
           <div>
             <p className="text-sm text-muted-foreground">Job Board</p>
-            <p className="text-sm font-medium capitalize">{automation.jobBoard}</p>
+            <p className="text-sm font-medium capitalize">{automation.jobBoard === "xitee" ? "xitee Careers" : automation.jobBoard}</p>
           </div>
           <div>
             <p className="text-sm text-muted-foreground">Match Threshold</p>

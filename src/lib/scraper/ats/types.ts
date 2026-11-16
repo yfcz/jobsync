@@ -25,6 +25,7 @@ export interface AtsProvider {
     totalScopes: number;
     skipped?: number;
     fetchedCount?: number;
+    listingCount?: number;
     duplicates?: { key: string; name: string; reason: string }[];
     rejected?: {
       key: string;

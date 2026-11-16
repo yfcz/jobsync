@@ -37,17 +37,17 @@ export function StepReview({
       <div className="flex justify-between">
         <span className="text-muted-foreground">Job Board</span>
         <span className="font-medium capitalize">
-          {formValues.jobBoard || "-"}
+          {formValues.jobBoard === "xitee" ? "xitee Careers" : formValues.jobBoard || "-"}
         </span>
       </div>
       <div className="flex justify-between gap-4">
         <span className="text-muted-foreground">
-          {isCzechJobBoard(formValues.jobBoard) ? "Search queries" : "Companies"}
+          {formValues.jobBoard === "xitee" ? "Discovery" : isCzechJobBoard(formValues.jobBoard) ? "Search queries" : "Companies"}
         </span>
         <span className="font-medium text-right">
-          {"queries" in searchConfig
+          {formValues.jobBoard === "xitee" ? "All current xitee vacancies" : "queries" in searchConfig
             ? searchConfig.queries.join(", ")
-            : searchConfig.companies?.length
+            : "companies" in searchConfig && searchConfig.companies?.length
               ? searchConfig.companies.map((c) => c.name).join(", ")
               : "-"}
         </span>

@@ -12,8 +12,8 @@ export type AutomationRunStatus =
   | "cancelled";
 export type DiscoveryStatus = "new" | "accepted" | "dismissed";
 export type CzechJobBoard = "jobs.cz" | "startupjobs.cz";
-export type JobBoard = "greenhouse" | "lever" | "ashby" | CzechJobBoard;
-export type AtsBoard = Exclude<JobBoard, CzechJobBoard>;
+export type JobBoard = "greenhouse" | "lever" | "ashby" | CzechJobBoard | "xitee";
+export type AtsBoard = Exclude<JobBoard, CzechJobBoard | "xitee">;
 export function isCzechJobBoard(board: string): board is CzechJobBoard {
   return board === "jobs.cz" || board === "startupjobs.cz";
 }
@@ -99,7 +99,11 @@ export interface SourceConfig {
   ashby?: AshbySourceConfig;
   "jobs.cz"?: JobsCzSourceConfig;
   "startupjobs.cz"?: StartupJobsSourceConfig;
+  xitee?: XiteeSourceConfig;
 }
+
+// Single-company source: discovery always covers every current vacancy.
+export type XiteeSourceConfig = Omit<GreenhouseSourceConfig, "companies">;
 
 export interface StartupJobsSourceConfig extends JobsCzSourceConfig {
   searchMode: JobsCzSearchMode;
@@ -109,7 +113,7 @@ export interface StartupJobsSourceConfig extends JobsCzSourceConfig {
 // (that pulls the network-calling search fns into client bundles). Both the
 // client-imported schema and the scheduler import it here.
 export const ATS_BOARDS: AtsBoard[] = ["greenhouse", "lever", "ashby"];
-export const AUTOMATION_BOARDS: JobBoard[] = [...ATS_BOARDS, "jobs.cz", "startupjobs.cz"];
+export const AUTOMATION_BOARDS: JobBoard[] = [...ATS_BOARDS, "jobs.cz", "startupjobs.cz", "xitee"];
 
 // Boards that used to exist and were removed. Their Automation rows stay in
 // the database; the UI marks them retired and only offers pause/delete.
@@ -201,4 +205,5 @@ export interface ScrapedJobData {
   employmentType?: string;
   isRemote?: boolean;
   workplaceType?: string;
+  salary?: string;
 }

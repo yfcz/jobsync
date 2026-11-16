@@ -63,10 +63,11 @@ export function StepBasics({
                 <SelectItem value="ashby">Ashby (company boards)</SelectItem>
                 <SelectItem value="jobs.cz">Jobs.cz</SelectItem>
                 <SelectItem value="startupjobs.cz">StartupJobs.cz</SelectItem>
+                <SelectItem value="xitee">xitee Careers</SelectItem>
               </SelectContent>
             </Select>
             <FormDescription>
-              {isCzechJobBoard(field.value)
+              {field.value === "xitee" ? "Monitor all publicly advertised positions at xitee" : isCzechJobBoard(field.value)
                 ? `Search public ${field.value === "startupjobs.cz" ? "StartupJobs.cz" : "Jobs.cz"} listings in Brno, Prague or Remote Czech Republic`
                 : "Track specific companies' job boards"}
             </FormDescription>

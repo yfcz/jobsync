@@ -73,4 +73,10 @@ export type JobMatchData = JobMatchScores & {
   prerankComponents?: PrerankComponents;
   // Set by the MCP path: how complete the job description was when scored.
   descriptionCompleteness?: DescriptionCompleteness;
+  // Publisher identities/metadata retained by single-company career sources.
+  sourceId?: string;
+  dedupeUrls?: string[];
+  applicationUrl?: string;
+  postedDate?: string;
+  employmentType?: string;
 };

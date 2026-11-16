@@ -41,6 +41,7 @@ export async function persistDiscoveredJob(
     employmentType: job.employmentType,
     isRemote: job.isRemote,
     workplaceType: job.workplaceType,
+    salary: job.salary,
   };
 
   const jobRecord = await mapScrapedJobToJobRecord({
@@ -48,7 +49,13 @@ export async function persistDiscoveredJob(
     userId: automation.userId,
     automationId: automation.id,
     matchScore,
-    matchData: JSON.stringify({ ...matchData, ...(job.sourceId ? { sourceId: job.sourceId } : {}) }),
+    matchData: JSON.stringify({
+      ...matchData, ...(job.sourceId ? { sourceId: job.sourceId } : {}),
+      ...(automation.jobBoard === "xitee" ? {
+        dedupeUrls: job.dedupeUrls, applicationUrl: job.applicationUrl,
+        postedDate: job.postedDate, employmentType: job.employmentType,
+      } : {}),
+    }),
     skillTerms,
   });
 

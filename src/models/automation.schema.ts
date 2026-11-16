@@ -11,6 +11,7 @@ export const JobBoardSchema = z.enum([
   "ashby",
   "jobs.cz",
   "startupjobs.cz",
+  "xitee",
 ]);
 
 export const AutomationStatusSchema = z.enum(["active", "paused"]);
@@ -97,12 +98,15 @@ export const StartupJobsSourceConfigSchema = JobsCzSourceConfigSchema.extend({
   maxResults: z.number().int().min(1).max(APP_CONSTANTS.STARTUPJOBS_MAX_RESULTS).optional(),
 });
 
+export const XiteeSourceConfigSchema = GreenhouseSourceConfigSchema.omit({ companies: true });
+
 export const SourceConfigSchema = z.object({
   greenhouse: GreenhouseSourceConfigSchema.optional(),
   lever: LeverSourceConfigSchema.optional(),
   ashby: AshbySourceConfigSchema.optional(),
   "jobs.cz": JobsCzSourceConfigSchema.optional(),
   "startupjobs.cz": StartupJobsSourceConfigSchema.optional(),
+  xitee: XiteeSourceConfigSchema.optional(),
 });
 
 // Only a malformed id gets the custom text; a missing one keeps Zod's own.
@@ -121,6 +125,7 @@ export const CreateAutomationSchema = z
     scheduleHour: z.number().min(0).max(23),
   })
   .superRefine((data, ctx) => {
+    if (data.jobBoard === "xitee") return;
     if (isCzechJobBoard(data.jobBoard)) {
       const queries = data.sourceConfig?.[data.jobBoard]?.queries ?? [];
       if (queries.length < 1) {
@@ -155,6 +160,7 @@ export const UpdateAutomationSchema = z
   })
   .superRefine((data, ctx) => {
     if (!data.jobBoard) return;
+    if (data.jobBoard === "xitee") return;
     if (isCzechJobBoard(data.jobBoard)) {
       const queries = data.sourceConfig?.[data.jobBoard]?.queries ?? [];
       if (queries.length < 1) {

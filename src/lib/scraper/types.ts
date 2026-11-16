@@ -10,6 +10,9 @@ export interface JobDetails {
   employmentType?: string;
   isRemote?: boolean;
   workplaceType?: string;
+  applicationUrl?: string;
+  // Publisher-provided equivalents only; never fetched as part of discovery.
+  dedupeUrls?: string[];
 }
 
 export type ScraperError =

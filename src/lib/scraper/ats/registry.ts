@@ -4,6 +4,7 @@ import { searchLeverJobs } from "../lever";
 import { searchAshbyJobs } from "../ashby";
 import { searchJobsCzJobs } from "../jobscz";
 import { searchStartupJobs } from "../startupjobs";
+import { searchXiteeJobs } from "../xitee";
 import type { AtsProvider } from "./types";
 import type { AutomationRunConfig } from "../automation-run/config";
 
@@ -50,4 +51,5 @@ export const ATS_PROVIDERS: Partial<Record<JobBoard, AtsProvider>> = {
   ashby: { id: "ashby", label: "Ashby", search: adaptAtsSearch(searchAshbyJobs) },
   "jobs.cz": { id: "jobs.cz", label: "Jobs.cz", search: searchJobsCzJobs },
   "startupjobs.cz": { id: "startupjobs.cz", label: "StartupJobs.cz", search: searchStartupJobs },
+  xitee: { id: "xitee", label: "xitee Careers", search: searchXiteeJobs },
 };

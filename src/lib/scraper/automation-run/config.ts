@@ -5,7 +5,7 @@ import {
 } from "@/models/automation.model";
 import type { JobsCzRunConfig } from "../jobscz";
 import type { StartupJobsRunConfig } from "../startupjobs/types";
-import { StartupJobsSourceConfigSchema } from "@/models/automation.schema";
+import { StartupJobsSourceConfigSchema, XiteeSourceConfigSchema } from "@/models/automation.schema";
 
 export interface AtsRunConfig {
   kind: "ats";
@@ -18,16 +18,27 @@ export interface AtsRunConfig {
   saveUnanalyzed: boolean;
 }
 
-export type AutomationRunConfig = AtsRunConfig | JobsCzRunConfig | StartupJobsRunConfig;
+export type XiteeRunConfig = Omit<AtsRunConfig, "kind" | "companies"> & { kind: "xitee" };
+export type AutomationRunConfig = AtsRunConfig | JobsCzRunConfig | StartupJobsRunConfig | XiteeRunConfig;
 
 export function parseAutomationConfig(
   sourceConfig: string | null | undefined,
   jobBoard: JobBoard,
 ): AutomationRunConfig | null {
-  if (!sourceConfig) return null;
+  if (!sourceConfig && jobBoard !== "xitee") return null;
   try {
-    const parsed = JSON.parse(sourceConfig);
+    const parsed = sourceConfig ? JSON.parse(sourceConfig) : {};
     const cfg = parsed?.[jobBoard];
+    if (jobBoard === "xitee") {
+      const valid = XiteeSourceConfigSchema.safeParse(cfg ?? {});
+      if (!valid.success) return null;
+      const value = valid.data;
+      return {
+        kind: "xitee", targetTitles: value.targetTitles ?? [], keywords: value.keywords ?? [],
+        locations: value.locations ?? [], strictLocation: value.strictLocation ?? false,
+        topK: value.topK ?? APP_CONSTANTS.MAX_JOBS_PER_RUN, saveUnanalyzed: value.saveUnanalyzed !== false,
+      };
+    }
     if (jobBoard === "startupjobs.cz") {
       const valid = StartupJobsSourceConfigSchema.safeParse(cfg);
       if (!valid.success) return null;

@@ -165,7 +165,7 @@ export function AutomationList({
                     {automation.name}
                   </Link>
                   <Badge variant="outline" className="capitalize">
-                    {automation.jobBoard}
+                    {automation.jobBoard === "xitee" ? "xitee Careers" : automation.jobBoard}
                   </Badge>
                   {retired ? (
                     <Badge variant="destructive">Retired</Badge>
@@ -200,6 +200,7 @@ export function AutomationList({
                 {!retired && (
                   <div className="space-y-1.5 text-sm text-muted-foreground">
                     <div className="flex flex-wrap items-center gap-1">
+                      {automation.jobBoard === "xitee" && <Badge variant="secondary">All current xitee vacancies</Badge>}
                       {jobsCzQueries.map((query) => (
                         <Badge key={query} variant="secondary">
                           {query}
