@@ -3,6 +3,8 @@ name: Publish Wiki
 # One-way: wiki/ is the source, the GitHub wiki is a rendering of it. Set the
 # wiki to collaborator-edit-only after the first successful publish so the two
 # cannot diverge.
+# Forks validate by default. To publish a fork's own wiki, initialise it first
+# and set the PUBLISH_WIKI repository variable to true (WIKI_PUBLISHING.md).
 on:
   push:
     branches: [main]
@@ -36,10 +38,19 @@ jobs:
       # avoids a Prisma generate this job has no use for.
       - run: npm ci --ignore-scripts
 
+      - name: Validate wiki
+        run: node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/sync-wiki.mts --dry-run
+
+      - name: Explain validation-only mode
+        if: ${{ github.event.repository.fork && vars.PUBLISH_WIKI != 'true' }}
+        run: |
+          echo 'Wiki validation passed. Publishing is disabled for this fork. See WIKI_PUBLISHING.md to enable it with PUBLISH_WIKI=true.' >> "$GITHUB_STEP_SUMMARY"
+
       # GITHUB_TOKEN's coverage of wiki repos is ambiguous in GitHub's docs.
       # If this 403s on push, add a PAT as the WIKI_TOKEN repo secret — no
       # change to this file is needed.
       - name: Sync wiki
+        if: ${{ !github.event.repository.fork || vars.PUBLISH_WIKI == 'true' }}
         env:
           WIKI_TOKEN: ${{ secrets.WIKI_TOKEN || github.token }}
         run: node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/sync-wiki.mts
