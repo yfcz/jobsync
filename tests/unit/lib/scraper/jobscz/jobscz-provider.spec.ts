@@ -9,7 +9,7 @@ import {
 } from "@/lib/scraper/jobscz";
 
 const fixture = (name: string) =>
-  readFileSync(join(process.cwd(), "__tests__", "fixtures", name), "utf8");
+  readFileSync(join(import.meta.dirname, "fixtures", name), "utf8");
 
 const searchHtml = fixture("jobscz-search.html");
 const detailHtml = fixture("jobscz-detail.html");

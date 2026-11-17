@@ -169,7 +169,7 @@ describe("runAutomation (lever)", () => {
     ...leverAutomation, id: "auto-xitee", jobBoard: "xitee", name: "xitee Careers",
     sourceConfig: JSON.stringify({ xitee: {} }),
   };
-  const xiteeFixture = (name: string) => readFileSync(join(process.cwd(), "__tests__/fixtures", `xitee-${name}.html`), "utf8");
+  const xiteeFixture = (name: string) => readFileSync(join(import.meta.dirname, "xitee/fixtures", `xitee-${name}.html`), "utf8");
   const xiteeListing = parseXiteeListing(xiteeFixture("listing"));
   const xiteeJob = parseXiteeDetail(xiteeFixture("detail-en"), xiteeListing[1]);
 

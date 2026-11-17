@@ -56,10 +56,12 @@ describe("useWizardForm subscriptions", () => {
       ]);
     });
     expect(result.current.canGoNext()).toBe(true);
-    expect(result.current.atsConfig.companies).toEqual([{ name: "Acme", token: "acme" }]);
+    expect(result.current.sourceConfigValue).toMatchObject({
+      companies: [{ name: "Acme", token: "acme" }],
+    });
 
     act(() => result.current.form.setValue("jobBoard", "ashby"));
-    expect(result.current.atsKey).toBe("ashby");
+    expect(result.current.sourceKey).toBe("ashby");
     expect(result.current.canGoNext()).toBe(false);
     act(() => {
       result.current.form.setValue("sourceConfig.ashby", {
@@ -78,8 +80,8 @@ describe("useWizardForm subscriptions", () => {
 
     act(() => result.current.handleClose());
     await waitFor(() => expect(result.current.formValues.name).toBe(""));
-    expect(result.current.atsKey).toBe("greenhouse");
-    expect(result.current.atsConfig.companies).toEqual([]);
+    expect(result.current.sourceKey).toBe("greenhouse");
+    expect(result.current.sourceConfigValue).toMatchObject({ companies: [] });
     expect(result.current.step).toBe(0);
   });
 
@@ -87,10 +89,10 @@ describe("useWizardForm subscriptions", () => {
     const { result, rerender } = renderHook((p) => useWizardForm(p), { initialProps: props });
     rerender({ ...props, editAutomation: automation });
     expect(result.current.formValues.name).toBe("Frontend roles");
-    expect(result.current.atsKey).toBe("lever");
-    expect(result.current.atsConfig.companies).toEqual([
-      { name: "Acme", token: "acme", host: "eu" },
-    ]);
+    expect(result.current.sourceKey).toBe("lever");
+    expect(result.current.sourceConfigValue).toMatchObject({
+      companies: [{ name: "Acme", token: "acme", host: "eu" }],
+    });
 
     act(() => result.current.nextStep());
     expect(result.current.step).toBe(1);

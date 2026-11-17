@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { allowedStartupJobsUrl, parseStartupJobsSearchPage } from "@/lib/scraper/startupjobs/parser";
 import { buildStartupJobsSearchRequest, STARTUPJOBS_SEARCH_ORIGIN } from "@/lib/scraper/startupjobs/search";
 
-const fixture = (name: string) => readFileSync(join(process.cwd(), "__tests__/fixtures", name), "utf8");
+const fixture = (name: string) => readFileSync(join(import.meta.dirname, "fixtures", name), "utf8");
 const java = fixture("startupjobs-search-brno-java.json");
 
 describe("StartupJobs native portal search", () => {

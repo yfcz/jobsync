@@ -14,7 +14,7 @@ vi.mock("node:timers/promises", async (original) => {
   return { ...actual, setTimeout, default: { ...actual, setTimeout } };
 });
 
-const fixture = (name: string) => readFileSync(join(process.cwd(), "__tests__/fixtures", name), "utf8");
+const fixture = (name: string) => readFileSync(join(import.meta.dirname, "fixtures", name), "utf8");
 const detail = fixture("startupjobs-detail.html");
 const javaSearch = fixture("startupjobs-search-brno-java.json");
 const backendSearch = fixture("startupjobs-search-brno-backend.json");

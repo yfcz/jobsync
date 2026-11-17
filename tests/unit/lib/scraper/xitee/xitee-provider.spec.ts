@@ -12,7 +12,7 @@ vi.mock("node:timers/promises", () => {
   const setTimeout = vi.fn().mockResolvedValue(undefined);
   return { setTimeout, default: { setTimeout } };
 });
-const fixture = (name: string) => readFileSync(join(process.cwd(), "__tests__/fixtures", `xitee-${name}.html`), "utf8");
+const fixture = (name: string) => readFileSync(join(import.meta.dirname, "fixtures", `xitee-${name}.html`), "utf8");
 const listing = fixture("listing");
 const cs = fixture("detail-cs");
 const en = fixture("detail-en");
