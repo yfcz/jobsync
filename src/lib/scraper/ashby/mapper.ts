@@ -1,5 +1,6 @@
 import type { JobDetails } from "../types";
 import type { AshbyJob } from "./types";
+import { mapAshbySalary } from "./compensation";
 
 // Ashby's workplaceType → WORKPLACE_TYPES enum key. "OnSite" has no hyphen
 // here (Lever sends "on-site"), so the two adapters can't share one map.
@@ -27,6 +28,7 @@ export function mapAshbyJob(job: AshbyJob, companyName: string): JobDetails {
     .filter((value): value is string => Boolean(value));
 
   return {
+    sourceId: job.id,
     title: (job.title ?? "").trim(),
     company: companyName, // not in the payload
     location: Array.from(new Set(locations)).join(", "),
@@ -35,7 +37,9 @@ export function mapAshbyJob(job: AshbyJob, companyName: string): JobDetails {
     description:
       job.descriptionHtml?.trim() || job.descriptionPlain?.trim() || "",
     url: job.jobUrl,
+    applicationUrl: job.applyUrl,
     postedDate: job.publishedAt,
+    salary: mapAshbySalary(job.compensation),
     employmentType: job.employmentType,
     // isRemote is deliberately unmapped: Ashby sets it true whenever a remote
     // office is offered, so hybrid/on-site roles carry it too.

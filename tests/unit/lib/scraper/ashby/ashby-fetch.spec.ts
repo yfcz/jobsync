@@ -1,6 +1,8 @@
 import { fetchAshbyBoardJobs, searchAshbyJobs } from "@/lib/scraper/ashby";
 import { mapAshbyJob } from "@/lib/scraper/ashby/mapper";
 import type { AshbyJob } from "@/lib/scraper/ashby/types";
+import { APP_CONSTANTS } from "@/lib/constants";
+import e2bBoard from "./fixtures/e2b-board.json";
 
 function posting(overrides: Partial<AshbyJob> = {}): AshbyJob {
   return {
@@ -111,7 +113,7 @@ describe("fetchAshbyBoardJobs", () => {
 
     expect(spy).toHaveBeenCalledTimes(1);
     expect(String(spy.mock.calls[0][0])).toBe(
-      "https://api.ashbyhq.com/posting-api/job-board/acme",
+      "https://api.ashbyhq.com/posting-api/job-board/acme?includeCompensation=true",
     );
     expect(result.success).toBe(true);
     if (!result.success) return;
@@ -130,6 +132,52 @@ describe("fetchAshbyBoardJobs", () => {
     expect(result.success).toBe(true);
     if (!result.success) return;
     expect(result.data).toHaveLength(1);
+  });
+
+  it("loads captured E2B descriptions, salary, identity and application metadata in one request", async () => {
+    const spy = vi.spyOn(global, "fetch").mockResolvedValue(okJson(e2bBoard));
+    const result = await fetchAshbyBoardJobs("E2B", "e2b");
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+    const platform = result.data.find((job) => job.title === "Platform Engineer")!;
+    const raw = e2bBoard.jobs.find((job) => job.title === platform.title)!;
+    expect(platform).toMatchObject({
+      company: "E2B", sourceId: raw.id, url: raw.jobUrl,
+      applicationUrl: raw.applyUrl, postedDate: raw.publishedAt,
+      description: raw.descriptionHtml, location: "Prague, Czech Republic",
+      employmentType: "FullTime", workplaceType: "ONSITE",
+      salary: "CZK 150,000 – 300,000 / month",
+    });
+    expect(platform.description.length).toBeGreaterThan(4000);
+    expect(spy).toHaveBeenCalledTimes(1);
+  });
+
+  it("accepts a genuinely empty board", async () => {
+    vi.spyOn(global, "fetch").mockResolvedValue(okJson({ jobs: [] }));
+    expect(await fetchAshbyBoardJobs("E2B", "e2b")).toEqual({ success: true, data: [] });
+  });
+
+  it.each([null, {}, [], { jobs: null }, { jobs: [null] }, { jobs: [{}] }])(
+    "reports malformed payload %j instead of an empty success", async (body) => {
+      vi.spyOn(global, "fetch").mockResolvedValue(okJson(body));
+      expect(await fetchAshbyBoardJobs("E2B", "e2b")).toMatchObject({
+        success: false, error: { type: "parse", message: expect.stringContaining("e2b") },
+      });
+    },
+  );
+
+  it("identifies invalid JSON as a parse error", async () => {
+    vi.spyOn(global, "fetch").mockResolvedValue(new Response("<html>Access denied</html>"));
+    expect(await fetchAshbyBoardJobs("E2B", "e2b")).toMatchObject({
+      success: false, error: { type: "parse", message: expect.stringContaining("invalid JSON") },
+    });
+  });
+
+  it.each([403, 500])("reports HTTP %i with the board name", async (status) => {
+    vi.spyOn(global, "fetch").mockResolvedValue(okJson(null, status));
+    expect(await fetchAshbyBoardJobs("E2B", "e2b")).toMatchObject({
+      success: false, error: { type: "network", message: `Board 'e2b' returned ${status}` },
+    });
   });
 
   it("returns a network error naming the token on 404", async () => {
@@ -169,6 +217,20 @@ describe("fetchAshbyBoardJobs", () => {
     if (result.success) return;
     expect(result.error).toMatchObject({ message: expect.stringContaining("timed out") });
   });
+
+  it("aborts a pending request at the configured timeout", async () => {
+    vi.useFakeTimers();
+    try {
+      vi.spyOn(global, "fetch").mockImplementation((_, options) => new Promise((_, reject) => {
+        options?.signal?.addEventListener("abort", () => reject(new DOMException("Timed out", "AbortError")));
+      }));
+      const request = fetchAshbyBoardJobs("E2B", "e2b");
+      await vi.advanceTimersByTimeAsync(APP_CONSTANTS.ASHBY_FETCH_TIMEOUT_MS);
+      expect(await request).toMatchObject({ success: false, error: { message: "Board 'e2b' timed out" } });
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });
 
 describe("searchAshbyJobs", () => {
@@ -177,7 +239,7 @@ describe("searchAshbyJobs", () => {
   it("isolates a failing board: good jobs returned, bad token recorded", async () => {
     vi.spyOn(global, "fetch").mockImplementation((input) =>
       Promise.resolve(
-        String(input).endsWith("/bad")
+        new URL(String(input)).pathname.endsWith("/bad")
           ? okJson(null, 404)
           : okJson({ jobs: [posting()] }),
       ),

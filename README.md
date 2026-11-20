@@ -138,7 +138,7 @@ Set up automations that search for new jobs on a schedule and AI-match them agai
 
 - **Lever** — same company-tracking workflow as Greenhouse, backed by a built-in directory of 1,160+ companies (or paste a board URL). Automatically resolves the right regional API (`lever.co` or `eu.lever.co`) per company and carries full remote/hybrid/onsite signal from the listing. No API key required.
 
-- **Ashby** — same company-tracking workflow, backed by a built-in directory of 1,860+ companies (or paste a board URL). No API key required.
+- **Ashby** — same company-tracking workflow, backed by a built-in directory of 1,860+ companies (or paste a board URL). Includes published salaries and application metadata; [E2B Careers](./E2B_CAREERS.md) also accepts its original career page URL. No API key required.
 
 - **Jobs.cz** — bounded public searches for Brno, Prague or Remote – Czech Republic, using the same ranking and resume matching pipeline.
 

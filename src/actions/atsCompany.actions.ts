@@ -223,12 +223,20 @@ function extractAshbyToken(input: string): string | null {
   const trimmed = input.trim();
   if (!trimmed) return null;
 
-  const urlMatch = trimmed.match(/jobs\.ashbyhq\.com\/([a-z0-9_-]+)/i);
-  if (urlMatch) return urlMatch[1].toLowerCase();
-
   if (!trimmed.includes("/") && !trimmed.includes(".")) {
     return trimmed.toLowerCase();
   }
+
+  try {
+    const url = new URL(/^jobs\.ashbyhq\.com\//i.test(trimmed) ? `https://${trimmed}` : trimmed);
+    if (url.username || url.password || url.port) return null;
+    if (url.protocol === "https:" && url.hostname === "e2b.dev" && /^\/careers\/?$/.test(url.pathname)) {
+      return "e2b";
+    }
+    if ((url.protocol === "https:" || url.protocol === "http:") && url.hostname === "jobs.ashbyhq.com") {
+      return url.pathname.match(/^\/([a-z0-9_-]+)(?:\/|$)/i)?.[1].toLowerCase() ?? null;
+    }
+  } catch { /* Not a supported board URL. */ }
 
   return null;
 }
@@ -238,7 +246,7 @@ async function resolveAshby(input: string): Promise<ResolveResult> {
   if (!token) {
     return {
       success: false,
-      message: "Paste a jobs.ashbyhq.com link or a token",
+      message: "Paste a jobs.ashbyhq.com link, a token, or https://e2b.dev/careers",
     };
   }
 
@@ -247,11 +255,14 @@ async function resolveAshby(input: string): Promise<ResolveResult> {
     return { success: false, message: `Invalid Ashby token '${token}'` };
   }
 
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), APP_CONSTANTS.ASHBY_FETCH_TIMEOUT_MS);
   try {
     const res = await fetch(
       `${APP_CONSTANTS.ASHBY_BASE_URL}/${encodeURIComponent(token)}`,
+      { signal: controller.signal, redirect: "error" },
     );
-    res.body?.cancel(); // status is all we need; skip the full board payload
+    await res.body?.cancel(); // status is all we need; skip the full board payload
 
     if (res.status === 404) {
       return { success: false, message: `No Ashby board found for '${token}'` };
@@ -267,5 +278,7 @@ async function resolveAshby(input: string): Promise<ResolveResult> {
     return { success: true, name: seeded?.name ?? humanizeToken(token), token };
   } catch {
     return { success: false, message: "Could not reach Ashby" };
+  } finally {
+    clearTimeout(timer);
   }
 }

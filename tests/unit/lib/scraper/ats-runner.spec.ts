@@ -79,6 +79,7 @@ import { automationLogger } from "@/lib/automation-logger";
 import { generateText } from "ai";
 import { recordRunNotifications } from "@/lib/notifications/record";
 import type { Automation } from "@/models/automation.model";
+import e2bBoard from "./ashby/fixtures/e2b-board.json";
 
 function makeJob(title: string, description = "", extra = {}) {
   return {
@@ -172,6 +173,124 @@ describe("runAutomation (lever)", () => {
   const xiteeFixture = (name: string) => readFileSync(join(import.meta.dirname, "xitee/fixtures", `xitee-${name}.html`), "utf8");
   const xiteeListing = parseXiteeListing(xiteeFixture("listing"));
   const xiteeJob = parseXiteeDetail(xiteeFixture("detail-en"), xiteeListing[1]);
+
+  describe("E2B through the real Ashby provider", () => {
+    const platform = e2bBoard.jobs.find((job) => job.title === "Platform Engineer")!;
+    const billing = e2bBoard.jobs.find((job) => job.title === "Billing Engineer")!;
+    const config = {
+      companies: [{ name: "E2B", token: "e2b" }], targetTitles: ["Engineer"],
+      keywords: ["Go", "Terraform"], locations: ["Prague"], strictLocation: true,
+      topK: 10, saveUnanalyzed: false,
+    };
+    const automation: Automation = {
+      ...leverAutomation, id: "auto-e2b", name: "E2B", jobBoard: "ashby",
+      sourceConfig: JSON.stringify({ ashby: config }),
+    };
+    const respond = (body: unknown) => vi.spyOn(global, "fetch").mockImplementation(async () =>
+      new Response(JSON.stringify(body), { headers: { "Content-Type": "application/json" } }));
+
+    afterEach(() => vi.restoreAllMocks());
+
+    it("matches a complete captured posting to a CV, saves salary and metadata, then skips saved duplicates", async () => {
+      vi.mocked(prisma.resume.findUnique).mockResolvedValue({
+        id: "resume1", title: "E2B CV", ContactInfo: null,
+        ResumeSections: [{ sectionType: "skills", skills: [{ order: 0, Tag: { id: "go", label: "Go" } }] }],
+      } as never);
+      const fetchSpy = respond({ jobs: [platform, platform] });
+      const first = await runAutomation(automation);
+      expect(first).toMatchObject({ status: "completed", jobsSearched: 2, jobsProcessed: 1, jobsSaved: 1 });
+      expect(fetchSpy).toHaveBeenCalledExactlyOnceWith(
+        "https://api.ashbyhq.com/posting-api/job-board/e2b?includeCompensation=true",
+        expect.objectContaining({ signal: expect.any(AbortSignal) }),
+      );
+      expect(vi.mocked(generateText).mock.calls[0][0].prompt).toContain("E2B CV");
+      expect(vi.mocked(generateText).mock.calls[0][0].prompt).toContain("kernel-level metrics");
+      const data = vi.mocked(prisma.job.create).mock.calls[0][0].data;
+      expect(data).toMatchObject({
+        jobUrl: platform.jobUrl, description: platform.descriptionHtml,
+        salaryRange: "CZK 150,000 – 300,000 / month", workplaceType: "ONSITE", jobType: "FT", matchScore: 90,
+      });
+      expect(JSON.parse(data.matchData as string)).toMatchObject({
+        analyzed: true, resumeId: "resume1", resumeTitle: "E2B CV", sourceId: platform.id,
+        applicationUrl: platform.applyUrl, postedDate: platform.publishedAt, employmentType: "FullTime",
+      });
+      vi.mocked(prisma.job.findMany).mockResolvedValue([{
+        id: "saved-e2b", jobUrl: data.jobUrl, JobTitle: { label: platform.title },
+        Company: { label: "E2B" }, Location: { label: platform.location },
+      }] as never);
+      vi.mocked(prisma.job.create).mockClear(); vi.mocked(generateText).mockClear();
+      expect(await runAutomation(automation)).toMatchObject({ status: "completed", jobsSaved: 0, jobsProcessed: 0 });
+      expect(prisma.job.create).not.toHaveBeenCalled();
+      expect(generateText).not.toHaveBeenCalled();
+    });
+
+    it("applies the strict Prague filter to the captured board before AI matching", async () => {
+      respond(e2bBoard);
+      const result = await runAutomation(automation);
+      expect(result).toMatchObject({ status: "completed", jobsSearched: 6, jobsProcessed: 5, jobsSaved: 5 });
+      expect(generateText).toHaveBeenCalledTimes(5);
+      expect(prisma.location.findUnique).not.toHaveBeenCalledWith(expect.objectContaining({
+        where: expect.objectContaining({ label: "San Francisco" }),
+      }));
+    });
+
+    it.each([true, false])("keeps the AI budget and additional-listing setting (%s)", async (saveUnanalyzed) => {
+      respond({ jobs: [platform, billing] });
+      const result = await runAutomation({ ...automation,
+        sourceConfig: JSON.stringify({ ashby: { ...config, topK: 1, saveUnanalyzed } }),
+      });
+      expect(generateText).toHaveBeenCalledTimes(1);
+      expect(result.jobsSaved).toBe(saveUnanalyzed ? 2 : 1);
+      if (saveUnanalyzed) {
+        const metadata = vi.mocked(prisma.job.create).mock.calls.map(([args]) => JSON.parse(args.data.matchData as string));
+        expect(metadata).toEqual(expect.arrayContaining([
+          expect.objectContaining({ analyzed: false, sourceId: expect.any(String), applicationUrl: expect.any(String) }),
+          expect.objectContaining({ analyzed: true, resumeId: "resume1" }),
+        ]));
+      }
+    });
+
+    it("does not save an analyzed posting below the selected threshold", async () => {
+      respond({ jobs: [platform] });
+      vi.mocked(generateText).mockResolvedValue({ text: "SCORES: match=40 recommendation=weak match\n\n## Summary\nThin fit" } as never);
+      expect(await runAutomation(automation)).toMatchObject({ status: "completed", jobsProcessed: 1, jobsSaved: 0 });
+      expect(prisma.job.create).not.toHaveBeenCalled();
+    });
+
+    it.each([403, 404, 429, "invalid JSON", "missing jobs", "timeout", "empty"])(
+      "reports %s while preserving historical jobs and AI results", async (failure) => {
+        const fetchSpy = vi.spyOn(global, "fetch");
+        if (failure === "timeout") fetchSpy.mockRejectedValue(new DOMException("Timeout", "AbortError"));
+        else fetchSpy.mockImplementation(async () => new Response(
+          failure === "invalid JSON" ? "<html>Unavailable</html>"
+            : JSON.stringify(failure === "missing jobs" ? {} : { jobs: [] }),
+          { status: typeof failure === "number" ? failure : 200 },
+        ));
+        const result = await runAutomation(automation);
+        expect(result).toMatchObject({ status: failure === "empty" ? "completed" : "failed", jobsSaved: 0 });
+        if (failure !== "empty") {
+          const diagnostics = vi.mocked(recordRunNotifications).mock.calls[0][1];
+          expect(diagnostics.boardErrors).toEqual([expect.objectContaining({ name: "E2B", token: "e2b" })]);
+          expect(automationLogger.getLogs(automation.id).some((entry) => entry.message.includes("skipped"))).toBe(true);
+        }
+        expect(prisma.job.create).not.toHaveBeenCalled();
+        expect(generateText).not.toHaveBeenCalled();
+      },
+    );
+
+    it("keeps E2B results when another Ashby board is unavailable", async () => {
+      vi.spyOn(global, "fetch").mockImplementation(async (input) =>
+        new URL(String(input)).pathname.endsWith("/bad")
+          ? new Response(null, { status: 404 })
+          : new Response(JSON.stringify({ jobs: [platform] })));
+      const result = await runAutomation({ ...automation, sourceConfig: JSON.stringify({ ashby: {
+        ...config, companies: [...config.companies, { name: "Unavailable", token: "bad" }],
+      } }) });
+      expect(result).toMatchObject({ status: "completed_with_errors", jobsSaved: 1 });
+      expect(vi.mocked(recordRunNotifications).mock.calls[0][1].boardErrors)
+        .toEqual([expect.objectContaining({ name: "Unavailable", reason: expect.stringContaining("404") })]);
+    });
+  });
 
   it("matches captured xitee descriptions against selected CV skills with empty targeting, persists metadata and deduplicates subsequent runs", async () => {
     vi.mocked(prisma.resume.findUnique).mockResolvedValue({ id: "resume1", title: "QA CV", ContactInfo: null, ResumeSections: [{ sectionType: "skills", skills: [{ order: 0, Tag: { id: "testing", label: "testing" } }] }] } as never);

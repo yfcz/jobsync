@@ -265,6 +265,45 @@ describe("resolveAtsBoard (ashby branch)", () => {
     expect(result.success).toBe(false);
     expect(spy).not.toHaveBeenCalled();
   });
+
+  it.each([
+    "e2b", "E2B", "https://jobs.ashbyhq.com/e2b",
+    "jobs.ashbyhq.com/e2b/efc5fc81-83b7-40f6-8c00-a5a8bf508fe5",
+    "https://e2b.dev/careers", "https://e2b.dev/careers/?utm_source=jobsync#positions",
+  ])("resolves %s to the seeded E2B board through one fixed-host probe", async (input) => {
+    const spy = vi.spyOn(global, "fetch").mockResolvedValue(okResponse());
+    expect(await resolveAtsBoard("ashby", input)).toEqual({ success: true, name: "E2B", token: "e2b" });
+    expect(spy).toHaveBeenCalledExactlyOnceWith(
+      `${APP_CONSTANTS.ASHBY_BASE_URL}/e2b`,
+      expect.objectContaining({ signal: expect.any(AbortSignal), redirect: "error" }),
+    );
+  });
+
+  it.each([
+    "https://e2b.dev.evil.example/careers", "https://evil.example/e2b.dev/careers",
+    "https://e2b.dev/careers/other", "https://e2b.dev/", "http://e2b.dev/careers",
+    "https://e2b.dev:444/careers", "https://name@e2b.dev/careers",
+    "https://evil.example/?next=https://jobs.ashbyhq.com/e2b",
+    "https://jobs.ashbyhq.com.evil.example/e2b",
+  ])("rejects unsupported URL %s without making requests", async (input) => {
+    const spy = vi.spyOn(global, "fetch");
+    expect((await resolveAtsBoard("ashby", input)).success).toBe(false);
+    expect(spy).not.toHaveBeenCalled();
+  });
+
+  it("bounds E2B alias validation with the Ashby timeout", async () => {
+    vi.useFakeTimers();
+    try {
+      vi.spyOn(global, "fetch").mockImplementation((_, options) => new Promise((_, reject) => {
+        options?.signal?.addEventListener("abort", () => reject(new DOMException("Timeout", "AbortError")));
+      }));
+      const request = resolveAtsBoard("ashby", "https://e2b.dev/careers");
+      await vi.advanceTimersByTimeAsync(APP_CONSTANTS.ASHBY_FETCH_TIMEOUT_MS);
+      expect(await request).toEqual({ success: false, message: "Could not reach Ashby" });
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });
 
 describe("searchAtsCompanies (ashby)", () => {
@@ -278,5 +317,11 @@ describe("searchAtsCompanies (ashby)", () => {
     const { companies } = await searchAtsCompanies("ashby", "");
     expect(companies.length).toBeGreaterThan(0);
     expect(companies[0]).toHaveProperty("token");
+  });
+
+  it("finds the existing E2B entry without duplicating the directory", async () => {
+    const { companies } = await searchAtsCompanies("ashby", "E2B");
+    expect(companies).toContainEqual({ name: "E2B", token: "e2b" });
+    expect(companies.filter((company) => company.token === "e2b")).toHaveLength(1);
   });
 });

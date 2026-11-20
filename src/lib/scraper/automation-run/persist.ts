@@ -51,10 +51,11 @@ export async function persistDiscoveredJob(
     matchScore,
     matchData: JSON.stringify({
       ...matchData, ...(job.sourceId ? { sourceId: job.sourceId } : {}),
-      ...(automation.jobBoard === "xitee" ? {
-        dedupeUrls: job.dedupeUrls, applicationUrl: job.applicationUrl,
+      ...(automation.jobBoard === "xitee" || automation.jobBoard === "ashby" ? {
+        applicationUrl: job.applicationUrl,
         postedDate: job.postedDate, employmentType: job.employmentType,
       } : {}),
+      ...(automation.jobBoard === "xitee" ? { dedupeUrls: job.dedupeUrls } : {}),
     }),
     skillTerms,
   });

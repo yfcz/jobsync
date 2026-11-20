@@ -18,7 +18,7 @@ export async function fetchAshbyBoardJobs(
   );
 
   try {
-    const url = `${APP_CONSTANTS.ASHBY_BASE_URL}/${encodeURIComponent(token)}`;
+    const url = `${APP_CONSTANTS.ASHBY_BASE_URL}/${encodeURIComponent(token)}?includeCompensation=true`;
     const response = await fetch(url, { signal: controller.signal });
 
     // 429 is distinct so the run surfaces the existing "rate limited" label.
@@ -35,8 +35,10 @@ export async function fetchAshbyBoardJobs(
       };
     }
 
-    const data: AshbyBoardResponse = await response.json();
-    if (data.jobs !== undefined && !Array.isArray(data.jobs)) {
+    const data: AshbyBoardResponse | null = await response.json();
+    if (!data || !Array.isArray(data.jobs) || data.jobs.some((job) =>
+      !job || typeof job.id !== "string" || typeof job.jobUrl !== "string"
+    )) {
       return {
         success: false,
         error: { type: "parse", message: `Board '${token}' malformed payload` },
@@ -44,12 +46,18 @@ export async function fetchAshbyBoardJobs(
     }
 
     // Company name isn't in the payload — carry it from the seed/user.
-    const jobs = (data.jobs ?? [])
+    const jobs = data.jobs
       .filter((job) => job.isListed !== false)
       .map((job) => mapAshbyJob(job, name));
 
     return { success: true, data: jobs };
   } catch (error) {
+    if (error instanceof SyntaxError) {
+      return {
+        success: false,
+        error: { type: "parse", message: `Board '${token}' returned invalid JSON` },
+      };
+    }
     if (error instanceof Error && error.name === "AbortError") {
       return {
         success: false,

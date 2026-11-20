@@ -2,6 +2,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { AtsSearchStep } from "@/components/automations/AtsSearchStep";
 import { toastInfo } from "@/lib/toast";
+import { resolveAtsBoard, searchAtsCompanies } from "@/actions/atsCompany.actions";
 
 vi.mock("@/actions/atsCompany.actions", () => ({
   searchAtsCompanies: vi
@@ -135,5 +136,36 @@ describe("AtsSearchStep batch add", () => {
     await clickAddAll();
 
     expect(toastInfo).toHaveBeenCalledWith(expect.stringMatching(/2 skipped/i));
+  });
+});
+
+describe("AtsSearchStep E2B", () => {
+  it("adds the careers URL to the Ashby config and keeps preferences when reopened", async () => {
+    vi.mocked(resolveAtsBoard).mockResolvedValue({ success: true, name: "E2B", token: "e2b" });
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+    const value = {
+      companies: [], targetTitles: ["Platform Engineer"], keywords: ["Go"], locations: ["Prague"],
+      strictLocation: true, topK: 3, saveUnanalyzed: false,
+    };
+    const { rerender } = render(<AtsSearchStep provider="ashby" value={value} onChange={onChange} />);
+    const input = screen.getByPlaceholderText(/https:\/\/e2b.dev\/careers/);
+    await user.type(input, "https://e2b.dev/careers");
+    await user.keyboard("{Enter}");
+    expect(resolveAtsBoard).toHaveBeenCalledWith("ashby", "https://e2b.dev/careers");
+    expect(onChange).toHaveBeenCalledWith({ ...value, companies: [{ name: "E2B", token: "e2b" }] });
+    rerender(<AtsSearchStep provider="ashby" value={onChange.mock.calls[0][0]} onChange={onChange} />);
+    expect(screen.getByText("E2B")).toBeInTheDocument();
+    expect(input).toHaveValue("");
+  });
+
+  it("selects E2B from the existing Ashby company directory", async () => {
+    vi.mocked(searchAtsCompanies).mockResolvedValue({ companies: [{ name: "E2B", token: "e2b" }], hasMore: false });
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+    render(<AtsSearchStep provider="ashby" value={{ companies: [] }} onChange={onChange} />);
+    await user.click(screen.getByRole("button", { name: /search companies/i }));
+    await user.click(await screen.findByRole("option", { name: /E2B/ }));
+    expect(onChange).toHaveBeenCalledWith({ companies: [{ name: "E2B", token: "e2b" }] });
   });
 });

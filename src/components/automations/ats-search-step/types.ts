@@ -23,7 +23,7 @@ export const PROVIDER_META: Record<
   },
   ashby: {
     label: "Ashby",
-    urlHint: "Or paste a jobs.ashbyhq.com link or token",
+    urlHint: "Or paste an Ashby link, token, or https://e2b.dev/careers",
     searchExample: "Ramp",
   },
 };

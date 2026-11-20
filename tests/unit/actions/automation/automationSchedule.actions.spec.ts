@@ -88,6 +88,26 @@ describe("createAutomation schedule-hour uniqueness", () => {
     expect(JSON.parse(update.data!.sourceConfig!)).toEqual(edited);
   });
 
+  it("creates and edits an E2B Ashby automation without losing preferences or scheduling", async () => {
+    vi.mocked(prisma.automation.findFirst).mockResolvedValue(null);
+    const sourceConfig = { ashby: {
+      companies: [{ name: "E2B", token: "e2b" }], targetTitles: ["Platform Engineer"],
+      keywords: ["Go"], locations: ["Prague"], strictLocation: true, topK: 3, saveUnanalyzed: false,
+    } };
+    expect((await createAutomation(baseInput({ name: "E2B", jobBoard: "ashby", sourceConfig }))).success).toBe(true);
+    const saved = vi.mocked(prisma.automation.create).mock.calls[0][0].data;
+    expect(saved).toMatchObject({ jobBoard: "ashby", resumeId: RESUME_ID, matchThreshold: 80, scheduleHour: 8 });
+    expect(JSON.parse(saved.sourceConfig as string)).toEqual(sourceConfig);
+    expect(saved.nextRunAt).toBeInstanceOf(Date);
+    vi.mocked(prisma.automation.findFirst).mockResolvedValue({ id: "auto-1", jobBoard: "ashby" } as never);
+    vi.mocked(prisma.automation.update).mockImplementation(({ data }) => Promise.resolve({ id: "auto-1", ...data }) as never);
+    const edited = { ashby: { ...sourceConfig.ashby, topK: 1, saveUnanalyzed: true } };
+    const update = await updateAutomation("auto-1", { jobBoard: "ashby", sourceConfig: edited, matchThreshold: 90 });
+    expect(update.success).toBe(true);
+    expect(JSON.parse(update.data!.sourceConfig!)).toEqual(edited);
+    expect(update.data!.matchThreshold).toBe(90);
+  });
+
   it("scopes the clash check to the current user and chosen hour", async () => {
     (prisma.automation.findFirst as any).mockResolvedValue(null);
 
